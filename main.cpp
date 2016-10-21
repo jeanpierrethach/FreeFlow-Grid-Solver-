@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
     playButton->setGeometry(100,10,80,30);
 
     // to do remove objects of window (playButton, quitButton)
-    QObject::connect(playButton, SIGNAL (clicked()),QApplication::instance(), SLOT (playButton->deleteLater();));
+    QObject::connect(playButton, SIGNAL (clicked()),playButton, SLOT (close()));
+    QObject::connect(playButton, SIGNAL (clicked()),quitButton, SLOT (close()));
 
     window.show();
 
