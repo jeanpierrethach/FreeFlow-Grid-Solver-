@@ -21,6 +21,8 @@ public:
     void mousePressEvent(QMouseEvent*);
     void mouseMoveEvent(QMouseEvent*);
     void mouseReleaseEvent(QMouseEvent*);
+
+    void paintEvent(QPaintEvent*);
     //bool eventFilter(QObject*, QEvent*);
 
 private:
@@ -32,6 +34,18 @@ private:
     QPoint pos[5][5];
     int mouseX;
     int mouseY;
+    int interval;
+    const int height = 720;
+    const int width = 720;
+    const int leftside = 5;
+    const int rightside = 5;
+    const int up = 5;
+    int n = 5;
+    QPainter* painter;
+    int caseX;
+    int caseY;
+
+
 
 
 };
