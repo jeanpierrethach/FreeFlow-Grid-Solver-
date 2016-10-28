@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QPainter>
 #include <vector>
-
+#include "grid.h"
 
 namespace Ui {
 class MainWindow;
@@ -40,11 +40,10 @@ private:
     const int leftside = 5;
     const int rightside = 5;
     const int up = 5;
-    int n = 5;
     QPainter* painter;
     int caseX;
     int caseY;
-
+    //Path* p = new Path(5);
 
 
 

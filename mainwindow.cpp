@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "grid.h"
+#include "grid.cpp"
 
 #include <QLabel>
 #include <QDebug>
@@ -11,7 +13,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-{  
+{
     ui->setupUi(this);
     //installEventFilter(this);
     this->setFixedWidth(width);
@@ -35,13 +37,14 @@ void MainWindow::paintEvent(QPaintEvent* e)
 void MainWindow::drawGrid()
 {
 
+    Grid* grid = new Grid(5,5);
     painter->setBrush(Qt::black);
     painter->setPen(Qt::white);
-    interval = height / n;
+    interval = height / grid->getWidth();
 
-    for(int i = 0;i < n;i++)
+    for(int i = 0; i < grid->getWidth(); i++)
     {
-        for(int j = 0;j < n;j++)
+        for(int j = 0; j < grid->getHeight(); j++)
         {
             pos[i][j].setX(leftside + j * interval + interval / 2);
             pos[i][j].setY(up + i * interval + interval / 2);
@@ -54,12 +57,12 @@ void MainWindow::drawGrid()
                             QPoint(leftside,up + 720)};
     painter->drawPolygon(pointList,4);
 
-    for(int i = 1;i < n;i++)
+    for(int i = 1; i < grid->getWidth(); i++)
     {
         painter->drawLine(QPoint(leftside,up+i*interval),
                           QPoint(leftside+720,up+i*interval));
     }
-    for(int i = 1;i < n;i++)
+    for(int i = 1; i < grid->getHeight(); i++)
     {
         painter->drawLine(QPoint(leftside+i*interval,up),
                           QPoint(leftside+i*interval,up+720));

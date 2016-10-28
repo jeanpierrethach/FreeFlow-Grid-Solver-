@@ -14,9 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    showlevel.cpp
+    showlevel.cpp \
+    grid.cpp \
+    path.cpp
 
 HEADERS  += mainwindow.h \
-    showlevel.h
+    showlevel.h \
+    grid.h \
+    path.h
 
 FORMS    += mainwindow.ui
