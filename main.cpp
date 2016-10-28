@@ -4,17 +4,20 @@
 #include <QPointer>
 #include "string.h"
 #include "showlevel.h"
-
+#include <QHBoxLayout>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //MainWindow w;
+    //MainWindow* w;
 
     QWidget window;
     window.setFixedSize(780,780);
 
     ShowLevel *sl = new ShowLevel();
+
+    //MainWindow *mw = new MainWindow();
+
 
     sl->addBoutons(12, 6, window);
 
@@ -34,6 +37,5 @@ int main(int argc, char *argv[])
 
 
     window.show();
-
     return a.exec();
 }
