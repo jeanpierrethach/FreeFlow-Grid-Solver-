@@ -23,7 +23,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::mouseMoveEvent(QMouseEvent* e)
 {
-    //label->setText("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()));
+    qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()));
 
 }
 

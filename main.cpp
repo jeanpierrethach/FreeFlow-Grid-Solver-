@@ -9,9 +9,9 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //MainWindow* w;
+    MainWindow w;
 
-    QWidget window;
+    /*QWidget window;
     window.setFixedSize(780,780);
 
     ShowLevel *sl = new ShowLevel();
@@ -34,8 +34,9 @@ int main(int argc, char *argv[])
     // to do remove objects of window (playButton, quitButton)
     QObject::connect(playButton, SIGNAL (clicked()),playButton, SLOT (close()));
     QObject::connect(playButton, SIGNAL (clicked()),quitButton, SLOT (close()));
-
-
     window.show();
+    */
+    w.show();
+
     return a.exec();
 }
