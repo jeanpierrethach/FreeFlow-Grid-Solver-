@@ -34,12 +34,12 @@ MainWindow::MainWindow(QWidget *parent) :
     //setMouseTracking(true);
 
     // proof of concept
-    grid->getGrid()[2][4].setColor(3);
-    grid->getGrid()[0][0].setColor(3);
+    grid->getGrid()[2][4].setColor(0);
+    grid->getGrid()[0][0].setColor(0);
     grid->getGrid()[3][4].setColor(5);
     grid->getGrid()[2][2].setColor(5);
-    grid->getGrid()[1][0].setColor(7);
-    grid->getGrid()[2][3].setColor(7);
+    grid->getGrid()[1][0].setColor(1);
+    grid->getGrid()[2][3].setColor(1);
     grid->getGrid()[4][4].setColor(4);
     grid->getGrid()[3][1].setColor(4);
 
@@ -67,7 +67,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
     // create visual effect on mouse pressed
     if(activeX != NOTACTIVE)
     {
-        if(grid->getGrid()[activeX][activeY].getColor() != blank)
+        if(grid->getGrid()[activeX][activeY].getColor() != -1)
         {
             painter->setPen(activeColor[grid->getGrid()[activeX][activeY].getColor()]);
             painter->setBrush(activeColor[grid->getGrid()[activeX][activeY].getColor()]);
