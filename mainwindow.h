@@ -43,6 +43,8 @@ private:
     QPainter* painter;
     int caseX;
     int caseY;
+
+    Grid* grid = new Grid(5,5);
     //Path* p = new Path(5);
 
 

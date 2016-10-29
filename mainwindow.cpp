@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "grid.h"
-#include "grid.cpp"
 
 #include <QLabel>
 #include <QDebug>
@@ -37,7 +36,6 @@ void MainWindow::paintEvent(QPaintEvent* e)
 void MainWindow::drawGrid()
 {
 
-    Grid* grid = new Grid(5,5);
     painter->setBrush(Qt::black);
     painter->setPen(Qt::white);
     interval = height / grid->getWidth();
@@ -93,8 +91,8 @@ void MainWindow::drawGrid()
 
 void MainWindow::mouseMoveEvent(QMouseEvent* e)
 {
-    caseX = (e->x() - 5) / 144;
-    caseY = (e->y() - 5) / 144;
+    caseX = (e->x() - 5) / (height / grid->getHeight());
+    caseY = (e->y() - 5) / (width / grid->getWidth());
     qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()) +" posCaseX: " + caseX + "posCaseY: " +caseY);
 
 }
@@ -102,6 +100,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
 void MainWindow::mousePressEvent(QMouseEvent* e)
 {
     if (e->button() == Qt::LeftButton){
+        qDebug() << "Mouse pressed";
         qDebug() << "Left Button";
     }
     mouseX = e->x();
@@ -114,7 +113,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
 
 void MainWindow::mouseReleaseEvent(QMouseEvent* e)
 {
-
+    qDebug() << "Mouse released";
 
 }
 
