@@ -7,21 +7,23 @@ class Grid
 {
 public:
     Grid(int, int);
-
+    ~Grid();
 
     Path getElement();
 
     Path getPath(int, int);
+    Path** getGrid(){ return gameGrid; }
 
     void setPath(int, int, Path);
 
-    int getHeight();
     int getWidth();
+    int getHeight();
+
 
 private:
-
-    int height;
     int width;
+    int height;
+
 
     Path** gameGrid;
 

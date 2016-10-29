@@ -2,8 +2,8 @@
 
 Grid::Grid(int height, int width)
 {
-    this->height = height;
     this->width = width;
+    this->height = height;
 
     gameGrid = new Path*[width];
 
@@ -11,6 +11,15 @@ Grid::Grid(int height, int width)
     {
         gameGrid[i] = new Path[height];
     }
+}
+
+Grid::~Grid()
+{
+    for (int i = 0; i < this->width; ++i)
+    {
+        delete [] gameGrid[i];
+    }
+    delete [] gameGrid;
 }
 
 Path Grid::getPath(int i, int j)

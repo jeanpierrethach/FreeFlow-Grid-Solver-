@@ -1,6 +1,8 @@
 #ifndef PATH_H
 #define PATH_H
 
+
+
 struct Point {
     int x;
     int y;
@@ -17,12 +19,22 @@ public:
 
     const Point getEdgePoint1();
     const Point getEdgePoint2();
-    const bool getFixed();
+    const bool isFixed();
     const int getColor();
+    bool isOrigin();
+    bool isCovered();
+
+    void setColor(int color) { this->color = color; }
+
+
 
 private:
     Point edgePoint1;
     Point edgePoint2;
+
+
+    bool origin;
+    bool covered;
 
     bool fixed;
     int color;

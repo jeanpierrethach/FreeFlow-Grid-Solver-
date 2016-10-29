@@ -6,6 +6,10 @@
 #include <vector>
 #include "grid.h"
 
+
+#define NOTACTIVE -1
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -31,9 +35,21 @@ private:
     void drawGrid();
     void drawColorLine();
 
+
     QPoint pos[5][5];
-    int mouseX;
-    int mouseY;
+    QPoint mousePosition;
+    /*int mouseXinit;
+    int mouseYinit;
+    int mouseXfinal;
+    int mouseYfinal;*/
+    int activeX;
+    int activeY;
+
+
+    QPoint startPos;
+    QPoint endPos;
+
+    bool mousePressed = false;
     int interval;
     const int height = 720;
     const int width = 720;
@@ -43,6 +59,10 @@ private:
     QPainter* painter;
     int caseX;
     int caseY;
+
+
+
+    //int offset = 5; // separator between case
 
     Grid* grid = new Grid(5,5);
     //Path* p = new Path(5);

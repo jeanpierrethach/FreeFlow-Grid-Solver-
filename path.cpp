@@ -2,7 +2,7 @@
 
 Path::Path()
 {
-
+    this->color = -1;
 }
 
 // Path sans direction
@@ -44,7 +44,7 @@ const Point Path::getEdgePoint2()
     return edgePoint2;
 }
 
-const bool Path::getFixed()
+const bool Path::isFixed()
 {
     return fixed;
 }
@@ -52,4 +52,14 @@ const bool Path::getFixed()
 const int Path::getColor()
 {
     return color;
+}
+
+bool Path::isOrigin()
+{
+    return origin;
+}
+
+bool Path::isCovered()
+{
+    return covered;
 }
