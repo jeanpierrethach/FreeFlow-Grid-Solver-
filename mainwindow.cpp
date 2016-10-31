@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
     {
         ui->setupUi(this);
+
         this->setFixedWidth(width);
         this->setFixedHeight(height);
         //setMouseTracking(true);
@@ -71,6 +72,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::start()
+{
+    setEnabled(true);
+    show();
+}
+
+void MainWindow::leave()
+{
+    close();
+}
+
+
 void MainWindow::paintEvent(QPaintEvent* e)
 {
 
@@ -88,7 +101,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
             {
                 painter->setPen(activeColor[grid->getGrid()[i][j].getColor()]);
                 painter->setBrush(activeColor[grid->getGrid()[i][j].getColor()]);
-                painter->drawRect(5 + interval * i, 5 + interval * j, interval, interval);
+                painter->drawRect(offset + interval * i, offset + interval * j, interval, interval);
             }
         }
     }
@@ -101,15 +114,15 @@ void MainWindow::paintEvent(QPaintEvent* e)
         {
 
             //qDebug() << grid->getGrid()[i][j].isCovered();
-            if(grid->getGrid()[i][j].previous[0] != 0)
+            if(grid->getGrid()[i][j].previous[0] != 0) // && grid->getGrid()[i][j].isCovered() == false
             {
                 painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
                     15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
                     painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
 
-                painter->drawLine(QPoint(interval/2 + 5 + interval * grid->getGrid()[i][j].previous[0]->x,
-                    interval/2 + 5 + interval * grid->getGrid()[i][j].previous[0]->y),
-                    QPoint(interval/2 + 5  + interval * i, interval/2 + 5 + interval * j));
+                painter->drawLine(QPoint(interval/2 + offset + interval * grid->getGrid()[i][j].previous[0]->x,
+                    interval/2 + offset + interval * grid->getGrid()[i][j].previous[0]->y),
+                    QPoint(interval/2 + offset  + interval * i, interval/2 + offset + interval * j));
             }
 
         }
@@ -133,6 +146,7 @@ void MainWindow::drawGrid()
     painter->setPen(Qt::black);
     interval = height / grid->getWidth();
 
+    // sets position of x,y of each cases
     for(int i = 0; i < grid->getWidth(); i++)
     {
         for(int j = 0; j < grid->getHeight(); j++)
@@ -142,26 +156,26 @@ void MainWindow::drawGrid()
         }
     }
 
-    // draw rectangle with 4 points
+    // draw grid with 4 points (top left, top right, bottom right, bottom left)
     QPoint pointList[4] = {QPoint(leftside,up), QPoint(720 - rightside,up),
         QPoint(720 - rightside,up + 720), QPoint(leftside,up + 720)};
     painter->drawPolygon(pointList,4);
 
-    // draw lines
+    // draw lines top left
     for(int i = 1; i < grid->getWidth(); i++)
     {
         painter->drawLine(QPoint(leftside,up+i*interval),
-        QPoint(leftside+720,up+i*interval));
+        QPoint(720 - rightside,up+i*interval));
     }
 
-    // can put this in the for above if same size
+    // draw lines
     for(int i = 1; i < grid->getHeight(); i++)
     {
         painter->drawLine(QPoint(leftside+i*interval,up),
         QPoint(leftside+i*interval,up+720));
     }
 
-    // draw grid from data input
+    // draw origins from data input from data
     for(int i = 0; i < grid->getWidth(); i++)
     {
         for(int j = 0; j < grid->getHeight(); j++)
@@ -191,15 +205,15 @@ void MainWindow::drawColorLine()
 void MainWindow::mouseMoveEvent(QMouseEvent* e)
 {
 
-    if (e->x() > 5 && e->y() > 5 && e->x() < width - 5  && e->y() < height - 5)
+    if (e->x() > offset && e->y() > offset && e->x() < width - offset  && e->y() < height - offset)
     {
-        int x = ((e->x() - 5) / interval);
-        int y = ((e->y() - 5) / interval);
+        int x = ((e->x() - offset) / interval);
+        int y = ((e->y() - offset) / interval);
         mousePosition.setX(e->x());
         mousePosition.setY(e->y());
 
-        caseX = (e->x() - 5) / (height / grid->getHeight());
-        caseY = (e->y() - 5) / (width / grid->getWidth());
+        caseX = (e->x() - offset) / (height / grid->getHeight());
+        caseY = (e->y() - offset) / (width / grid->getWidth());
         qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()) +" posCaseX: " + caseX + "posCaseY: " +caseY);
 
         if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
@@ -232,15 +246,15 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
 
 void MainWindow::mousePressEvent(QMouseEvent* e)
 {
-    if (e->x() > 5 && e->y() > 5 && e->x() < width - 5  && e->y() < height - 5)
+    if (e->x() > offset && e->y() > offset && e->x() < width - offset  && e->y() < height - offset)
     {
         if (e->button() == Qt::LeftButton){
 
             mousePressed = true;
             if(mousePressed)
             {
-                int x = ((e->x() - 5) / interval);
-                int y = ((e->y() - 5) / interval);
+                int x = ((e->x() - offset) / interval);
+                int y = ((e->y() - offset) / interval);
                 activeX = x;
                 activeY = y;
                 mousePosition.setX(e->x());

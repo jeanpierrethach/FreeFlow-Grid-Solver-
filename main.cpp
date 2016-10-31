@@ -1,15 +1,24 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include <QPushButton>
-#include <QPointer>
-#include "string.h"
+
 #include "showlevel.h"
-#include <QHBoxLayout>
+#include "dialog.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
     MainWindow w;
+    Dialog startMenu(&app);
+
+
+    QObject::connect(&startMenu, SIGNAL(start()), &w, SLOT(start()));
+    QObject::connect(&startMenu, SIGNAL(leave()), &w, SLOT(leave()));
+
+    startMenu.show();
+
+    //w.show();
+
+    return app.exec();
 
     /*QWidget window;
     window.setFixedSize(780,780);
@@ -36,7 +45,5 @@ int main(int argc, char *argv[])
     QObject::connect(playButton, SIGNAL (clicked()),quitButton, SLOT (close()));
     window.show();
     */
-    w.show();
 
-    return a.exec();
 }

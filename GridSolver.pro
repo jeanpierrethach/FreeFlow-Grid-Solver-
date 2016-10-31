@@ -16,11 +16,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     showlevel.cpp \
     grid.cpp \
-    path.cpp
+    path.cpp \
+    dialog.cpp
 
 HEADERS  += mainwindow.h \
     showlevel.h \
     grid.h \
-    path.h
+    path.h \
+    dialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    dialog.ui

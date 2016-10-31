@@ -27,6 +27,11 @@ public:
     void mouseReleaseEvent(QMouseEvent*);
 
     void paintEvent(QPaintEvent*);
+
+
+public slots:
+    void start();
+    void leave();
     
 private:
     Ui::MainWindow *ui;
@@ -40,13 +45,14 @@ private:
     const int leftside = 5;
     const int rightside = 5;
     const int up = 5;
+    //const int bottom = 5;
     QPainter* painter;
     int caseX;
     int caseY;
 
 
 
-    //int offset = 5; // separator between case
+    int offset = 5; // separator between case
 
     int activeX;
     int activeY;
