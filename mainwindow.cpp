@@ -225,6 +225,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
         {
             grid->getGrid()[x][y].setFlag(true);
+            grid->getGrid()[x][y].setCovered(true);
         }
 
         if (abs(activeX - x) + abs(activeY - y) == 1){
@@ -234,6 +235,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
             grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
             grid->getGrid()[x][y].setColor(grid->getGrid()[activeX][activeY].getColor());
             grid->getGrid()[x][y].setFlag(true);
+            grid->getGrid()[x][y].setCovered(true);
             activeX = x;
             activeY = y;
         }
