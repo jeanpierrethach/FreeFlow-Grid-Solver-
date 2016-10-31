@@ -4,8 +4,8 @@
 Dialog::Dialog(QApplication *a, QWidget *parent) :
     app(a),
     QDialog(parent),
-    ui(new Ui::Dialog),
-    mainWindow(this)
+    ui(new Ui::Dialog)
+    //mainWindow(this)
 {
     ui->setupUi(this);
     setWindowTitle("Free Flow");

@@ -89,55 +89,10 @@ void MainWindow::paintEvent(QPaintEvent* e)
 
     painter = new QPainter(this);
     drawGrid();
-    //drawColorLine();
+    drawColorLine();
+    fillSquareColor();
+    mouseRoundColor();
 
-    // fill the square when there are paths created
-
-    for (int i = 0; i < grid->getWidth(); ++i)
-    {
-        for (int j = 0; j < grid->getHeight(); ++j)
-        {
-            if(grid->getGrid()[i][j].getColor() != -1 && grid->getGrid()[i][j].hasFlag())
-            {
-                painter->setPen(activeColor[grid->getGrid()[i][j].getColor()]);
-                painter->setBrush(activeColor[grid->getGrid()[i][j].getColor()]);
-                painter->drawRect(offset + interval * i, offset + interval * j, interval, interval);
-            }
-        }
-    }
-
-    // paint line when connecting
-    // to change interval/2 + offset -> center of the square
-    for (int i = 0; i < grid->getWidth(); ++i)
-    {
-        for (int j = 0; j < grid->getHeight(); ++j)
-        {
-
-            //qDebug() << grid->getGrid()[i][j].isCovered();
-            if(grid->getGrid()[i][j].previous[0] != 0) // && grid->getGrid()[i][j].isCovered() == false
-            {
-                painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
-                    15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-                    painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
-
-                painter->drawLine(QPoint(interval/2 + offset + interval * grid->getGrid()[i][j].previous[0]->x,
-                    interval/2 + offset + interval * grid->getGrid()[i][j].previous[0]->y),
-                    QPoint(interval/2 + offset  + interval * i, interval/2 + offset + interval * j));
-            }
-
-        }
-    }
-
-    // create visual effect on mouse pressed
-    if(activeX != NOTACTIVE)
-    {
-        if(grid->getGrid()[activeX][activeY].getColor() != -1)
-        {
-            painter->setPen(activeColor[grid->getGrid()[activeX][activeY].getColor()]);
-            painter->setBrush(activeColor[grid->getGrid()[activeX][activeY].getColor()]);
-            painter->drawEllipse(mousePosition, 40, 40);
-        }
-    }
 }
 
 void MainWindow::drawGrid()
@@ -197,8 +152,59 @@ void MainWindow::drawGrid()
 
 void MainWindow::drawColorLine()
 {
+    // paint line when connecting
+    // to change interval/2 + offset -> center of the square
+    for (int i = 0; i < grid->getWidth(); ++i)
+    {
+        for (int j = 0; j < grid->getHeight(); ++j)
+        {
 
+            //qDebug() << grid->getGrid()[i][j].isCovered();
+            if(grid->getGrid()[i][j].previous[0] != 0) // && grid->getGrid()[i][j].isCovered() == false
+            {
+                painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
+                    15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+                    painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
 
+                painter->drawLine(QPoint(interval/2 + offset + interval * grid->getGrid()[i][j].previous[0]->x,
+                    interval/2 + offset + interval * grid->getGrid()[i][j].previous[0]->y),
+                    QPoint(interval/2 + offset  + interval * i, interval/2 + offset + interval * j));
+            }
+
+        }
+    }
+}
+
+void MainWindow::fillSquareColor()
+{
+    // fill the square when there are paths created
+
+    for (int i = 0; i < grid->getWidth(); ++i)
+    {
+        for (int j = 0; j < grid->getHeight(); ++j)
+        {
+            if(grid->getGrid()[i][j].getColor() != -1 && grid->getGrid()[i][j].hasFlag())
+            {
+                painter->setPen(activeColor[grid->getGrid()[i][j].getColor()]);
+                painter->setBrush(activeColor[grid->getGrid()[i][j].getColor()]);
+                painter->drawRect(offset + interval * i, offset + interval * j, interval, interval);
+            }
+        }
+    }
+}
+
+void MainWindow::mouseRoundColor()
+{
+    // create visual effect on mouse pressed
+    if(activeX != NOTACTIVE)
+    {
+        if(grid->getGrid()[activeX][activeY].getColor() != -1)
+        {
+            painter->setPen(activeColor[grid->getGrid()[activeX][activeY].getColor()]);
+            painter->setBrush(activeColor[grid->getGrid()[activeX][activeY].getColor()]);
+            painter->drawEllipse(mousePosition, 40, 40);
+        }
+    }
 }
 
 

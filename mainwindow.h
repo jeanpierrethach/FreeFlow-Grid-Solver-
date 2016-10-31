@@ -38,6 +38,8 @@ private:
 
     void drawGrid();
     void drawColorLine();
+    void fillSquareColor();
+    void mouseRoundColor();
 
     int interval;
     const int height = 720;

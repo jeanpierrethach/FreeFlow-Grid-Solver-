@@ -26,7 +26,7 @@ signals:
 
 private:
     Ui::Dialog *ui;
-    MainWindow mainWindow;
+    //MainWindow mainWindow; // can change to showlevel window
     QApplication *app;
 };
 
