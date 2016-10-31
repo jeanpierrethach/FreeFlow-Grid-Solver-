@@ -101,7 +101,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
         {
 
             //qDebug() << grid->getGrid()[i][j].isCovered();
-            if(grid->getGrid()[i][j].previous[0] != 0 && grid->getGrid()[i][j].isCovered() == false)
+            if(grid->getGrid()[i][j].previous[0] != 0)
             {
                 painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
                     15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -111,16 +111,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
                     interval/2 + 5 + interval * grid->getGrid()[i][j].previous[0]->y),
                     QPoint(interval/2 + 5  + interval * i, interval/2 + 5 + interval * j));
             }
-            /*if(grid->getGrid()[i][j].previous[1])
-            {
-                painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
-                    15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-                    painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
 
-                painter->drawLine(QPoint(interval/2 + 5 + interval * grid->getGrid()[i][j].previous[1]->x,
-                    interval/2 + 5 + interval * grid->getGrid()[i][j].previous[1]->y),
-                    QPoint(interval/2 + 5 + interval * i, interval/2 + 5 + interval * j));
-            }*/
         }
     }
 
@@ -220,11 +211,13 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
             activeX = x;
             activeY = y;
         }
-        else if(grid->getGrid()[x][y].isOrigin() && grid->getGrid()[activeX][activeY].getColor() == grid->getGrid()[x][y].getColor())
+        else if(grid->getGrid()[x][y].isOrigin() && grid->getGrid()[activeX][activeY].getColor() == grid->getGrid()[x][y].getColor()
+                && grid->getGrid()[x][y].isCovered() == false)
         {
             qDebug() << "entered origin case";
             grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
             grid->getGrid()[x][y].setFlag(true);
+            grid->getGrid()[x][y].setCovered(true);
             activeX = x;
             activeY = y;
         }
@@ -242,6 +235,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
     if (e->x() > 5 && e->y() > 5 && e->x() < width - 5  && e->y() < height - 5)
     {
         if (e->button() == Qt::LeftButton){
+
             mousePressed = true;
             if(mousePressed)
             {
@@ -254,8 +248,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
 
                 if (grid->getGrid()[x][y].isOrigin())
                 {
-                    grid->getGrid()[x][y].setFlag(true);
-                    qDebug() << "pressed origin";
+                    //grid->getGrid()[x][y].setFlag(true);
 
                     for (int i = 0; i < grid->getWidth(); ++i)
                     {
@@ -270,6 +263,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
                                 grid->getGrid()[i][j].next[0] = 0;
                                 grid->getGrid()[i][j].previous[0] = 0;
                                 grid->getGrid()[i][j].setFlag(false);
+                                grid->getGrid()[i][j].setCovered(false);
                             }
                         }
                     }

@@ -34,18 +34,6 @@ private:
     void drawGrid();
     void drawColorLine();
 
-
-    QPoint pos[5][5];
-    QPoint mousePosition;
-
-    int activeX;
-    int activeY;
-
-
-    QPoint startPos;
-    QPoint endPos;
-
-    bool mousePressed = false;
     int interval;
     const int height = 720;
     const int width = 720;
@@ -60,6 +48,15 @@ private:
 
     //int offset = 5; // separator between case
 
+    int activeX;
+    int activeY;
+    bool mousePressed = false;
+
+    // static level
+    QPoint pos[5][5];
+    QPoint mousePosition;
+
+    // static level
     Grid* grid = new Grid(5,5);
 
 };
