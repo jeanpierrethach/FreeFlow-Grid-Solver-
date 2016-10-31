@@ -34,10 +34,10 @@ void Grid::setPath(int i, int j, Path path)
 
 int Grid::getWidth()
 {
-  return width;
+    return width;
 }
 
 int Grid::getHeight()
 {
-  return height;
+    return height;
 }

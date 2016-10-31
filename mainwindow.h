@@ -11,7 +11,7 @@
 
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -27,8 +27,7 @@ public:
     void mouseReleaseEvent(QMouseEvent*);
 
     void paintEvent(QPaintEvent*);
-    //bool eventFilter(QObject*, QEvent*);
-
+    
 private:
     Ui::MainWindow *ui;
 
@@ -38,10 +37,7 @@ private:
 
     QPoint pos[5][5];
     QPoint mousePosition;
-    /*int mouseXinit;
-    int mouseYinit;
-    int mouseXfinal;
-    int mouseYfinal;*/
+
     int activeX;
     int activeY;
 
@@ -65,9 +61,6 @@ private:
     //int offset = 5; // separator between case
 
     Grid* grid = new Grid(5,5);
-    //Path* p = new Path(5);
-
-
 
 };
 

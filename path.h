@@ -44,7 +44,6 @@ private:
 
     bool fixed;
     int color;
-    //Path p;
 
 };
 

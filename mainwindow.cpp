@@ -14,78 +14,57 @@
 enum {blank, red, blue, purple, yellow, orange, green, black, brown};
 
 QColor color[9] = {QColor(237, 28, 36), QColor(0, 162, 232), QColor(102, 24, 126),
-                   QColor(244, 233, 11), QColor(255, 127, 39), QColor(144, 233, 50),
-                   QColor(0, 0, 0), QColor(185, 122, 87), QColor(254, 109, 221)};
+    QColor(244, 233, 11), QColor(255, 127, 39), QColor(144, 233, 50),
+    QColor(0, 0, 0), QColor(185, 122, 87), QColor(254, 109, 221)};
 
 QColor activeColor[9] = {QColor(237, 28, 36, 100), QColor(0, 162, 232, 100),
-                         QColor(102, 24, 126, 100), QColor(244, 233, 11, 100),
-                         QColor(255, 127, 39, 100), QColor(144, 233, 50, 100),
-                         QColor(0, 0, 0, 100), QColor(185, 122, 87, 100),
-                         QColor(254, 109, 221, 100)};
+    QColor(102, 24, 126, 100), QColor(244, 233, 11, 100),
+    QColor(255, 127, 39, 100), QColor(144, 233, 50, 100),
+    QColor(0, 0, 0, 100), QColor(185, 122, 87, 100),
+    QColor(254, 109, 221, 100)};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-{
-    ui->setupUi(this);
-    //installEventFilter(this);
-    this->setFixedWidth(width);
-    this->setFixedHeight(height);
-    //setMouseTracking(true);
-
-    // proof of concept
-    grid->getGrid()[2][4].setColor(0);
-    grid->getGrid()[0][0].setColor(0);
-    grid->getGrid()[3][4].setColor(5);
-    grid->getGrid()[2][2].setColor(5);
-    grid->getGrid()[1][0].setColor(1);
-    grid->getGrid()[2][3].setColor(1);
-    grid->getGrid()[4][4].setColor(4);
-    grid->getGrid()[3][1].setColor(4);
-
-    // refactor after in readData method
-    grid->getGrid()[2][4].setOrigin(true);
-    grid->getGrid()[0][0].setOrigin(true);
-    grid->getGrid()[3][4].setOrigin(true);
-    grid->getGrid()[2][2].setOrigin(true);
-    grid->getGrid()[1][0].setOrigin(true);
-    grid->getGrid()[2][3].setOrigin(true);
-    grid->getGrid()[4][4].setOrigin(true);
-    grid->getGrid()[3][1].setOrigin(true);
-
-    // set pos x,y (to change when reading data)
-    /*grid->getGrid()[2][4].x = 2;
-    grid->getGrid()[2][4].y = 4;
-    grid->getGrid()[0][0].x = 0;
-    grid->getGrid()[0][0].y = 0;
-    grid->getGrid()[3][4].x = 3;
-    grid->getGrid()[3][4].y = 4;
-    grid->getGrid()[2][2].x = 2;
-    grid->getGrid()[2][2].y = 2;
-    grid->getGrid()[1][0].x = 1;
-    grid->getGrid()[1][0].y = 0;
-    grid->getGrid()[2][3].x = 2;
-    grid->getGrid()[2][3].y = 3;
-    grid->getGrid()[4][4].x = 4;
-    grid->getGrid()[4][4].y = 4;
-    grid->getGrid()[3][1].x = 3;
-    grid->getGrid()[3][1].y = 1;*/
-
-    for (int i = 0; i < grid->getWidth(); ++i)
     {
-        for (int j = 0; j < grid->getHeight(); ++j)
+        ui->setupUi(this);
+        this->setFixedWidth(width);
+        this->setFixedHeight(height);
+        //setMouseTracking(true);
+
+        // proof of concept
+        grid->getGrid()[2][4].setColor(0);
+        grid->getGrid()[0][0].setColor(0);
+        grid->getGrid()[3][4].setColor(5);
+        grid->getGrid()[2][2].setColor(5);
+        grid->getGrid()[1][0].setColor(1);
+        grid->getGrid()[2][3].setColor(1);
+        grid->getGrid()[4][4].setColor(4);
+        grid->getGrid()[3][1].setColor(4);
+
+        // refactor after in readData method
+        grid->getGrid()[2][4].setOrigin(true);
+        grid->getGrid()[0][0].setOrigin(true);
+        grid->getGrid()[3][4].setOrigin(true);
+        grid->getGrid()[2][2].setOrigin(true);
+        grid->getGrid()[1][0].setOrigin(true);
+        grid->getGrid()[2][3].setOrigin(true);
+        grid->getGrid()[4][4].setOrigin(true);
+        grid->getGrid()[3][1].setOrigin(true);
+
+        // set pos x,y (to change when reading data or in constructor)
+
+        for (int i = 0; i < grid->getWidth(); ++i)
         {
-            grid->getGrid()[j][i].x = j;
-            grid->getGrid()[j][i].y = i;
+            for (int j = 0; j < grid->getHeight(); ++j)
+            {
+                grid->getGrid()[j][i].x = j;
+                grid->getGrid()[j][i].y = i;
+            }
         }
+        activeX = NOTACTIVE;
+        activeY = NOTACTIVE;
     }
-    activeX = NOTACTIVE;
-    activeY = NOTACTIVE;
-
-}
-
-
-
 
 MainWindow::~MainWindow()
 {
@@ -125,20 +104,20 @@ void MainWindow::paintEvent(QPaintEvent* e)
             if(grid->getGrid()[i][j].previous[0] != 0 && grid->getGrid()[i][j].isCovered() == false)
             {
                 painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
-                        15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-                painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
+                    15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+                    painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
 
-
-                painter->drawLine(QPoint(interval/2 + 5 + interval * grid->getGrid()[i][j].previous[0]->x, interval/2 + 5 + interval * grid->getGrid()[i][j].previous[0]->y),
-                                 QPoint(interval/2 + 5  + interval * i, interval/2 + 5 + interval * j));
+                painter->drawLine(QPoint(interval/2 + 5 + interval * grid->getGrid()[i][j].previous[0]->x,
+                    interval/2 + 5 + interval * grid->getGrid()[i][j].previous[0]->y),
+                    QPoint(interval/2 + 5  + interval * i, interval/2 + 5 + interval * j));
             }
             /*if(grid->getGrid()[i][j].previous[1])
             {
                 painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
-                        15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+                15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
                 painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
                 painter->drawLine(QPoint(130 + interval * grid->getGrid()[i][j].previous[1]->x, 80 + interval * grid->getGrid()[i][j].previous[1]->y),
-                                 QPoint(130 + interval * i, 80 + interval * j));
+                QPoint(130 + interval * i, 80 + interval * j));
             }*/
         }
     }
@@ -153,12 +132,10 @@ void MainWindow::paintEvent(QPaintEvent* e)
             painter->drawEllipse(mousePosition, 40, 40);
         }
     }
-
 }
 
 void MainWindow::drawGrid()
 {
-
     //painter->setBrush(Qt::white);
     painter->setPen(Qt::black);
     interval = height / grid->getWidth();
@@ -173,25 +150,23 @@ void MainWindow::drawGrid()
     }
 
     // draw rectangle with 4 points
-    QPoint pointList[4] = {QPoint(leftside,up),
-                             QPoint(720 - rightside,up),
-                            QPoint(720 - rightside,up + 720),
-                            QPoint(leftside,up + 720)};
+    QPoint pointList[4] = {QPoint(leftside,up), QPoint(720 - rightside,up),
+        QPoint(720 - rightside,up + 720), QPoint(leftside,up + 720)};
     painter->drawPolygon(pointList,4);
 
     // draw lines
     for(int i = 1; i < grid->getWidth(); i++)
     {
         painter->drawLine(QPoint(leftside,up+i*interval),
-                          QPoint(leftside+720,up+i*interval));
+        QPoint(leftside+720,up+i*interval));
     }
+
     // can put this in the for above if same size
     for(int i = 1; i < grid->getHeight(); i++)
     {
         painter->drawLine(QPoint(leftside+i*interval,up),
-                          QPoint(leftside+i*interval,up+720));
+        QPoint(leftside+i*interval,up+720));
     }
-
 
     // draw grid from data input
     for(int i = 0; i < grid->getWidth(); i++)
@@ -209,32 +184,12 @@ void MainWindow::drawGrid()
                 painter->drawEllipse(pos[j][i],interval/3,interval/3);
                 update();
             }
-
         }
     }
-
-    // update();
 }
 
 void MainWindow::drawColorLine()
 {
-
-
-       //qDebug() << "mouseXinit: " + mouseXinit << ", mouseYinit: " + mouseYinit;
-
-       painter->setPen(QPen(Qt::SolidPattern,20,Qt::SolidLine,Qt::RoundCap,Qt::RoundJoin));
-
-       // if (mousePressed != false)
-       painter->drawLine(startPos, endPos);
-
-       /*for (int i = 0; i < grid->getWidth(); ++i)
-       {
-
-           for (int j = 0; j < grid->getHeight(); ++j)
-           {
-               painter->drawLine(startPos,endPos);
-           }
-       }*/
 
 
 }
@@ -242,55 +197,38 @@ void MainWindow::drawColorLine()
 
 void MainWindow::mouseMoveEvent(QMouseEvent* e)
 {
-    //if (e->type() == QEvent::MouseMove){
 
     int x = ((e->x() - 5) / interval);
     int y = ((e->y() - 5) / interval);
     mousePosition.setX(e->x());
     mousePosition.setY(e->y());
 
+    caseX = (e->x() - 5) / (height / grid->getHeight());
+    caseY = (e->y() - 5) / (width / grid->getWidth());
+    qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()) +" posCaseX: " + caseX + "posCaseY: " +caseY);
 
-        caseX = (e->x() - 5) / (height / grid->getHeight());
-        caseY = (e->y() - 5) / (width / grid->getWidth());
-        qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()) +" posCaseX: " + caseX + "posCaseY: " +caseY);
+    if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
+    {
+        grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
+        grid->getGrid()[x][y].setColor(grid->getGrid()[activeX][activeY].getColor());
+        grid->getGrid()[x][y].setFlag(true);
+        activeX = x;
+        activeY = y;
+    }
+    else if(grid->getGrid()[x][y].isOrigin() && grid->getGrid()[activeX][activeY].getColor() == grid->getGrid()[x][y].getColor())
+    {
+        qDebug() << "entered origin";
+        grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
+        grid->getGrid()[x][y].setFlag(true);
+        activeX = x;
+        activeY = y;
+    }
+    /*else if(grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor())
+    {
 
-        if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
-        {
-            grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
-            grid->getGrid()[x][y].setColor(grid->getGrid()[activeX][activeY].getColor());
-            grid->getGrid()[x][y].setFlag(true);
-            activeX = x;
-            activeY = y;
-        }
-        else if(grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor())
-        {
+    }*/
 
-        }
-        else if(grid->getGrid()[x][y].isOrigin() && grid->getGrid()[activeX][activeY].getColor() == grid->getGrid()[x][y].getColor())
-        {
-            qDebug() << "entered origin";
-            grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
-            //grid->getGrid()[x][y].setColor(grid->getGrid()[activeX][activeY].getColor());
-            grid->getGrid()[x][y].setFlag(true);
-            activeX = x;
-            activeY = y;
-        }
-
-        //endPos = e->pos();
-
-        //mouseXfinal = (e->x() - 5) / (height / grid->getHeight());
-        //mouseYfinal = (e->y() - 5) / (width / grid->getWidth());
-        /*mouseXfinal = (caseX + (interval/3 * e->x()));
-        mouseYfinal = (caseY + (interval/3 * e->y()));
-        endPos.setX(mouseXfinal);
-        endPos.setY(mouseYfinal);*/
-
-        //mouseXfinal = e->pos().x();
-        //mouseYfinal = e->pos().y();
-
-        update();
-    //}
-
+    update();
 }
 
 void MainWindow::mousePressEvent(QMouseEvent* e)
@@ -299,11 +237,6 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
         mousePressed = true;
         if(mousePressed)
         {
-            //startPos = e->pos();
-
-            //mouseXinit = (e->x() - 5) / (height / grid->getHeight());
-            //mouseYinit = (e->y() - 5) / (width / grid->getWidth());
-
             int x = ((e->x() - 5) / interval);
             int y = ((e->y() - 5) / interval);
             activeX = x;
@@ -311,48 +244,26 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
             mousePosition.setX(e->x());
             mousePosition.setY(e->y());
 
+            if (grid->getGrid()[x][y].isOrigin())
+            {
+                grid->getGrid()[x][y].setFlag(true);
 
-           if (grid->getGrid()[x][y].isOrigin())
-           {
-               grid->getGrid()[x][y].setFlag(true);
-
-               for (int i = 0; i < grid->getWidth(); ++i)
-               {
-                   for (int j = 0; j < grid->getHeight(); ++j)
-                   {
-
-                       if(grid->getGrid()[i][j].isOrigin() && grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor())
-                       {
-                           grid->getGrid()[i][j].next[0] = 0;
-                           grid->getGrid()[i][j].previous[0] = 0;
-
-                       }
-                   }
+                for (int i = 0; i < grid->getWidth(); ++i)
+                {
+                    for (int j = 0; j < grid->getHeight(); ++j)
+                    {
+                        if(grid->getGrid()[i][j].isOrigin() && grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor())
+                        {
+                            grid->getGrid()[i][j].next[0] = 0;
+                            grid->getGrid()[i][j].previous[0] = 0;
+                        }
+                    }
                 }
-           }
-
-
-            /*mouseXinit = ((e->x() - 5) / (height / grid->getHeight()) + (interval/3 * e->x()));
-            mouseYinit = ((e->y() - 5) / (width / grid->getWidth()) + (interval/3 * e->y()));
-            startPos.setX(mouseXinit);
-            startPos.setY(mouseYinit);*/
-
-            //mouseXinit = e->pos().x();
-            //mouseYinit = e->pos().y();
+            }
             qDebug() << "Mouse pressed";
             qDebug() << "Left Button";
-            //update();
         }
-
-
-
-
     }
-
-
-
-
-
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent* e)
@@ -362,14 +273,3 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* e)
     activeX = NOTACTIVE;
     activeY = NOTACTIVE;
 }
-
-/*
-bool MainWindow::eventFilter(QObject *obj, QEvent *event)
-{
-  if (event->type() == QEvent::MouseMove)
-  {
-    QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-    statusBar()->showMessage(QString("Mouse move (%1,%2)").arg(mouseEvent->pos().x()).arg(mouseEvent->pos().y()));
-  }
-  return false;
-}*/
