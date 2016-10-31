@@ -3,6 +3,10 @@
 Path::Path()
 {
     this->color = -1;
+    this->origin = false;
+    this->covered = false;
+    this->previous[0] = 0;
+    this->flag = false;
 }
 
 // Path sans direction

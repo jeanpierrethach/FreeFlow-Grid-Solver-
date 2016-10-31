@@ -23,10 +23,15 @@ public:
     const int getColor();
     bool isOrigin();
     bool isCovered();
+    bool hasFlag() { return flag; }
 
     void setColor(int color) { this->color = color; }
+    void setOrigin(bool b) { this->origin = b; }
+    void setFlag(bool f) { this->flag = f; }
 
-
+    int x,y;
+    Path* next[2];
+    Path* previous[2];
 
 private:
     Point edgePoint1;
@@ -35,6 +40,7 @@ private:
 
     bool origin;
     bool covered;
+    bool flag;
 
     bool fixed;
     int color;
