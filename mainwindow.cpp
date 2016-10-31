@@ -222,11 +222,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         caseY = (e->y() - offset) / (width / grid->getWidth());
         qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()) +" posCaseX: " + caseX + "posCaseY: " +caseY);
 
-        if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
-        {
-            grid->getGrid()[x][y].setFlag(true);
-            grid->getGrid()[x][y].setCovered(true);
-        }
+
 
         if (abs(activeX - x) + abs(activeY - y) == 1){
         if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
@@ -245,7 +241,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
             qDebug() << "entered origin case";
             grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
             grid->getGrid()[x][y].setFlag(true);
-            grid->getGrid()[x][y].setCovered(true);
+            //grid->getGrid()[x][y].setCovered(true);
             activeX = x;
             activeY = y;
         }
@@ -253,6 +249,11 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         {
 
         }*/
+        }
+        if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
+        {
+            grid->getGrid()[x][y].setFlag(true);
+            grid->getGrid()[x][y].setCovered(true);
         }
     }
 
