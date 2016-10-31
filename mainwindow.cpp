@@ -9,7 +9,7 @@
 #include <QPainter>
 #include <QColor>
 #include <QPoint>
-
+#include <cmath>
 
 enum {blank, red, blue, purple, yellow, orange, green, black, brown};
 
@@ -222,6 +222,12 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         caseY = (e->y() - offset) / (width / grid->getWidth());
         qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()) +" posCaseX: " + caseX + "posCaseY: " +caseY);
 
+        if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
+        {
+            grid->getGrid()[x][y].setFlag(true);
+        }
+
+        if (abs(activeX - x) + abs(activeY - y) == 1){
         if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
         {
             qDebug() << "entered blank case";
@@ -245,6 +251,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         {
 
         }*/
+        }
     }
 
     update();
