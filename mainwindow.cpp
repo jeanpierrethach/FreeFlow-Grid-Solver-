@@ -255,18 +255,25 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
                 if (grid->getGrid()[x][y].isOrigin())
                 {
                     grid->getGrid()[x][y].setFlag(true);
+                    qDebug() << "pressed origin";
 
                     for (int i = 0; i < grid->getWidth(); ++i)
                     {
                         for (int j = 0; j < grid->getHeight(); ++j)
                         {
+                            if(grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor() && grid->getGrid()[i][j].isOrigin() == false)
+                            {
+                                grid->getGrid()[i][j].clear();
+                            }
                             if(grid->getGrid()[i][j].isOrigin() && grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor())
                             {
                                 grid->getGrid()[i][j].next[0] = 0;
                                 grid->getGrid()[i][j].previous[0] = 0;
+                                grid->getGrid()[i][j].setFlag(false);
                             }
                         }
                     }
+                    grid->getGrid()[x][y].setFlag(false);
                 }
                 qDebug() << "Mouse pressed";
                 qDebug() << "Left Button";

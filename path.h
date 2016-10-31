@@ -29,6 +29,8 @@ public:
     void setOrigin(bool b) { this->origin = b; }
     void setFlag(bool f) { this->flag = f; }
 
+    void clear();
+
     int x,y;
     Path* next[2];
     Path* previous[2];
