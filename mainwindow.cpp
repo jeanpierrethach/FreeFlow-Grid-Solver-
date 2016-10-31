@@ -114,10 +114,12 @@ void MainWindow::paintEvent(QPaintEvent* e)
             /*if(grid->getGrid()[i][j].previous[1])
             {
                 painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
-                15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-                painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
-                painter->drawLine(QPoint(130 + interval * grid->getGrid()[i][j].previous[1]->x, 80 + interval * grid->getGrid()[i][j].previous[1]->y),
-                QPoint(130 + interval * i, 80 + interval * j));
+                    15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+                    painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
+
+                painter->drawLine(QPoint(interval/2 + 5 + interval * grid->getGrid()[i][j].previous[1]->x,
+                    interval/2 + 5 + interval * grid->getGrid()[i][j].previous[1]->y),
+                    QPoint(interval/2 + 5 + interval * i, interval/2 + 5 + interval * j));
             }*/
         }
     }
@@ -198,70 +200,77 @@ void MainWindow::drawColorLine()
 void MainWindow::mouseMoveEvent(QMouseEvent* e)
 {
 
-    int x = ((e->x() - 5) / interval);
-    int y = ((e->y() - 5) / interval);
-    mousePosition.setX(e->x());
-    mousePosition.setY(e->y());
-
-    caseX = (e->x() - 5) / (height / grid->getHeight());
-    caseY = (e->y() - 5) / (width / grid->getWidth());
-    qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()) +" posCaseX: " + caseX + "posCaseY: " +caseY);
-
-    if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
+    if (e->x() > 5 && e->y() > 5 && e->x() < width - 5  && e->y() < height - 5)
     {
-        grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
-        grid->getGrid()[x][y].setColor(grid->getGrid()[activeX][activeY].getColor());
-        grid->getGrid()[x][y].setFlag(true);
-        activeX = x;
-        activeY = y;
+        int x = ((e->x() - 5) / interval);
+        int y = ((e->y() - 5) / interval);
+        mousePosition.setX(e->x());
+        mousePosition.setY(e->y());
+
+        caseX = (e->x() - 5) / (height / grid->getHeight());
+        caseY = (e->y() - 5) / (width / grid->getWidth());
+        qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()) +" posCaseX: " + caseX + "posCaseY: " +caseY);
+
+        if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
+        {
+            qDebug() << "entered blank case";
+            grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
+            grid->getGrid()[x][y].setColor(grid->getGrid()[activeX][activeY].getColor());
+            grid->getGrid()[x][y].setFlag(true);
+            activeX = x;
+            activeY = y;
+        }
+        else if(grid->getGrid()[x][y].isOrigin() && grid->getGrid()[activeX][activeY].getColor() == grid->getGrid()[x][y].getColor())
+        {
+            qDebug() << "entered origin case";
+            grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
+            grid->getGrid()[x][y].setFlag(true);
+            activeX = x;
+            activeY = y;
+        }
+        /*else if(grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor())
+        {
+
+        }*/
     }
-    else if(grid->getGrid()[x][y].isOrigin() && grid->getGrid()[activeX][activeY].getColor() == grid->getGrid()[x][y].getColor())
-    {
-        qDebug() << "entered origin";
-        grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
-        grid->getGrid()[x][y].setFlag(true);
-        activeX = x;
-        activeY = y;
-    }
-    /*else if(grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor())
-    {
-
-    }*/
 
     update();
 }
 
 void MainWindow::mousePressEvent(QMouseEvent* e)
 {
-    if (e->button() == Qt::LeftButton){
-        mousePressed = true;
-        if(mousePressed)
-        {
-            int x = ((e->x() - 5) / interval);
-            int y = ((e->y() - 5) / interval);
-            activeX = x;
-            activeY = y;
-            mousePosition.setX(e->x());
-            mousePosition.setY(e->y());
-
-            if (grid->getGrid()[x][y].isOrigin())
+    if (e->x() > 5 && e->y() > 5 && e->x() < width - 5  && e->y() < height - 5)
+    {
+        if (e->button() == Qt::LeftButton){
+            mousePressed = true;
+            if(mousePressed)
             {
-                grid->getGrid()[x][y].setFlag(true);
+                int x = ((e->x() - 5) / interval);
+                int y = ((e->y() - 5) / interval);
+                activeX = x;
+                activeY = y;
+                mousePosition.setX(e->x());
+                mousePosition.setY(e->y());
 
-                for (int i = 0; i < grid->getWidth(); ++i)
+                if (grid->getGrid()[x][y].isOrigin())
                 {
-                    for (int j = 0; j < grid->getHeight(); ++j)
+                    grid->getGrid()[x][y].setFlag(true);
+
+                    for (int i = 0; i < grid->getWidth(); ++i)
                     {
-                        if(grid->getGrid()[i][j].isOrigin() && grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor())
+                        for (int j = 0; j < grid->getHeight(); ++j)
                         {
-                            grid->getGrid()[i][j].next[0] = 0;
-                            grid->getGrid()[i][j].previous[0] = 0;
+                            if(grid->getGrid()[i][j].isOrigin() && grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor())
+                            {
+                                grid->getGrid()[i][j].next[0] = 0;
+                                grid->getGrid()[i][j].previous[0] = 0;
+                            }
                         }
                     }
                 }
+                qDebug() << "Mouse pressed";
+                qDebug() << "Left Button";
             }
-            qDebug() << "Mouse pressed";
-            qDebug() << "Left Button";
         }
     }
 }

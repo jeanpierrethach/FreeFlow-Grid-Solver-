@@ -6,6 +6,9 @@ Path::Path()
     this->origin = false;
     this->covered = false;
     this->previous[0] = 0;
+    this->previous[1] = 0;
+    this->next[0] = 0;
+    this->next[1] = 0;
     this->flag = false;
 }
 
