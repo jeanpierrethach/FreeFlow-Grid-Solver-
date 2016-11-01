@@ -1,21 +1,21 @@
 #include "grid.h"
 
-Grid::Grid(int height, int width)
+Grid::Grid(int nbRow, int nbCol)
 {
-    this->width = width;
-    this->height = height;
+    this->row = nbRow;
+    this->column = nbCol;
 
-    gameGrid = new Path*[width];
-
-    for (int i = 0; i < width; ++i)
+    gameGrid = new Path*[nbRow];
+    
+    for (int i = 0; i < nbRow; ++i)
     {
-        gameGrid[i] = new Path[height];
+        gameGrid[i] = new Path[nbCol];
     }
 }
 
 Grid::~Grid()
 {
-    for (int i = 0; i < this->width; ++i)
+    for (int i = 0; i < this->row; ++i)
     {
         delete [] gameGrid[i];
     }
@@ -32,12 +32,12 @@ void Grid::setPath(int i, int j, Path path)
     gameGrid[i][j] = path;
 }
 
-int Grid::getWidth()
+int Grid::getNbRow()
 {
-    return width;
+    return row;
 }
 
-int Grid::getHeight()
+int Grid::getNbColumn()
 {
-    return height;
+    return column;
 }

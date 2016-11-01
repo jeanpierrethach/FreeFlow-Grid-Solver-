@@ -11,13 +11,11 @@
 #include <QPoint>
 #include <cmath>
 
-enum {blank, red, blue, purple, yellow, orange, green, black, brown};
-
 QColor color[9] = {QColor(237, 28, 36), QColor(0, 162, 232), QColor(102, 24, 126),
     QColor(244, 233, 11), QColor(255, 127, 39), QColor(144, 233, 50),
     QColor(0, 0, 0), QColor(185, 122, 87), QColor(254, 109, 221)};
 
-QColor activeColor[9] = {QColor(237, 28, 36, 100), QColor(0, 162, 232, 100),
+QColor currentColor[9] = {QColor(237, 28, 36, 100), QColor(0, 162, 232, 100),
     QColor(102, 24, 126, 100), QColor(244, 233, 11, 100),
     QColor(255, 127, 39, 100), QColor(144, 233, 50, 100),
     QColor(0, 0, 0, 100), QColor(185, 122, 87, 100),
@@ -45,16 +43,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
         // set pos x,y (to change when reading data or in constructor)
         // or use method to set position
-        for (int i = 0; i < grid->getWidth(); ++i)
+        for (int i = 0; i < grid->getNbRow(); ++i)
         {
-            for (int j = 0; j < grid->getHeight(); ++j)
+            for (int j = 0; j < grid->getNbColumn(); ++j)
             {
                 grid->getGrid()[j][i].x = j;
                 grid->getGrid()[j][i].y = i;
             }
         }
-        activeX = NOTACTIVE;
-        activeY = NOTACTIVE;
+        currentX = NOTACTIVE;
+        currentY = NOTACTIVE;
     }
 
 MainWindow::~MainWindow()
@@ -73,64 +71,76 @@ void MainWindow::leave()
     close();
 }
 
-
 void MainWindow::paintEvent(QPaintEvent* )
 {
-
     painter = new QPainter(this);
     drawGrid();
     drawColorLine();
     fillSquareColor();
     mouseRoundColor();
-
 }
 
 void MainWindow::drawGrid()
 {
-    //painter->setBrush(Qt::white);
     painter->setPen(Qt::black);
-    interval = height / grid->getWidth();
+    interval = height / grid->getNbRow();
 
+    setPositionCase();
+
+    drawRectangleGrid();
+
+    drawRowColumnLines();
+
+    drawOrigins();
+}
+
+void MainWindow::setPositionCase()
+{
     // sets position of x,y of each cases
-    for(int i = 0; i < grid->getWidth(); i++)
+    for (int i = 0; i < grid->getNbRow(); ++i)
     {
-        for(int j = 0; j < grid->getHeight(); j++)
+        for (int j = 0; j < grid->getNbColumn(); ++j)
         {
             pos[i][j].setX(leftside + j * interval + interval / 2);
             pos[i][j].setY(up + i * interval + interval / 2);
         }
     }
+}
 
+void MainWindow::drawRectangleGrid()
+{
     // draw grid with 4 points (top left, top right, bottom right, bottom left)
-    QPoint pointList[4] = {QPoint(leftside,up), QPoint(720 - rightside,up),
-        QPoint(720 - rightside,up + 720), QPoint(leftside,up + 720)};
-    painter->drawPolygon(pointList,4);
+    QPoint gridPoints[4] = {QPoint(leftside, up), QPoint(width - rightside, up),
+        QPoint(width - rightside, up + height), QPoint(leftside, up + height)};
+    painter->drawPolygon(gridPoints, 4);
+}
 
-    // draw lines top left
-    for(int i = 1; i < grid->getWidth(); i++)
+void MainWindow::drawRowColumnLines()
+{
+    // draw row lines
+    for (int i = 1; i < grid->getNbRow(); ++i)
     {
-        painter->drawLine(QPoint(leftside,up+i*interval),
-        QPoint(720 - rightside,up+i*interval));
+        painter->drawLine(QPoint(leftside, up + i * interval),
+        QPoint(720 - rightside, up + i * interval));
     }
 
-    // draw lines
-    for(int i = 1; i < grid->getHeight(); i++)
+    // draw column lines
+    for (int i = 1; i < grid->getNbColumn(); ++i)
     {
-        painter->drawLine(QPoint(leftside+i*interval,up),
-        QPoint(leftside+i*interval,up+720));
+        painter->drawLine(QPoint(leftside + i * interval, up),
+        QPoint(leftside + i * interval, up + 720));
     }
+}
 
-    // draw origins from data input from data
-    for(int i = 0; i < grid->getWidth(); i++)
+void MainWindow::drawOrigins()
+{
+    // draw origins from data
+    for (int i = 0; i < grid->getNbRow(); ++i)
     {
-        for(int j = 0; j < grid->getHeight(); j++)
+        for (int j = 0; j < grid->getNbColumn(); ++j)
         {
             if (grid->getGrid()[i][j].getColor() != -1 && grid->getGrid()[i][j].isOrigin()){
-
                 painter->setPen(Qt::white);
-                //painter->setBrush(Qt::green);
-                //if(data[i][j] == 0) continue;
-                //painter->setBrush(transColor[data[i][j]]);
                 painter->setPen(color[grid->getGrid()[i][j].getColor()]);
                 painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
                 painter->drawEllipse(pos[j][i],interval/3,interval/3);
@@ -142,14 +152,11 @@ void MainWindow::drawGrid()
 void MainWindow::drawColorLine()
 {
     // paint line when connecting
-    // to change interval/2 + offset -> center of the square
-    for (int i = 0; i < grid->getWidth(); ++i)
+    for (int i = 0; i < grid->getNbRow(); ++i)
     {
-        for (int j = 0; j < grid->getHeight(); ++j)
+        for (int j = 0; j < grid->getNbColumn(); ++j)
         {
-
-            //qDebug() << grid->getGrid()[i][j].isCovered();
-            if(grid->getGrid()[i][j].previous[0] != 0) // && grid->getGrid()[i][j].isCovered() == false
+            if (grid->getGrid()[i][j].previous[0] != 0)
             {
                 painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
                     15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -159,23 +166,21 @@ void MainWindow::drawColorLine()
                     interval/2 + offset + interval * grid->getGrid()[i][j].previous[0]->y),
                     QPoint(interval/2 + offset  + interval * i, interval/2 + offset + interval * j));
             }
-
         }
     }
 }
 
 void MainWindow::fillSquareColor()
 {
-    // fill the square when there are paths created
-
-    for (int i = 0; i < grid->getWidth(); ++i)
+    // fill the square with a color
+    for (int i = 0; i < grid->getNbRow(); ++i)
     {
-        for (int j = 0; j < grid->getHeight(); ++j)
+        for (int j = 0; j < grid->getNbColumn(); ++j)
         {
-            if(grid->getGrid()[i][j].getColor() != -1 && grid->getGrid()[i][j].hasFlag())
+            if (grid->getGrid()[i][j].getColor() != -1 && grid->getGrid()[i][j].hasFlag())
             {
-                painter->setPen(activeColor[grid->getGrid()[i][j].getColor()]);
-                painter->setBrush(activeColor[grid->getGrid()[i][j].getColor()]);
+                painter->setPen(currentColor[grid->getGrid()[i][j].getColor()]);
+                painter->setBrush(currentColor[grid->getGrid()[i][j].getColor()]);
                 painter->drawRect(offset + interval * i, offset + interval * j, interval, interval);
             }
         }
@@ -185,184 +190,189 @@ void MainWindow::fillSquareColor()
 void MainWindow::mouseRoundColor()
 {
     // create visual effect on mouse pressed
-    if(activeX != NOTACTIVE)
+    if (currentX != NOTACTIVE)
     {
-        if(grid->getGrid()[activeX][activeY].getColor() != -1)
+        if (grid->getGrid()[currentX][currentY].getColor() != -1)
         {
-            painter->setPen(activeColor[grid->getGrid()[activeX][activeY].getColor()]);
-            painter->setBrush(activeColor[grid->getGrid()[activeX][activeY].getColor()]);
+            painter->setPen(currentColor[grid->getGrid()[currentX][currentY].getColor()]);
+            painter->setBrush(currentColor[grid->getGrid()[currentX][currentY].getColor()]);
             painter->drawEllipse(mousePosition, 40, 40);
         }
     }
-
 }
 
+void MainWindow::mousePressEvent(QMouseEvent* e)
+{
+    // restrict mouse movement to only the grid
+    if (e->x() > offset && e->y() > offset && e->x() < width - offset
+            && e->y() < height - offset)
+    {
+        if (e->button() == Qt::LeftButton)
+        {
+            int x = ((e->x() - offset) / interval);
+            int y = ((e->y() - offset) / interval);
+            currentX = x;
+            currentY = y;
+            mousePosition.setX(e->x());
+            mousePosition.setY(e->y());
+
+            // allow user to clear a path from a specific case
+            if (grid->getGrid()[x][y].getColor() != -1 && grid->getGrid()[x][y].next[0] != 0
+                    && grid->getGrid()[x][y].next[0]->getColor() == grid->getGrid()[x][y].getColor())
+            {
+                Path *temp = grid->getGrid()[x][y].next[0];
+                clearPathColorCase(temp);
+            }
+
+            // clear path from origin
+            if (grid->getGrid()[x][y].isOrigin())
+            {
+                for (int i = 0; i < grid->getNbRow(); ++i)
+                {
+                    for (int j = 0; j < grid->getNbColumn(); ++j)
+                    {
+                        if (grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor()
+                                && grid->getGrid()[i][j].isOrigin() == false)
+                        {
+                            grid->getGrid()[i][j].clear();
+                        }
+                        if (grid->getGrid()[i][j].isOrigin()
+                                && grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor())
+                        {
+                            grid->getGrid()[i][j].clearOrigin();
+
+                        }
+                    }
+                }
+                grid->getGrid()[x][y].setFlag(true);
+                grid->getGrid()[x][y].setFirstOrigin(true);
+            }
+            qDebug() << "Mouse pressed: Left button";
+        }
+    }
+
+    update();
+}
 
 void MainWindow::mouseMoveEvent(QMouseEvent* e)
 {
-
-    if (e->x() > offset && e->y() > offset && e->x() < width - offset  && e->y() < height - offset)
+    // restrict mouse movement to only the grid
+    if (e->x() > offset && e->y() > offset && e->x() < width - offset
+            && e->y() < height - offset)
     {
         int x = ((e->x() - offset) / interval);
         int y = ((e->y() - offset) / interval);
         mousePosition.setX(e->x());
         mousePosition.setY(e->y());
 
-        caseX = (e->x() - offset) / (height / grid->getHeight());
-        caseY = (e->y() - offset) / (width / grid->getWidth());
-        qDebug() << ("X:"+QString::number(e->x())+"-- Y:"+QString::number(e->y()) +" posCaseX: " + caseX + "posCaseY: " +caseY);
+        // tracks and prints the mouse position
+        positionCaseX = (e->x() - offset) / (height / grid->getNbColumn());
+        positionCaseY = (e->y() - offset) / (width / grid->getNbRow());
+        qDebug() << ("X:" + QString::number(e->x()) + ", Y:" + QString::number(e->y())
+                     + " posCaseX: " + positionCaseX + "posCaseY: " + positionCaseY);
 
-
-
-        if (abs(activeX - x) + abs(activeY - y) == 1){
-        /*if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1
-             && grid->getGrid()[x][y].previous[0] != 0 && grid->getGrid()[x][y].previous[0]->isOrigin()
-             && grid->getGrid()[x][y].previous[0]->getPathComplete() == true)
+        // limits the pathing creation to adjacents cases only
+        if (abs(currentX - x) + abs(currentY - y) == 1)
         {
-            qDebug() << "pathComplete function";
-        }
-        else*/ if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
-        {
-            qDebug() << "entered blank case";
-            grid->getGrid()[activeX][activeY].next[0] = &grid->getGrid()[x][y];
-            grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
-            grid->getGrid()[x][y].setColor(grid->getGrid()[activeX][activeY].getColor());
-            grid->getGrid()[x][y].setFlag(true);
-            grid->getGrid()[x][y].setCovered(true);
-            activeX = x;
-            activeY = y;
 
-        }
-        else if(grid->getGrid()[x][y].isOrigin() && grid->getGrid()[activeX][activeY].getColor() == grid->getGrid()[x][y].getColor()
-                && grid->getGrid()[x][y].isCovered() == false)
-        {
-                // WIP
-            if (grid->getGrid()[x][y].getFirstOrigin() == false)
+            // TODO: Work in progress
+            /*
+            if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1
+                && grid->getGrid()[x][y].previous[0] != 0 && grid->getGrid()[x][y].previous[0]->isOrigin()
+                && grid->getGrid()[x][y].previous[0]->getPathComplete() == true)
             {
-                qDebug() << "entered second origin case";
-                grid->getGrid()[activeX][activeY].next[0] = &grid->getGrid()[x][y];
-                grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
-                grid->getGrid()[x][y].setFlag(true);
+                qDebug() << "pathComplete function";
+            }
+            else { */
+
+            // if the case is blank
+            if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
+            {
+                // TODO: Work in progress
+                // if the path continues forward the second origin
+                // Path *temp = grid->getGrid()[x][y].previous[0];
+                // Path temp = grid->getGrid()[activeX][activeY];
+                /*
+                if (temp->getSecondOrigin() == true)
+                {
+                    qDebug() << "Can't go further";
+                }
+                else { */
+
+                qDebug() << "Entered blank case";
+                grid->getGrid()[currentX][currentY].next[0] = &grid->getGrid()[x][y];
+                grid->getGrid()[x][y].previous[0] = &grid->getGrid()[currentX][currentY];
+                grid->getGrid()[x][y].setColor(grid->getGrid()[currentX][currentY].getColor());
+                grid->getGrid()[x][y].setCoveredFlag(true);
+                currentX = x;
+                currentY = y;
+            }
+            // when the second origin is connected to the first origin
+            else if (grid->getGrid()[x][y].isOrigin()
+                    && grid->getGrid()[currentX][currentY].getColor() == grid->getGrid()[x][y].getColor()
+                    && grid->getGrid()[x][y].isCovered() == false)
+            {
+                if (grid->getGrid()[x][y].getFirstOrigin() == false)
+                {
+                    qDebug() << "Entered second origin case";
+                    grid->getGrid()[x][y].setSecondOrigin(true);
+                    grid->getGrid()[currentX][currentY].next[0] = &grid->getGrid()[x][y];
+                    grid->getGrid()[x][y].previous[0] = &grid->getGrid()[currentX][currentY];
+                    grid->getGrid()[x][y].setCoveredFlag(true);
+                    grid->getGrid()[x][y].setPathComplete(true);
+                    currentX = x;
+                    currentY = y;
+                }
+            }
+            // if the user wants to create a path on another colored path
+            else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[currentX][currentY].getColor()
+                    && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] != 0)
+            {
+                Path *temp = grid->getGrid()[x][y].next[0];
+                grid->getGrid()[x][y].setColor(-1);
+                grid->getGrid()[x][y].previous[0];
+                grid->getGrid()[x][y].next[0];
+                grid->getGrid()[x][y].setCoveredFlag(false);
+
+                clearPath(temp);
+            }
+            // clear only the last case from another colored path
+            else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[currentX][currentY].getColor()
+                    && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] == 0)
+            {
+                Path* temp = grid->getGrid()[x][y].previous[0];
+                temp->next[0] = 0;
+                grid->getGrid()[x][y].clear();
+            }
+            // allow user to go back when creating a path
+            else if (grid->getGrid()[x][y].getColor() == grid->getGrid()[currentX][currentY].getColor()
+                    && grid->getGrid()[x][y].hasFlag() && grid->getGrid()[x][y].isCovered()
+                    && grid->getGrid()[currentX][currentY].isOrigin() == false)
+            {
+                if (grid->getGrid()[x][y].next[0] == &grid->getGrid()[currentX][currentY])
+                {
+                    grid->getGrid()[currentX][currentY].clear();
+                    currentX = x;
+                    currentY = y;
+                }
+            }
+            if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
+            {
                 grid->getGrid()[x][y].setCovered(true);
-                grid->getGrid()[x][y].setPathComplete(true);
-
-                activeX = x;
-                activeY = y;
-            }
-        }
-        // if the user wants to create a path on another colored path
-        else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor()
-                 && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] != 0)
-        {
-            Path *temp = grid->getGrid()[x][y].next[0];
-            grid->getGrid()[x][y].setColor(-1);
-            grid->getGrid()[x][y].previous[0];
-            grid->getGrid()[x][y].setFlag(false);
-            grid->getGrid()[x][y].setCovered(false);
-            //grid->getGrid()[x][y].clear();
-
-            clearPath(temp);
-
-        }
-        // clear only the last case from another colored path
-        else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor()
-                 && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] == 0)
-        {
-            Path* temp = grid->getGrid()[x][y].previous[0];
-            temp->next[0] = 0;
-            grid->getGrid()[x][y].clear();
-        }
-
-        // allow user to go back when creating a path
-        else if(grid->getGrid()[x][y].getColor() == grid->getGrid()[activeX][activeY].getColor() && grid->getGrid()[x][y].hasFlag()
-                && grid->getGrid()[x][y].isCovered() && grid->getGrid()[activeX][activeY].isOrigin() == false)
-        {
-            if(grid->getGrid()[x][y].next[0] == &grid->getGrid()[activeX][activeY])
-            {
-                grid->getGrid()[activeX][activeY].clear();
-                activeX = x;
-                activeY = y;
-            }
-        }
-        }
-        if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
-        {
-            //grid->getGrid()[x][y].setFlag(true);
-            grid->getGrid()[x][y].setCovered(true);
-
-        }
-    }
-
-    update();
-}
-
-void MainWindow::mousePressEvent(QMouseEvent* e)
-{
-    if (e->x() > offset && e->y() > offset && e->x() < width - offset  && e->y() < height - offset)
-    {
-        if (e->button() == Qt::LeftButton){
-
-            mousePressed = true;
-            if(mousePressed)
-            {
-                int x = ((e->x() - offset) / interval);
-                int y = ((e->y() - offset) / interval);
-                activeX = x;
-                activeY = y;
-                mousePosition.setX(e->x());
-                mousePosition.setY(e->y());
-
-                // allow user to clear a path from a specific case
-                if (grid->getGrid()[x][y].getColor() != -1 && grid->getGrid()[x][y].next[0] != 0
-                        && grid->getGrid()[x][y].next[0]->getColor() == grid->getGrid()[x][y].getColor())
-                {
-                    Path *temp = grid->getGrid()[x][y].next[0];
-                    clearPathCase(temp);
-
-                }
-                // clear path from origin
-                if (grid->getGrid()[x][y].isOrigin())
-                {
-                    //grid->getGrid()[x][y].setFlag(true);
-
-                    for (int i = 0; i < grid->getWidth(); ++i)
-                    {
-                        for (int j = 0; j < grid->getHeight(); ++j)
-                        {
-                            if(grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor() && grid->getGrid()[i][j].isOrigin() == false)
-                            {
-                                grid->getGrid()[i][j].clear();
-                            }
-                            if(grid->getGrid()[i][j].isOrigin() && grid->getGrid()[i][j].getColor() == grid->getGrid()[x][y].getColor())
-                            {
-                                grid->getGrid()[i][j].next[0] = 0;
-                                grid->getGrid()[i][j].previous[0] = 0;
-                                grid->getGrid()[i][j].setFlag(false);
-                                grid->getGrid()[i][j].setCovered(false);
-                                grid->getGrid()[i][j].setFirstOrigin(false);
-                                grid->getGrid()[i][j].setSecondOrigin(false);
-                                grid->getGrid()[i][j].setPathComplete(false);
-                            }
-                        }
-                    }
-                    grid->getGrid()[x][y].setFlag(true);
-                    grid->getGrid()[x][y].setFirstOrigin(true);
-
-                }
-                qDebug() << "Mouse pressed";
-                qDebug() << "Left Button";
             }
         }
     }
+
     update();
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent* e)
 {
-    qDebug() << "Mouse released at: " +QString::number(e->x()) + "," + QString::number(e->y());
-    mousePressed = false;
-    activeX = NOTACTIVE;
-    activeY = NOTACTIVE;
+    qDebug() << "Mouse released at: " + QString::number(e->x()) + ","
+                + QString::number(e->y());
+    currentX = NOTACTIVE;
+    currentY = NOTACTIVE;
+
     update();
 }
 
@@ -370,49 +380,45 @@ void MainWindow::clearPath(Path *temp)
 {
     while(temp)
     {
-        if(!temp->isOrigin())
+        if(temp->isOrigin() == false)
         {
             temp->previous[0] = 0;
             int tempX = temp->x;
             int tempY = temp->y;
             temp->setColor(-1);
-            temp->setFlag(false);
-            temp->setCovered(false);
+            temp->setCoveredFlag(false);
             temp = temp->next[0];
             grid->getGrid()[tempX][tempY].next[0] = 0;
-        } else
+        }
+        else
         {
             temp->previous[0] = 0;
-            temp->setFlag(false);
-            temp->setCovered(false);
+            temp->setCoveredFlag(false);
             break;
         }
     }
 }
 
-void MainWindow::clearPathCase(Path *temp)
+void MainWindow::clearPathColorCase(Path *temp)
 {
-
     int color = temp->getColor();
 
     while(temp)
     {
-        if(!temp->isOrigin() && temp->getColor() == color)
+        if(temp->isOrigin() == false && temp->getColor() == color)
         {
             temp->previous[0] = 0;
             int tempX = temp->x;
             int tempY = temp->y;
             temp->setColor(-1);
-            temp->setFlag(false);
-            temp->setCovered(false);
+            temp->setCoveredFlag(false);
             temp = temp->next[0];
             grid->getGrid()[tempX][tempY].next[0] = 0;
         }
         else if(temp->getColor() == color)
         {
             temp->previous[0] = 0;
-            temp->setFlag(false);
-            temp->setCovered(false);
+            temp->setCoveredFlag(false);
             break;
         }
         else

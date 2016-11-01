@@ -14,13 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    showlevel.cpp \
     grid.cpp \
     path.cpp \
     dialog.cpp
 
 HEADERS  += mainwindow.h \
-    showlevel.h \
     grid.h \
     path.h \
     dialog.h

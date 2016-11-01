@@ -5,7 +5,7 @@
 #include <mainwindow.h>
 
 namespace Ui {
-class Dialog;
+    class Dialog;
 }
 
 class Dialog : public QDialog
@@ -17,8 +17,8 @@ public:
     ~Dialog();
 
 public slots:
-    void startReceivers();
-    void leaveReceivers();
+    void startSlot();
+    void leaveSlot();
 
 signals:
     void start();
@@ -26,7 +26,6 @@ signals:
 
 private:
     Ui::Dialog *ui;
-    //MainWindow mainWindow; // can change to showlevel window
     QApplication *app;
 };
 

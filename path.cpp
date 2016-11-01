@@ -22,14 +22,13 @@ Path::~Path()
 // Path without direction
 Path::Path(int color)
 {
-    fixed = false;
     this->color = color;
 }
 
 // Path that is an edge
-Path::Path(int color, bool fixed)
+Path::Path(int color, bool origin)
 {
-    this->fixed = fixed;
+    this->origin = origin;
     this->color = color;
 }
 
@@ -58,11 +57,6 @@ const Point Path::getEdgePoint2()
     return edgePoint2;
 }
 
-const bool Path::isFixed()
-{
-    return fixed;
-}
-
 const int Path::getColor()
 {
     return color;
@@ -82,6 +76,11 @@ void Path::clear()
 {
     this->color = -1;
     this->origin = false;
+    clearOrigin();
+}
+
+void Path::clearOrigin()
+{
     this->covered = false;
     this->previous[0] = 0;
     this->next[0] = 0;

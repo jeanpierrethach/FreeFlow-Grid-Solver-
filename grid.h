@@ -16,13 +16,13 @@ public:
 
     void setPath(int, int, Path);
 
-    int getWidth();
-    int getHeight();
+    int getNbRow();
+    int getNbColumn();
 
 
 private:
-    int width;
-    int height;
+    int row;
+    int column;
 
 
     Path** gameGrid;
