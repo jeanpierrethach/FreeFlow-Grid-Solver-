@@ -259,14 +259,16 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
             clearPath(temp);
 
         }
-        // TO DO clear only the last case from another colored path
-        /*else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor()
+        // clear only the last case from another colored path
+        else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor()
                  && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] == 0)
         {
+            Path* temp = grid->getGrid()[x][y].previous[0];
+            temp->next[0] = 0;
             grid->getGrid()[x][y].clear();
-        }*/
+        }
 
-        // attempt to allow user to go back when creating a path
+        // allow user to go back when creating a path
         else if(grid->getGrid()[x][y].getColor() == grid->getGrid()[activeX][activeY].getColor() && grid->getGrid()[x][y].hasFlag()
                 && grid->getGrid()[x][y].isCovered() && grid->getGrid()[activeX][activeY].isOrigin() == false)
         {
