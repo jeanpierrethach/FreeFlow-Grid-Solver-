@@ -28,6 +28,8 @@ public:
 
     void paintEvent(QPaintEvent*);
 
+    void clearPath(Path*);
+
 
 public slots:
     void start();
@@ -61,11 +63,11 @@ private:
     bool mousePressed = false;
 
     // static level
-    QPoint pos[5][5];
+    QPoint pos[10][10];
     QPoint mousePosition;
 
     // static level
-    Grid* grid = new Grid(5,5);
+    Grid* grid = new Grid(10,10);
 
 };
 

@@ -245,6 +245,26 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
             activeX = x;
             activeY = y;
         }
+        // if the user wants to create a path on another colored path
+        else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor()
+                 && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] != 0)
+        {
+            Path *temp = grid->getGrid()[x][y].next[0];
+            grid->getGrid()[x][y].setColor(-1);
+            grid->getGrid()[x][y].previous[0];
+            grid->getGrid()[x][y].setFlag(false);
+            grid->getGrid()[x][y].setCovered(false);
+            //grid->getGrid()[x][y].clear();
+
+            clearPath(temp);
+
+        }
+        // TO DO clear only the last case from another colored path
+        /*else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor()
+                 && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] == 0)
+        {
+            grid->getGrid()[x][y].clear();
+        }*/
         // attempt to allow user to go back when creating a path
         /*else if(grid->getGrid()[x][y].getColor() == grid->getGrid()[activeX][activeY].getColor() && grid->getGrid()[x][y].hasFlag()
                 && grid->getGrid()[x][y].isCovered() && grid->getGrid()[activeX][activeY].isOrigin() == false)
@@ -288,33 +308,15 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
                 mousePosition.setX(e->x());
                 mousePosition.setY(e->y());
 
-
-                if (grid->getGrid()[x][y].getColor() != -1 && grid->getGrid()[x][y].next[0] != 0)
+                // allow user to clear a path from a specific case
+                if (grid->getGrid()[x][y].getColor() != -1 && grid->getGrid()[x][y].next[0] != 0
+                        && grid->getGrid()[x][y].next[0]->getColor() == grid->getGrid()[x][y].getColor())
                 {
                     Path *temp = grid->getGrid()[x][y].next[0];
-                    //grid->getGrid()[x][y].clear();
+                    clearPath(temp);
 
-                    while(temp)
-                    {
-                        if(!temp->isOrigin())
-                        {
-                            temp->previous[0] = 0;
-                            int tempX = temp->x;
-                            int tempY = temp->y;
-                            temp->setColor(-1);
-                            temp->setFlag(false);
-                            temp->setCovered(false);
-                            temp = temp->next[0];
-                            grid->getGrid()[tempX][tempY].next[0] = 0;
-                        } else
-                        {
-                            temp->previous[0] = 0;
-                            temp->setFlag(false);
-                            temp->setCovered(false);
-                            break;
-                        }
-                    }
                 }
+                // clear path from origin
                 if (grid->getGrid()[x][y].isOrigin())
                 {
                     //grid->getGrid()[x][y].setFlag(true);
@@ -354,4 +356,28 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* e)
     activeX = NOTACTIVE;
     activeY = NOTACTIVE;
     update();
+}
+
+void MainWindow::clearPath(Path *temp)
+{
+    while(temp)
+    {
+        if(!temp->isOrigin())
+        {
+            temp->previous[0] = 0;
+            int tempX = temp->x;
+            int tempY = temp->y;
+            temp->setColor(-1);
+            temp->setFlag(false);
+            temp->setCovered(false);
+            temp = temp->next[0];
+            grid->getGrid()[tempX][tempY].next[0] = 0;
+        } else
+        {
+            temp->previous[0] = 0;
+            temp->setFlag(false);
+            temp->setCovered(false);
+            break;
+        }
+    }
 }
