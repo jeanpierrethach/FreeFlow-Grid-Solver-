@@ -279,10 +279,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
                 activeY = y;
             }
         }
-        /*else if(grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor())
-        {
-
-        }*/
         }
         if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
         {
@@ -316,7 +312,32 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
                         && grid->getGrid()[x][y].next[0]->getColor() == grid->getGrid()[x][y].getColor())
                 {
                     Path *temp = grid->getGrid()[x][y].next[0];
-                    clearPath(temp);
+                    int color = temp->getColor();
+                    while(temp)
+                    {
+                        if(!temp->isOrigin() && temp->getColor() == color)
+                        {
+                            temp->previous[0] = 0;
+                            int tempX = temp->x;
+                            int tempY = temp->y;
+                            temp->setColor(-1);
+                            temp->setFlag(false);
+                            temp->setCovered(false);
+                            temp = temp->next[0];
+                            grid->getGrid()[tempX][tempY].next[0] = 0;
+                        }
+                        else if(temp->getColor() == color)
+                        {
+                            temp->previous[0] = 0;
+                            temp->setFlag(false);
+                            temp->setCovered(false);
+                            break;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
 
                 }
                 // clear path from origin
