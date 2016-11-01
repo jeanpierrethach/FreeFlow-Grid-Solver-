@@ -224,7 +224,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         else*/
         if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
         {
-            qDebug() << "test1";
             qDebug() << "entered blank case";
             grid->getGrid()[activeX][activeY].next[0] = &grid->getGrid()[x][y];
             grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
@@ -283,7 +282,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         }
         if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
         {
-            grid->getGrid()[x][y].setFlag(true);
+            //grid->getGrid()[x][y].setFlag(true);
             grid->getGrid()[x][y].setCovered(true);
 
         }
@@ -339,7 +338,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
                             }
                         }
                     }
-                    grid->getGrid()[x][y].setFlag(false);
+                    grid->getGrid()[x][y].setFlag(true);
                 }
                 qDebug() << "Mouse pressed";
                 qDebug() << "Left Button";
