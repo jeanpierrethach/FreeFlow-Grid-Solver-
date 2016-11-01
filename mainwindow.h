@@ -64,11 +64,11 @@ private:
     bool mousePressed = false;
 
     // static level
-    QPoint pos[5][5];
+    QPoint pos[8][8];
     QPoint mousePosition;
 
     // static level
-    Grid* grid = new Grid(5,5);
+    Grid* grid = new Grid(8,8);
 
 };
 

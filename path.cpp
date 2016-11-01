@@ -8,7 +8,9 @@ Path::Path()
     this->previous[0] = 0;
     this->next[0] = 0;
     this->flag = false;
-    //this->noMore = false;
+    this->pathComplete = false;
+    this->firstOrigin = false;
+    this->secondOrigin = false;
 }
 
 Path::~Path()
@@ -84,5 +86,7 @@ void Path::clear()
     this->previous[0] = 0;
     this->next[0] = 0;
     this->flag = false;
-    //this->noMore = false;
+    this->pathComplete = false;
+    this->firstOrigin = false;
+    this->secondOrigin = false;
 }

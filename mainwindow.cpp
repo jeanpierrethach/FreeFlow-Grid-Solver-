@@ -216,13 +216,12 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
 
         if (abs(activeX - x) + abs(activeY - y) == 1){
         /*if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1
-                && grid->getGrid()[x][y].previous != 0 && grid->getGrid()[x][y].previous[0]->isOrigin()
-                && grid->getGrid()[x][y].previous[0]->noMore == true)
+             && grid->getGrid()[x][y].previous[0] != 0 && grid->getGrid()[x][y].previous[0]->isOrigin()
+             && grid->getGrid()[x][y].previous[0]->getPathComplete() == true)
         {
-            qDebug() << "noMore == true";
+            qDebug() << "pathComplete function";
         }
-        else*/
-        if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
+        else*/ if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
         {
             qDebug() << "entered blank case";
             grid->getGrid()[activeX][activeY].next[0] = &grid->getGrid()[x][y];
@@ -232,18 +231,24 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
             grid->getGrid()[x][y].setCovered(true);
             activeX = x;
             activeY = y;
+
         }
         else if(grid->getGrid()[x][y].isOrigin() && grid->getGrid()[activeX][activeY].getColor() == grid->getGrid()[x][y].getColor()
                 && grid->getGrid()[x][y].isCovered() == false)
         {
-            qDebug() << "entered origin case";
-            grid->getGrid()[activeX][activeY].next[0] = &grid->getGrid()[x][y];
-            grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
-            grid->getGrid()[x][y].setFlag(true);
-            grid->getGrid()[x][y].setCovered(true);
-            //grid->getGrid()[x][y].noMore = true;
-            activeX = x;
-            activeY = y;
+                // WIP
+            if (grid->getGrid()[x][y].getFirstOrigin() == false)
+            {
+                qDebug() << "entered second origin case";
+                grid->getGrid()[activeX][activeY].next[0] = &grid->getGrid()[x][y];
+                grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
+                grid->getGrid()[x][y].setFlag(true);
+                grid->getGrid()[x][y].setCovered(true);
+                grid->getGrid()[x][y].setPathComplete(true);
+
+                activeX = x;
+                activeY = y;
+            }
         }
         // if the user wants to create a path on another colored path
         else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor()
@@ -334,11 +339,15 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
                                 grid->getGrid()[i][j].previous[0] = 0;
                                 grid->getGrid()[i][j].setFlag(false);
                                 grid->getGrid()[i][j].setCovered(false);
-                                //grid->getGrid()[i][j].noMore = false;
+                                grid->getGrid()[i][j].setFirstOrigin(false);
+                                grid->getGrid()[i][j].setSecondOrigin(false);
+                                grid->getGrid()[i][j].setPathComplete(false);
                             }
                         }
                     }
                     grid->getGrid()[x][y].setFlag(true);
+                    grid->getGrid()[x][y].setFirstOrigin(true);
+
                 }
                 qDebug() << "Mouse pressed";
                 qDebug() << "Left Button";
