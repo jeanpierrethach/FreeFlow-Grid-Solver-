@@ -265,8 +265,9 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         {
             grid->getGrid()[x][y].clear();
         }*/
+
         // attempt to allow user to go back when creating a path
-        /*else if(grid->getGrid()[x][y].getColor() == grid->getGrid()[activeX][activeY].getColor() && grid->getGrid()[x][y].hasFlag()
+        else if(grid->getGrid()[x][y].getColor() == grid->getGrid()[activeX][activeY].getColor() && grid->getGrid()[x][y].hasFlag()
                 && grid->getGrid()[x][y].isCovered() && grid->getGrid()[activeX][activeY].isOrigin() == false)
         {
             if(grid->getGrid()[x][y].previous[0] != &grid->getGrid()[activeX][activeY])
@@ -275,7 +276,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
                 activeX = x;
                 activeY = y;
             }
-        }*/
+        }
         /*else if(grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() != grid->getGrid()[activeX][activeY].getColor())
         {
 
