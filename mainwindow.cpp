@@ -224,6 +224,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         else*/
         if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
         {
+            qDebug() << "test1";
             qDebug() << "entered blank case";
             grid->getGrid()[activeX][activeY].next[0] = &grid->getGrid()[x][y];
             grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
@@ -272,7 +273,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         else if(grid->getGrid()[x][y].getColor() == grid->getGrid()[activeX][activeY].getColor() && grid->getGrid()[x][y].hasFlag()
                 && grid->getGrid()[x][y].isCovered() && grid->getGrid()[activeX][activeY].isOrigin() == false)
         {
-            if(grid->getGrid()[x][y].previous[0] != &grid->getGrid()[activeX][activeY])
+            if(grid->getGrid()[x][y].next[0] == &grid->getGrid()[activeX][activeY])
             {
                 grid->getGrid()[activeX][activeY].clear();
                 activeX = x;
@@ -312,32 +313,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
                         && grid->getGrid()[x][y].next[0]->getColor() == grid->getGrid()[x][y].getColor())
                 {
                     Path *temp = grid->getGrid()[x][y].next[0];
-                    int color = temp->getColor();
-                    while(temp)
-                    {
-                        if(!temp->isOrigin() && temp->getColor() == color)
-                        {
-                            temp->previous[0] = 0;
-                            int tempX = temp->x;
-                            int tempY = temp->y;
-                            temp->setColor(-1);
-                            temp->setFlag(false);
-                            temp->setCovered(false);
-                            temp = temp->next[0];
-                            grid->getGrid()[tempX][tempY].next[0] = 0;
-                        }
-                        else if(temp->getColor() == color)
-                        {
-                            temp->previous[0] = 0;
-                            temp->setFlag(false);
-                            temp->setCovered(false);
-                            break;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
+                    clearPathCase(temp);
 
                 }
                 // clear path from origin
@@ -401,6 +377,38 @@ void MainWindow::clearPath(Path *temp)
             temp->previous[0] = 0;
             temp->setFlag(false);
             temp->setCovered(false);
+            break;
+        }
+    }
+}
+
+void MainWindow::clearPathCase(Path *temp)
+{
+
+    int color = temp->getColor();
+
+    while(temp)
+    {
+        if(!temp->isOrigin() && temp->getColor() == color)
+        {
+            temp->previous[0] = 0;
+            int tempX = temp->x;
+            int tempY = temp->y;
+            temp->setColor(-1);
+            temp->setFlag(false);
+            temp->setCovered(false);
+            temp = temp->next[0];
+            grid->getGrid()[tempX][tempY].next[0] = 0;
+        }
+        else if(temp->getColor() == color)
+        {
+            temp->previous[0] = 0;
+            temp->setFlag(false);
+            temp->setCovered(false);
+            break;
+        }
+        else
+        {
             break;
         }
     }

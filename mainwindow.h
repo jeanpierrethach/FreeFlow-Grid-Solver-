@@ -29,6 +29,7 @@ public:
     void paintEvent(QPaintEvent*);
 
     void clearPath(Path*);
+    void clearPathCase(Path*);
 
 
 public slots:
