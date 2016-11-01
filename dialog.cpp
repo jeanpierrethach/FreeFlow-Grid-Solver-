@@ -1,5 +1,7 @@
 #include "dialog.h"
 #include "ui_dialog.h"
+#include <QPixmap>
+#include <QIcon>
 
 Dialog::Dialog(QApplication *a, QWidget *parent) :
     app(a),
@@ -13,6 +15,8 @@ Dialog::Dialog(QApplication *a, QWidget *parent) :
     connect(ui->leave, SIGNAL(clicked()), this, SLOT(leaveReceivers()));
     connect(ui->start, SIGNAL(clicked()), this, SLOT(startReceivers()));
 
+    QPixmap title(":/Image/freeflow.png");
+    ui->title->setPixmap(title);
 }
 
 Dialog::~Dialog()

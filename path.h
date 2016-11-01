@@ -33,9 +33,10 @@ public:
 
     void clear();
 
+    // to be moved to private
     int x,y;
-    Path* next[2];
-    Path* previous[2];
+    Path* next[1];
+    Path* previous[1];
     //bool noMore;
 
 private:

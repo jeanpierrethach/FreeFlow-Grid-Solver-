@@ -84,7 +84,7 @@ void MainWindow::leave()
 }
 
 
-void MainWindow::paintEvent(QPaintEvent* e)
+void MainWindow::paintEvent(QPaintEvent* )
 {
 
     painter = new QPainter(this);
@@ -321,6 +321,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
                         {
                             temp->previous[0] = 0;
                             temp->setFlag(false);
+                            temp->setCovered(false);
                             break;
                         }
                     }
