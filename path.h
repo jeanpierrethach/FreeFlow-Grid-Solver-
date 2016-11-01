@@ -12,6 +12,7 @@ class Path
 {
 public:
     Path();
+    ~Path();
     Path(int);
     Path(int, bool);
     Path(int, Point, Point);
@@ -35,6 +36,7 @@ public:
     int x,y;
     Path* next[2];
     Path* previous[2];
+    //bool noMore;
 
 private:
     Point edgePoint1;

@@ -10,6 +10,15 @@ Path::Path()
     this->next[0] = 0;
     this->next[1] = 0;
     this->flag = false;
+    //this->noMore = false;
+}
+
+Path::~Path()
+{
+    delete next[0];
+    delete next[1];
+    delete previous[0];
+    delete previous[1];
 }
 
 // Path sans direction
@@ -81,4 +90,5 @@ void Path::clear()
     this->next[0] = 0;
     this->next[1] = 0;
     this->flag = false;
+    //this->noMore = false;
 }

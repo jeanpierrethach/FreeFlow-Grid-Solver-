@@ -144,7 +144,7 @@ void MainWindow::drawGrid()
                 painter->setPen(color[grid->getGrid()[i][j].getColor()]);
                 painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
                 painter->drawEllipse(pos[j][i],interval/3,interval/3);
-                update();
+                //update();
             }
         }
     }
@@ -205,6 +205,7 @@ void MainWindow::mouseRoundColor()
             painter->drawEllipse(mousePosition, 40, 40);
         }
     }
+
 }
 
 
@@ -225,6 +226,13 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
 
 
         if (abs(activeX - x) + abs(activeY - y) == 1){
+        /*if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1
+                && grid->getGrid()[x][y].previous != 0 && grid->getGrid()[x][y].previous[0]->isOrigin()
+                && grid->getGrid()[x][y].previous[0]->noMore == true)
+        {
+            qDebug() << "noMore == true";
+        }
+        else*/
         if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
         {
             qDebug() << "entered blank case";
@@ -241,7 +249,8 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
             qDebug() << "entered origin case";
             grid->getGrid()[x][y].previous[0] = &grid->getGrid()[activeX][activeY];
             grid->getGrid()[x][y].setFlag(true);
-            //grid->getGrid()[x][y].setCovered(true);
+            grid->getGrid()[x][y].setCovered(true);
+            //grid->getGrid()[x][y].noMore = true;
             activeX = x;
             activeY = y;
         }
@@ -254,6 +263,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         {
             grid->getGrid()[x][y].setFlag(true);
             grid->getGrid()[x][y].setCovered(true);
+
         }
     }
 
@@ -294,6 +304,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
                                 grid->getGrid()[i][j].previous[0] = 0;
                                 grid->getGrid()[i][j].setFlag(false);
                                 grid->getGrid()[i][j].setCovered(false);
+                                //grid->getGrid()[i][j].noMore = false;
                             }
                         }
                     }
@@ -304,6 +315,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
             }
         }
     }
+    update();
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent* e)
@@ -312,4 +324,5 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* e)
     mousePressed = false;
     activeX = NOTACTIVE;
     activeY = NOTACTIVE;
+    update();
 }
