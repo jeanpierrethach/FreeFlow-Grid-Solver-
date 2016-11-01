@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="leave">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>150</x>
      <y>210</y>
      <width>93</width>
      <height>28</height>
@@ -29,7 +29,7 @@
   <widget class="QPushButton" name="start">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>150</x>
      <y>150</y>
      <width>93</width>
      <height>28</height>

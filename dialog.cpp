@@ -11,6 +11,7 @@ Dialog::Dialog(QApplication *a, QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Free Flow");
+    setFixedSize(400,300);
 
     connect(ui->leave, SIGNAL(clicked()), this, SLOT(leaveReceivers()));
     connect(ui->start, SIGNAL(clicked()), this, SLOT(startReceivers()));

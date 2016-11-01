@@ -27,6 +27,7 @@ public:
     bool hasFlag() { return flag; }
 
     void setColor(int color) { this->color = color; }
+    void setData(int color) { this->color = color; this->origin = true; }
     void setOrigin(bool b) { this->origin = b; }
     void setFlag(bool f) { this->flag = f; }
     void setCovered(bool c) { this->covered = c; }

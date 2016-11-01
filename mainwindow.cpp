@@ -31,30 +31,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
         this->setFixedWidth(width);
         this->setFixedHeight(height);
-        //setMouseTracking(true);
 
         // proof of concept
-        grid->getGrid()[2][4].setColor(0);
-        grid->getGrid()[0][0].setColor(0);
-        grid->getGrid()[3][4].setColor(5);
-        grid->getGrid()[2][2].setColor(5);
-        grid->getGrid()[1][0].setColor(1);
-        grid->getGrid()[2][3].setColor(1);
-        grid->getGrid()[4][4].setColor(4);
-        grid->getGrid()[3][1].setColor(4);
-
         // refactor after in readData method
-        grid->getGrid()[2][4].setOrigin(true);
-        grid->getGrid()[0][0].setOrigin(true);
-        grid->getGrid()[3][4].setOrigin(true);
-        grid->getGrid()[2][2].setOrigin(true);
-        grid->getGrid()[1][0].setOrigin(true);
-        grid->getGrid()[2][3].setOrigin(true);
-        grid->getGrid()[4][4].setOrigin(true);
-        grid->getGrid()[3][1].setOrigin(true);
+        grid->getGrid()[2][4].setData(0);
+        grid->getGrid()[0][0].setData(0);
+        grid->getGrid()[3][4].setData(5);
+        grid->getGrid()[2][2].setData(5);
+        grid->getGrid()[1][0].setData(1);
+        grid->getGrid()[2][3].setData(1);
+        grid->getGrid()[4][4].setData(4);
+        grid->getGrid()[3][1].setData(4);
 
         // set pos x,y (to change when reading data or in constructor)
-
+        // or use method to set position
         for (int i = 0; i < grid->getWidth(); ++i)
         {
             for (int j = 0; j < grid->getHeight(); ++j)
@@ -144,7 +134,6 @@ void MainWindow::drawGrid()
                 painter->setPen(color[grid->getGrid()[i][j].getColor()]);
                 painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
                 painter->drawEllipse(pos[j][i],interval/3,interval/3);
-                //update();
             }
         }
     }

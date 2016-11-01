@@ -17,21 +17,21 @@ Path::~Path()
     delete previous[0];
 }
 
-// Path sans direction
+// Path without direction
 Path::Path(int color)
 {
     fixed = false;
     this->color = color;
 }
 
-// Path borne
+// Path that is an edge
 Path::Path(int color, bool fixed)
 {
     this->fixed = fixed;
     this->color = color;
 }
 
-// Path avec 2 directions
+// Path with two directions
 Path::Path(int color, Point edge1, Point edge2)
 {
     Path(color, edge1);
@@ -39,7 +39,7 @@ Path::Path(int color, Point edge1, Point edge2)
 
 }
 
-// Path avec une direction
+// Path with one direction
 Path::Path(int color, Point edge1)
 {
     this->color = color;
