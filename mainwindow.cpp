@@ -329,12 +329,14 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
                     && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] != 0)
             {
                 Path *temp = grid->getGrid()[x][y].next[0];
+                Path *temp2 = grid->getGrid()[x][y].previous[0];
+                temp2->next[0] = 0;
                 grid->getGrid()[x][y].setColor(-1);
-                grid->getGrid()[x][y].previous[0];
-                grid->getGrid()[x][y].next[0];
+                grid->getGrid()[x][y].previous[0] = 0;
+                grid->getGrid()[x][y].next[0] = 0;
                 grid->getGrid()[x][y].setCoveredFlag(false);
 
-                clearPath(temp);
+                clearPathColorCase(temp);
             }
             // clear only the last case from another colored path
             else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[currentX][currentY].getColor()
@@ -343,6 +345,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
                 Path* temp = grid->getGrid()[x][y].previous[0];
                 temp->next[0] = 0;
                 grid->getGrid()[x][y].clear();
+
             }
             // allow user to go back when creating a path
             else if (grid->getGrid()[x][y].getColor() == grid->getGrid()[currentX][currentY].getColor()
@@ -374,29 +377,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* e)
     currentY = NOTACTIVE;
 
     update();
-}
-
-void MainWindow::clearPath(Path *temp)
-{
-    while(temp)
-    {
-        if(temp->isOrigin() == false)
-        {
-            temp->previous[0] = 0;
-            int tempX = temp->x;
-            int tempY = temp->y;
-            temp->setColor(-1);
-            temp->setCoveredFlag(false);
-            temp = temp->next[0];
-            grid->getGrid()[tempX][tempY].next[0] = 0;
-        }
-        else
-        {
-            temp->previous[0] = 0;
-            temp->setCoveredFlag(false);
-            break;
-        }
-    }
 }
 
 void MainWindow::clearPathColorCase(Path *temp)

@@ -28,7 +28,6 @@ public:
 
     void paintEvent(QPaintEvent*);
 
-    void clearPath(Path*);
     void clearPathColorCase(Path*);
 
 
