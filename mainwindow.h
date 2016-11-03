@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
     void mousePressEvent(QMouseEvent*);
@@ -36,7 +36,7 @@ public slots:
     void leave();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
 
     void drawGrid();
     void setPositionCase();
@@ -55,6 +55,8 @@ private:
     const int up = 5;
     //const int bottom = 5;
     const int offset = 5; // separator between the frame and the grid
+
+    bool pathConnected;
 
     QPainter* painter;
     int positionCaseX;

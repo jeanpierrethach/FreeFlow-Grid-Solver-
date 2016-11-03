@@ -3,7 +3,7 @@
 #include <QPixmap>
 #include <QIcon>
 
-Dialog::Dialog(QApplication *a, QWidget *parent) :
+Dialog::Dialog(QApplication* a, QWidget* parent) :
     app(a),
     QDialog(parent),
     ui(new Ui::Dialog)

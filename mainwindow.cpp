@@ -21,7 +21,7 @@ QColor currentColor[9] = {QColor(237, 28, 36, 100), QColor(0, 162, 232, 100),
     QColor(0, 0, 0, 100), QColor(185, 122, 87, 100),
     QColor(254, 109, 221, 100)};
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
     {
@@ -213,6 +213,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
             int y = ((e->y() - offset) / interval);
             currentX = x;
             currentY = y;
+            pathConnected = false;
             mousePosition.setX(e->x());
             mousePosition.setY(e->y());
 
@@ -220,7 +221,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
             if (grid->getGrid()[x][y].getColor() != -1 && grid->getGrid()[x][y].next[0] != 0
                     && grid->getGrid()[x][y].next[0]->getColor() == grid->getGrid()[x][y].getColor())
             {
-                Path *temp = grid->getGrid()[x][y].next[0];
+                Path* temp = grid->getGrid()[x][y].next[0];
                 clearPathColorCase(temp);
             }
 
@@ -274,31 +275,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         // limits the pathing creation to adjacents cases only
         if (abs(currentX - x) + abs(currentY - y) == 1)
         {
-
-            // TODO: Work in progress
-            /*
-            if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1
-                && grid->getGrid()[x][y].previous[0] != 0 && grid->getGrid()[x][y].previous[0]->isOrigin()
-                && grid->getGrid()[x][y].previous[0]->getPathComplete() == true)
-            {
-                qDebug() << "pathComplete function";
-            }
-            else { */
-
             // if the case is blank
-            if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1)
+            if (grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].getColor() == -1
+                    && !pathConnected)
             {
-                // TODO: Work in progress
-                // if the path continues forward the second origin
-                // Path *temp = grid->getGrid()[x][y].previous[0];
-                // Path temp = grid->getGrid()[activeX][activeY];
-                /*
-                if (temp->getSecondOrigin() == true)
-                {
-                    qDebug() << "Can't go further";
-                }
-                else { */
-
                 qDebug() << "Entered blank case";
                 grid->getGrid()[currentX][currentY].next[0] = &grid->getGrid()[x][y];
                 grid->getGrid()[x][y].previous[0] = &grid->getGrid()[currentX][currentY];
@@ -306,11 +286,12 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
                 grid->getGrid()[x][y].setCoveredFlag(true);
                 currentX = x;
                 currentY = y;
+                pathConnected = false;
             }
             // when the second origin is connected to the first origin
             else if (grid->getGrid()[x][y].isOrigin()
                     && grid->getGrid()[currentX][currentY].getColor() == grid->getGrid()[x][y].getColor()
-                    && grid->getGrid()[x][y].isCovered() == false)
+                    && grid->getGrid()[x][y].isCovered() == false && !pathConnected)
             {
                 if (grid->getGrid()[x][y].getFirstOrigin() == false)
                 {
@@ -322,41 +303,42 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
                     grid->getGrid()[x][y].setPathComplete(true);
                     currentX = x;
                     currentY = y;
+                    pathConnected = true;
                 }
             }
             // if the user wants to create a path on another colored path
             else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[currentX][currentY].getColor()
-                    && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] != 0)
+                    && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] != 0 && !pathConnected)
             {
-                Path *temp = grid->getGrid()[x][y].next[0];
-                Path *temp2 = grid->getGrid()[x][y].previous[0];
+                Path* temp = grid->getGrid()[x][y].next[0];
+                Path* temp2 = grid->getGrid()[x][y].previous[0];
                 temp2->next[0] = 0;
-                grid->getGrid()[x][y].setColor(-1);
-                grid->getGrid()[x][y].previous[0] = 0;
-                grid->getGrid()[x][y].next[0] = 0;
-                grid->getGrid()[x][y].setCoveredFlag(false);
+                grid->getGrid()[x][y].clear();
 
                 clearPathColorCase(temp);
+                pathConnected = false;
             }
             // clear only the last case from another colored path
             else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[currentX][currentY].getColor()
-                    && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] == 0)
+                    && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] == 0 && !pathConnected)
             {
                 Path* temp = grid->getGrid()[x][y].previous[0];
                 temp->next[0] = 0;
                 grid->getGrid()[x][y].clear();
+                pathConnected = false;
 
             }
             // allow user to go back when creating a path
             else if (grid->getGrid()[x][y].getColor() == grid->getGrid()[currentX][currentY].getColor()
                     && grid->getGrid()[x][y].hasFlag() && grid->getGrid()[x][y].isCovered()
-                    && grid->getGrid()[currentX][currentY].isOrigin() == false)
+                    && grid->getGrid()[currentX][currentY].isOrigin() == false && !pathConnected)
             {
                 if (grid->getGrid()[x][y].next[0] == &grid->getGrid()[currentX][currentY])
                 {
                     grid->getGrid()[currentX][currentY].clear();
                     currentX = x;
                     currentY = y;
+                    pathConnected = false;
                 }
             }
             if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
@@ -379,7 +361,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* e)
     update();
 }
 
-void MainWindow::clearPathColorCase(Path *temp)
+void MainWindow::clearPathColorCase(Path* temp)
 {
     int color = temp->getColor();
 
