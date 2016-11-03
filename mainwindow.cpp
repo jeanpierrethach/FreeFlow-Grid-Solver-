@@ -30,16 +30,7 @@ MainWindow::MainWindow(QWidget* parent) :
         this->setFixedWidth(width);
         this->setFixedHeight(height);
 
-        // proof of concept
-        // refactor after in readData method
-        grid->getGrid()[2][4].setData(0);
-        grid->getGrid()[0][0].setData(0);
-        grid->getGrid()[3][4].setData(5);
-        grid->getGrid()[2][2].setData(5);
-        grid->getGrid()[1][0].setData(1);
-        grid->getGrid()[2][3].setData(1);
-        grid->getGrid()[4][4].setData(4);
-        grid->getGrid()[3][1].setData(4);
+        setLevel();
 
         // set pos x,y (to change when reading data or in constructor)
         // or use method to set position
@@ -71,6 +62,21 @@ void MainWindow::leave()
     close();
 }
 
+void MainWindow::setLevel()
+{
+    // proof of concept
+    // refactor after in readData method
+    grid->getGrid()[2][4].setData(0);
+    grid->getGrid()[0][0].setData(0);
+    grid->getGrid()[3][4].setData(5);
+    grid->getGrid()[2][2].setData(5);
+    grid->getGrid()[1][0].setData(1);
+    grid->getGrid()[2][3].setData(1);
+    grid->getGrid()[4][4].setData(4);
+    grid->getGrid()[3][1].setData(4);
+
+}
+
 void MainWindow::paintEvent(QPaintEvent* )
 {
     painter = new QPainter(this);
@@ -78,6 +84,7 @@ void MainWindow::paintEvent(QPaintEvent* )
     drawColorLine();
     fillSquareColor();
     mouseRoundColor();
+    painter->end();
 }
 
 void MainWindow::drawGrid()

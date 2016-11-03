@@ -22,6 +22,8 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
+    void setLevel();
+
     void mousePressEvent(QMouseEvent*);
     void mouseMoveEvent(QMouseEvent*);
     void mouseReleaseEvent(QMouseEvent*);

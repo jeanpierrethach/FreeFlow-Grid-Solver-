@@ -15,46 +15,21 @@ Path::Path()
 
 Path::~Path()
 {
-    delete next[0];
-    delete previous[0];
+    delete[] next;
+    delete[] previous;
 }
 
-// Path without direction
+// Path
 Path::Path(int color)
 {
     this->color = color;
 }
 
-// Path that is an edge
+// Path that is an origin
 Path::Path(int color, bool origin)
 {
     this->origin = origin;
     this->color = color;
-}
-
-// Path with two directions
-Path::Path(int color, Point edge1, Point edge2)
-{
-    Path(color, edge1);
-    edgePoint2 = edge2;
-
-}
-
-// Path with one direction
-Path::Path(int color, Point edge1)
-{
-    this->color = color;
-    edgePoint1 = edge1;
-}
-
-const Point Path::getEdgePoint1()
-{
-    return edgePoint1;
-}
-
-const Point Path::getEdgePoint2()
-{
-    return edgePoint2;
 }
 
 const int Path::getColor()

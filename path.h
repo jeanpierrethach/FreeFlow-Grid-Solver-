@@ -13,11 +13,7 @@ public:
     ~Path();
     Path(int);
     Path(int, bool);
-    Path(int, Point, Point);
-    Path(int, Point);
 
-    const Point getEdgePoint1();
-    const Point getEdgePoint2();
     const int getColor();
     bool isOrigin();
     bool isCovered();
@@ -46,8 +42,6 @@ public:
     Path* previous[1];
 
 private:
-    Point edgePoint1;
-    Point edgePoint2;
 
     bool firstOrigin;
     bool secondOrigin;
