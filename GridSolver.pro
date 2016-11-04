@@ -28,3 +28,6 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     resource.qrc
+
+DISTFILES += \
+    assets/freeflow.png

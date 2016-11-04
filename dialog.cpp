@@ -15,7 +15,7 @@ Dialog::Dialog(QApplication* a, QWidget* parent) :
     connect(ui->leave, SIGNAL(clicked()), this, SLOT(leaveSlot()));
     connect(ui->start, SIGNAL(clicked()), this, SLOT(startSlot()));
 
-    QPixmap title(":/Image/freeflow.png");
+    QPixmap title(":/Image/assets/freeflow.png");
     ui->title->setPixmap(title);
 }
 
