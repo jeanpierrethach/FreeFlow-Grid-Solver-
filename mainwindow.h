@@ -1,10 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "dialog.h"
+
+#include <QMessageBox>
 #include <QMainWindow>
 #include <QPainter>
 #include <vector>
 #include "grid.h"
+#include <QLabel>
 
 
 #define NOTACTIVE -1
@@ -48,6 +52,7 @@ private:
     void drawColorLine();
     void fillSquareColor();
     void mouseRoundColor();
+    void gameIsWon();
 
     int interval; // length of one case in the grid
     const int height = 720;
@@ -71,6 +76,7 @@ private:
     QPoint pos[5][5]; // static level
 
     Grid* grid = new Grid(5,5); // static level
+    QLabel* label;
 
 };
 

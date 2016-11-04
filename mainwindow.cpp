@@ -26,7 +26,9 @@ MainWindow::MainWindow(QWidget* parent) :
     ui(new Ui::MainWindow)
     {
         ui->setupUi(this);
-
+        label=ui->congratulation;
+        label->setText("Congratulation!");
+        label->hide();
         this->setFixedWidth(width);
         this->setFixedHeight(height);
 
@@ -280,6 +282,11 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         qDebug() << ("X:" + QString::number(e->x()) + ", Y:" + QString::number(e->y())
                      + " posCaseX: " + positionCaseX + "posCaseY: " + positionCaseY);
 
+        if (grid->getGrid()[x][y].isOrigin())
+        {
+            grid->getGrid()[x][y].setCovered(true);
+        }
+
         // limits the pathing creation to adjacents cases only
         if (abs(currentX - x) + abs(currentY - y) == 1)
         {
@@ -299,7 +306,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
             // when the second origin is connected to the first origin
             else if (grid->getGrid()[x][y].isOrigin()
                     && grid->getGrid()[currentX][currentY].getColor() == grid->getGrid()[x][y].getColor()
-                    && grid->getGrid()[x][y].isCovered() == false && !pathConnected)
+                    && !pathConnected)
             {
                 if (grid->getGrid()[x][y].getFirstOrigin() == false)
                 {
@@ -312,6 +319,13 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
                     currentX = x;
                     currentY = y;
                     pathConnected = true;
+
+                    //Check if game is won
+                    if(grid->isCompleted())
+                    {
+                        gameIsWon();
+                        qDebug() << "\n\n\n\n\n\n------You won the game-----\n\n\n";
+                    }
                 }
             }
             // if the user wants to create a path on another colored path
@@ -349,10 +363,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
                     pathConnected = false;
                 }
             }
-            if (grid->getGrid()[x][y].hasFlag() == false && grid->getGrid()[x][y].isOrigin())
-            {
-                grid->getGrid()[x][y].setCovered(true);
-            }
+
         }
     }
 
@@ -396,4 +407,20 @@ void MainWindow::clearPathColorCase(Path* temp)
             break;
         }
     }
+}
+
+void MainWindow::gameIsWon()
+{
+    //TODO do stuff when game is won.
+    //label->setText("Congratulations");
+    //label=ui->congratulation;
+    //label->show();
+
+    QMessageBox msg;
+    msg.setText("Congratulations!");
+    //msg.setFixedSize(400,200);
+    msg.setBaseSize(QSize(400,200));
+    msg.exec();
+
+
 }

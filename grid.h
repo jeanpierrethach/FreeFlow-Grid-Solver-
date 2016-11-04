@@ -16,6 +16,7 @@ public:
     Path** getGrid(){ return gameGrid; }
 
     void setPath(int, int, Path);
+    bool isCompleted();
 
     int getNbRow();
     int getNbColumn();
@@ -24,7 +25,6 @@ public:
 private:
     int row;
     int column;
-
 
     Path** gameGrid;
 

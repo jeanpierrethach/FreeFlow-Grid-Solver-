@@ -1,4 +1,5 @@
 #include "grid.h"
+#include <QDebug>
 
 Grid::Grid()
 {
@@ -46,4 +47,41 @@ int Grid::getNbRow()
 int Grid::getNbColumn()
 {
     return column;
+}
+
+//Finds if the game is won
+bool Grid::isCompleted()
+{
+    int completedPaths = 0;
+    int totalPaths = 0;
+
+    for(int i = 0; i < row; i++)
+    {
+        for(int j = 0; j < column; j++)
+        {
+            if(!gameGrid[i][j].isCovered())
+            {
+                qDebug() << "Position " << i << " " << j;
+            }
+        }
+    }
+
+    for(int i = 0; i < row; i++)
+    {
+        for(int j = 0; j < column; j++)
+        {
+            Path path = gameGrid[i][j];
+            if(!path.isCovered() && !path.isOrigin())
+            {
+                return false;
+            }
+            else if(path.isOrigin())
+            {
+                totalPaths++;
+                completedPaths += path.getPathComplete() ? 1 : 0;
+            }
+        }
+    }
+    qDebug() << "CompletedPaths = " << completedPaths << "\nTotalPaths = " << totalPaths;
+    return completedPaths == totalPaths/2;
 }
