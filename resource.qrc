@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/Image">
-        <file>freeflow.png</file>
+        <file>assets/freeflow.png</file>
     </qresource>
 </RCC>
