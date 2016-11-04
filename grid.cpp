@@ -1,5 +1,11 @@
 #include "grid.h"
 
+Grid::Grid()
+{
+    this->row = 0;
+    this->column = 0;
+}
+
 Grid::Grid(int nbRow, int nbCol)
 {
     this->row = nbRow;

@@ -6,6 +6,7 @@
 class Grid
 {
 public:
+    Grid();
     Grid(int, int);
     ~Grid();
 
