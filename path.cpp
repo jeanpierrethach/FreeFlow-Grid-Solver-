@@ -15,8 +15,7 @@ Path::Path()
 
 Path::~Path()
 {
-    delete[] next;
-    delete[] previous;
+
 }
 
 // Path

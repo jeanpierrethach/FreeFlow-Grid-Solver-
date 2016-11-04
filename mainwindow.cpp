@@ -49,6 +49,7 @@ MainWindow::MainWindow(QWidget* parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete grid;
 }
 
 void MainWindow::start()
@@ -84,7 +85,7 @@ void MainWindow::paintEvent(QPaintEvent* )
     drawColorLine();
     fillSquareColor();
     mouseRoundColor();
-    painter->end();
+    delete painter;
 }
 
 void MainWindow::drawGrid()
