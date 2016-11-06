@@ -98,7 +98,7 @@ void MainWindow::restart()
 
 void MainWindow::setLevel()
 {
-    grid = new Grid(":/Other/levels/level1.json");
+    grid = new Grid(":/Other/levels/level2.json");
 }
 
 void MainWindow::paintEvent(QPaintEvent* )

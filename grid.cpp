@@ -59,12 +59,31 @@ Grid::Grid(const QString& filePath)
         QJsonArray jsonArray = json["level"].toArray();
 
         int color, x, y = 0;
+        std::vector<int> v;
 
-        foreach (const QJsonValue& item, jsonArray)
+        /*foreach (const QJsonValue& item, jsonArray)
         {
             x = item.toObject().value("x").toInt();
             y = item.toObject().value("y").toInt();
             color = item.toObject().value("color").toInt();
+
+            gameGrid[x][y].setData(color);
+        }*/
+
+
+        foreach (const QJsonValue& item, jsonArray)
+        {
+            foreach (const QJsonValue& i, item.toArray())
+            {
+                v.push_back(i.toInt());
+            }
+
+            color = v.back();
+            v.pop_back();
+            y = v.back();
+            v.pop_back();
+            x = v.back();
+            v.pop_back();
 
             gameGrid[x][y].setData(color);
         }
