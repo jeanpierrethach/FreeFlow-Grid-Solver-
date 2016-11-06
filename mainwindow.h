@@ -44,6 +44,17 @@ public slots:
 private:
     Ui::MainWindow* ui;
 
+    void pressClearPathCase(int, int);
+    void pressClearPathOrigin(int, int);
+
+    void moveActions(int, int);
+    void moveToBlankCase(int, int);
+    void moveToConnectSecondOrigin(int, int);
+    void moveToOverridePath(int, int);
+    void moveToClearLastCase(int, int);
+    void moveBackwards(int, int);
+
+
     void drawGrid();
     void setPositionCase();
     void drawRectangleGrid();

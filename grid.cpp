@@ -1,11 +1,12 @@
 #include "grid.h"
 #include <QDebug>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <vector>
 #include <exception>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/json_parser.hpp"
 #include <QFileInfo>
 
 using boost::property_tree::ptree;
@@ -27,21 +28,21 @@ Grid::Grid(string filePath)
     try
     {
         //std::ifstream jsonFile(filePath);
-        //std::istringstream file(filePath);
 
         std::stringstream ss;
         ss << "{\"row\": 5,\"column\": 5,\"level\": [[2, 4, 0],[0, 0, 0],[3, 4, 5],[2, 2, 5],[1, 0, 1],[2, 3, 1],[4, 4, 4],[3, 1, 4]]}";
 
         std::cout << filePath;
         std::string str = filePath;
+
         QString qstr = QString::fromStdString(str);
         if (fileExists(qstr))
         {
-            std::cout << "The file exists";
+            std::cout << "\nThe file exists";
         }
         else
         {
-            std::cout << "The file doesn't exists";
+            std::cout << "\nThe file doesn't exists";
         }
 
         ptree root;
@@ -58,9 +59,7 @@ Grid::Grid(string filePath)
         }
 
         std::vector<int> v;
-        int value = 0;
-        int y = 0;
-        int x = 0;
+        int value, x, y = 0;
 
         for (ptree::value_type &row : root.get_child("level"))
         {
