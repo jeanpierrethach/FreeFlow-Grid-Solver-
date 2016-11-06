@@ -65,7 +65,8 @@ private:
     void mouseRoundColor();
     void gameIsWon();
 
-    int interval; // length of one case in the grid
+    int intervalWidth; // width length of one case in the grid
+    int intervalHeight; // height length of one case in the grid
     const int height = 720;
     const int width = 720;
     const int leftside = 5;

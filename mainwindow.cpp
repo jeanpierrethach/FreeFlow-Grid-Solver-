@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget* parent) :
         label->setText("Congratulation!");
         label->hide();
         this->setFixedWidth(width);
-        this->setFixedHeight(height);
+        this->setFixedHeight(height + 140);
 
         setLevel();
 
@@ -83,7 +83,8 @@ void MainWindow::paintEvent(QPaintEvent* )
 void MainWindow::drawGrid()
 {
     painter->setPen(Qt::black);
-    interval = height / grid->getNbRow();
+    intervalWidth = width / grid->getNbRow();
+    intervalHeight = height / grid->getNbColumn();
 
     setPositionCase();
 
@@ -101,8 +102,8 @@ void MainWindow::setPositionCase()
     {
         for (int j = 0; j < grid->getNbColumn(); ++j)
         {
-            pos[i][j].setX(leftside + j * interval + interval / 2);
-            pos[i][j].setY(up + i * interval + interval / 2);
+            pos[i][j].setX(leftside + j * intervalWidth + intervalWidth / 2);
+            pos[i][j].setY(up + i * intervalHeight + intervalHeight / 2);
         }
     }
 }
@@ -120,15 +121,15 @@ void MainWindow::drawRowColumnLines()
     // draw row lines
     for (int i = 1; i < grid->getNbRow(); ++i)
     {
-        painter->drawLine(QPoint(leftside, up + i * interval),
-        QPoint(720 - rightside, up + i * interval));
+        painter->drawLine(QPoint(leftside, up + i * intervalHeight),
+        QPoint(width - rightside, up + i * intervalHeight));
     }
 
     // draw column lines
     for (int i = 1; i < grid->getNbColumn(); ++i)
     {
-        painter->drawLine(QPoint(leftside + i * interval, up),
-        QPoint(leftside + i * interval, up + 720));
+        painter->drawLine(QPoint(leftside + i * intervalWidth, up),
+        QPoint(leftside + i * intervalWidth, up + height));
     }
 }
 
@@ -143,7 +144,7 @@ void MainWindow::drawOrigins()
                 painter->setPen(Qt::white);
                 painter->setPen(color[grid->getGrid()[i][j].getColor()]);
                 painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
-                painter->drawEllipse(pos[j][i],interval/3,interval/3);
+                painter->drawEllipse(pos[j][i],intervalWidth/3,intervalHeight/3);
             }
         }
     }
@@ -162,9 +163,9 @@ void MainWindow::drawColorLine()
                     15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
                     painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
 
-                painter->drawLine(QPoint(interval/2 + offset + interval * grid->getGrid()[i][j].previous[0]->x,
-                    interval/2 + offset + interval * grid->getGrid()[i][j].previous[0]->y),
-                    QPoint(interval/2 + offset  + interval * i, interval/2 + offset + interval * j));
+                painter->drawLine(QPoint(intervalWidth/2 + offset + intervalWidth * grid->getGrid()[i][j].previous[0]->x,
+                    intervalHeight/2 + offset + intervalHeight * grid->getGrid()[i][j].previous[0]->y),
+                    QPoint(intervalWidth/2 + offset  + intervalWidth * i, intervalHeight/2 + offset + intervalHeight * j));
             }
         }
     }
@@ -181,7 +182,7 @@ void MainWindow::fillSquareColor()
             {
                 painter->setPen(currentColor[grid->getGrid()[i][j].getColor()]);
                 painter->setBrush(currentColor[grid->getGrid()[i][j].getColor()]);
-                painter->drawRect(offset + interval * i, offset + interval * j, interval, interval);
+                painter->drawRect(offset + intervalWidth * i, offset + intervalHeight * j, intervalWidth, intervalHeight);
             }
         }
     }
@@ -209,8 +210,8 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
     {
         if (e->button() == Qt::LeftButton)
         {
-            int x = ((e->x() - offset) / interval);
-            int y = ((e->y() - offset) / interval);
+            int x = ((e->x() - offset) / intervalWidth);
+            int y = ((e->y() - offset) / intervalHeight);
             currentX = x;
             currentY = y;
             pathConnected = false;
@@ -272,8 +273,8 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
     if (e->x() > offset && e->y() > offset && e->x() < width - offset
             && e->y() < height - offset)
     {
-        int x = ((e->x() - offset) / interval);
-        int y = ((e->y() - offset) / interval);
+        int x = ((e->x() - offset) / intervalWidth);
+        int y = ((e->y() - offset) / intervalHeight);
         mousePosition.setX(e->x());
         mousePosition.setY(e->y());
 
