@@ -10,6 +10,7 @@
 #include <QColor>
 #include <QPoint>
 #include <cmath>
+#include <QPushButton>
 
 QColor color[9] = {QColor(237, 28, 36), QColor(0, 162, 232), QColor(102, 24, 126),
     QColor(244, 233, 11), QColor(255, 127, 39), QColor(144, 233, 50),
@@ -26,11 +27,15 @@ MainWindow::MainWindow(QWidget* parent) :
     ui(new Ui::MainWindow)
     {
         ui->setupUi(this);
+
         label=ui->congratulation;
         label->setText("Congratulation!");
         label->hide();
         this->setFixedWidth(width);
         this->setFixedHeight(height + 140);
+
+        connect(ui->back, SIGNAL(clicked()), this, SLOT(back()));
+        connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
 
         setLevel();
 
@@ -63,6 +68,32 @@ void MainWindow::start()
 void MainWindow::leave()
 {
     close();
+}
+
+void MainWindow::back()
+{
+    close();
+    restart();
+    emit(backToStart());
+}
+
+void MainWindow::restart()
+{
+    for (int i = 0; i < grid->getNbRow(); ++i)
+    {
+        for (int j = 0; j < grid->getNbColumn(); ++j)
+        {
+            if (grid->getGrid()[j][i].isOrigin())
+            {
+                grid->getGrid()[j][i].clearOrigin();
+            }
+            else
+            {
+                grid->getGrid()[j][i].clear();
+            }
+        }
+    }
+    update();
 }
 
 void MainWindow::setLevel()

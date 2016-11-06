@@ -11,6 +11,9 @@ int main(int argc, char* argv[])
     Dialog startMenu(&app);
     QObject::connect(&startMenu, SIGNAL(start()), &w, SLOT(start()));
     QObject::connect(&startMenu, SIGNAL(leave()), &w, SLOT(leave()));
+    QObject::connect(&w, SIGNAL(backToStart()), &startMenu, SLOT(open()));
+
+
     startMenu.show();
 
     return app.exec();

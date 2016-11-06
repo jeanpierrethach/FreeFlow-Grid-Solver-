@@ -36,10 +36,16 @@ public:
 
     void clearPathColorCase(Path*);
 
+private slots:
+    void back();
+    void restart();
 
 public slots:
-    void start();
     void leave();
+    void start();
+
+signals:
+    void backToStart();
 
 private:
     Ui::MainWindow* ui;
