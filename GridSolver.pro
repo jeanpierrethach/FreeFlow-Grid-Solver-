@@ -23,6 +23,7 @@ HEADERS  += mainwindow.h \
     path.h \
     dialog.h
 
+
 FORMS    += mainwindow.ui \
     dialog.ui
 
@@ -30,4 +31,5 @@ RESOURCES += \
     resource.qrc
 
 DISTFILES += \
-    assets/freeflow.png
+    assets/freeflow.png \
+    levels/level1.json

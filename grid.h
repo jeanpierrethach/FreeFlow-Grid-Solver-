@@ -2,11 +2,16 @@
 #define GRID_H
 
 #include "path.h"
+#include <string>
+
+
+using std::string;
 
 class Grid
 {
 public:
     Grid();
+    Grid(string);
     Grid(int, int);
     ~Grid();
 

@@ -1,10 +1,88 @@
 #include "grid.h"
 #include <QDebug>
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <exception>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <QFileInfo>
+
+using boost::property_tree::ptree;
 
 Grid::Grid()
 {
     this->row = 0;
     this->column = 0;
+}
+
+bool fileExists(QString path) {
+    QFileInfo check_file(path);
+    // check if file exists. If yes then is it really a file and not a directory
+    return (check_file.exists() && check_file.isFile());
+}
+
+Grid::Grid(string filePath)
+{
+    try
+    {
+        //std::ifstream jsonFile(filePath);
+        //std::istringstream file(filePath);
+
+        std::stringstream ss;
+        ss << "{\"row\": 5,\"column\": 5,\"level\": [[2, 4, 0],[0, 0, 0],[3, 4, 5],[2, 2, 5],[1, 0, 1],[2, 3, 1],[4, 4, 4],[3, 1, 4]]}";
+
+        std::cout << filePath;
+        std::string str = filePath;
+        QString qstr = QString::fromStdString(str);
+        if (fileExists(qstr))
+        {
+            std::cout << "The file exists";
+        }
+        else
+        {
+            std::cout << "The file doesn't exists";
+        }
+
+        ptree root;
+        read_json(ss, root);
+
+        this->row = root.get<int>("row");
+        this->column = root.get<int>("column");
+
+        gameGrid = new Path*[row];
+
+        for (int i = 0; i < row; ++i)
+        {
+            gameGrid[i] = new Path[column];
+        }
+
+        std::vector<int> v;
+        int value = 0;
+        int y = 0;
+        int x = 0;
+
+        for (ptree::value_type &row : root.get_child("level"))
+        {
+            for (ptree::value_type &cell : row.second)
+            {
+                v.push_back(cell.second.get_value<int>());
+            }
+            value = v.back();
+            v.pop_back();
+            y = v.back();
+            v.pop_back();
+            x = v.back();
+            v.pop_back();
+
+            gameGrid[x][y].setData(value);
+        }
+    }
+    catch (std::exception const& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
 }
 
 Grid::Grid(int nbRow, int nbCol)

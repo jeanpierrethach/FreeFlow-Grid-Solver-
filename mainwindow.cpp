@@ -67,17 +67,7 @@ void MainWindow::leave()
 
 void MainWindow::setLevel()
 {
-    // proof of concept
-    // refactor after in readData method
-    grid->getGrid()[2][4].setData(0);
-    grid->getGrid()[0][0].setData(0);
-    grid->getGrid()[3][4].setData(5);
-    grid->getGrid()[2][2].setData(5);
-    grid->getGrid()[1][0].setData(1);
-    grid->getGrid()[2][3].setData(1);
-    grid->getGrid()[4][4].setData(4);
-    grid->getGrid()[3][1].setData(4);
-
+    grid = new Grid(":/Other/levels/level1.json");
 }
 
 void MainWindow::paintEvent(QPaintEvent* )

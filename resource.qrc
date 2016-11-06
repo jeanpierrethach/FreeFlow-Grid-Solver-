@@ -2,4 +2,7 @@
     <qresource prefix="/Image">
         <file>assets/freeflow.png</file>
     </qresource>
+    <qresource prefix="/Other">
+        <file>levels/level1.json</file>
+    </qresource>
 </RCC>

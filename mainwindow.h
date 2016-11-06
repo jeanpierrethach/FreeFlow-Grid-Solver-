@@ -75,7 +75,7 @@ private:
 
     QPoint pos[5][5]; // static level
 
-    Grid* grid = new Grid(5,5); // static level
+    Grid* grid;
     QLabel* label;
 
 };
