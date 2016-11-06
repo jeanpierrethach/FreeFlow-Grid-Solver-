@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = GridSolver
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     grid.cpp \
@@ -22,7 +21,6 @@ HEADERS  += mainwindow.h \
     grid.h \
     path.h \
     dialog.h
-
 
 FORMS    += mainwindow.ui \
     dialog.ui

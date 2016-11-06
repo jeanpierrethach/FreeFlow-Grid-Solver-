@@ -3,7 +3,7 @@
 
 #include "path.h"
 #include <string>
-
+#include <QFileInfo>
 
 using std::string;
 
@@ -11,7 +11,7 @@ class Grid
 {
 public:
     Grid();
-    Grid(string);
+    Grid(const QString&);
     Grid(int, int);
     ~Grid();
 

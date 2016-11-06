@@ -7,9 +7,16 @@
 #include <exception>
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/json_parser.hpp"
-#include <QFileInfo>
+
+#include <QByteArray>
+#include <QFile>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
 
 using boost::property_tree::ptree;
+
 
 Grid::Grid()
 {
@@ -23,27 +30,58 @@ bool fileExists(QString path) {
     return (check_file.exists() && check_file.isFile());
 }
 
-Grid::Grid(string filePath)
+Grid::Grid(const QString& filePath)
 {
     try
     {
-        //std::ifstream jsonFile(filePath);
+        QFile file(filePath);
+        file.open(QIODevice::ReadOnly);
 
-        std::stringstream ss;
-        ss << "{\"row\": 5,\"column\": 5,\"level\": [[2, 4, 0],[0, 0, 0],[3, 4, 5],[2, 2, 5],[1, 0, 1],[2, 3, 1],[4, 4, 4],[3, 1, 4]]}";
+        QByteArray rawData = file.readAll();
 
-        std::cout << filePath;
-        std::string str = filePath;
+        // Parse document
+        QJsonDocument doc(QJsonDocument::fromJson(rawData));
 
-        QString qstr = QString::fromStdString(str);
-        if (fileExists(qstr))
+        // Get JSON object
+        QJsonObject json = doc.object();
+
+        // Access properties
+        this->row = json["row"].toInt();
+        this->column = json["column"].toInt();
+
+        gameGrid = new Path*[row];
+
+        for (int i = 0; i < row; ++i)
         {
-            std::cout << "\nThe file exists";
+            gameGrid[i] = new Path[column];
+        }
+
+        QJsonArray jsonArray = json["level"].toArray();
+
+        int color, x, y = 0;
+
+        foreach (const QJsonValue& item, jsonArray)
+        {
+            x = item.toObject().value("x").toInt();
+            y = item.toObject().value("y").toInt();
+            color = item.toObject().value("color").toInt();
+
+            gameGrid[x][y].setData(color);
+        }
+
+        if (fileExists(filePath))
+        {
+            std::cout << "\nThe file exists\n";
         }
         else
         {
-            std::cout << "\nThe file doesn't exists";
+            std::cout << "\nThe file doesn't exists\n";
         }
+
+        //std::ifstream jsonFile(filePath);
+
+        /*std::stringstream ss;
+        ss << "{\"row\": 5,\"column\": 5,\"level\": [[2, 4, 0],[0, 0, 0],[3, 4, 5],[2, 2, 5],[1, 0, 1],[2, 3, 1],[4, 4, 4],[3, 1, 4]]}";
 
         ptree root;
         read_json(ss, root);
@@ -75,7 +113,7 @@ Grid::Grid(string filePath)
             v.pop_back();
 
             gameGrid[x][y].setData(value);
-        }
+        }*/
     }
     catch (std::exception const& e)
     {
