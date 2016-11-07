@@ -5,8 +5,6 @@
 #include <sstream>
 #include <vector>
 #include <exception>
-#include "boost/property_tree/ptree.hpp"
-#include "boost/property_tree/json_parser.hpp"
 
 #include <QByteArray>
 #include <QFile>
