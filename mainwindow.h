@@ -10,9 +10,7 @@
 #include "grid.h"
 #include <QLabel>
 
-
 #define NOTACTIVE -1
-
 
 namespace Ui {
     class MainWindow;
@@ -77,7 +75,6 @@ private:
     int intervalWidth; // width length of one case in the grid
     int intervalHeight; // height length of one case in the grid
 
-    const int bottomSpace = height/5;
     const int leftside = 5;
     const int rightside = 5;
     const int up = 5;
@@ -86,6 +83,7 @@ private:
 
     int height = 720;
     int width = 720 + leftside + rightside;
+    const int bottomSpace = height/5;
 
     bool pathConnected;
 
@@ -95,7 +93,7 @@ private:
     int currentY;
     QPoint mousePosition; // track mouse position
 
-    QPoint pos[5][5]; // static level
+    std::vector<std::vector<QPoint> > pos;
 
     Grid* grid;
     QLabel* label;

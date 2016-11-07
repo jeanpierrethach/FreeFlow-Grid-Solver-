@@ -93,6 +93,12 @@ void MainWindow::restart()
 void MainWindow::setLevel()
 {
     grid = new Grid(":/Other/levels/level2.json");
+
+    pos.resize(grid->getNbRow());
+    for (int i = 0; i < grid->getNbRow(); ++i)
+    {
+        pos[i].resize(grid->getNbColumn());
+    }
 }
 
 void MainWindow::setPositionStart()

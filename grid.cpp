@@ -13,9 +13,6 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
-using boost::property_tree::ptree;
-
-
 Grid::Grid()
 {
     this->row = 0;
