@@ -16,10 +16,10 @@
   <widget class="QPushButton" name="leave">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>152</x>
      <y>210</y>
-     <width>93</width>
-     <height>28</height>
+     <width>95</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="text">
@@ -29,10 +29,10 @@
   <widget class="QPushButton" name="start">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>152</x>
      <y>150</y>
-     <width>93</width>
-     <height>28</height>
+     <width>95</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="text">

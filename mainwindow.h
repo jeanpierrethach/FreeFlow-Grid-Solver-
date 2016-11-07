@@ -61,8 +61,11 @@ private:
     void moveBackwards(int, int);
 
 
-    void drawGrid();
+    void setPositionStart();
     void setPositionCase();
+    void resizeGrid();
+
+    void drawGrid();
     void drawRectangleGrid();
     void drawRowColumnLines();
     void drawOrigins();
@@ -73,19 +76,20 @@ private:
 
     int intervalWidth; // width length of one case in the grid
     int intervalHeight; // height length of one case in the grid
-    const int height = 720;
-    const int width = 720;
+
+    const int bottomSpace = height/5;
     const int leftside = 5;
     const int rightside = 5;
     const int up = 5;
     //const int bottom = 5;
     const int offset = 5; // separator between the frame and the grid
 
+    int height = 720;
+    int width = 720 + leftside + rightside;
+
     bool pathConnected;
 
     QPainter* painter;
-    int positionCaseX;
-    int positionCaseY;
 
     int currentX;
     int currentY;

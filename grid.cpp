@@ -26,6 +26,7 @@ Grid::Grid()
 
 bool fileExists(QString path) {
     QFileInfo check_file(path);
+
     // check if file exists. If yes then is it really a file and not a directory
     return (check_file.exists() && check_file.isFile());
 }
@@ -34,105 +35,59 @@ Grid::Grid(const QString& filePath)
 {
     try
     {
-        QFile file(filePath);
-        file.open(QIODevice::ReadOnly);
-
-        QByteArray rawData = file.readAll();
-
-        // Parse document
-        QJsonDocument doc(QJsonDocument::fromJson(rawData));
-
-        // Get JSON object
-        QJsonObject json = doc.object();
-
-        // Access properties
-        this->row = json["row"].toInt();
-        this->column = json["column"].toInt();
-
-        gameGrid = new Path*[row];
-
-        for (int i = 0; i < row; ++i)
-        {
-            gameGrid[i] = new Path[column];
-        }
-
-        QJsonArray jsonArray = json["level"].toArray();
-
-        int color, x, y = 0;
-        std::vector<int> v;
-
-        /*foreach (const QJsonValue& item, jsonArray)
-        {
-            x = item.toObject().value("x").toInt();
-            y = item.toObject().value("y").toInt();
-            color = item.toObject().value("color").toInt();
-
-            gameGrid[x][y].setData(color);
-        }*/
-
-
-        foreach (const QJsonValue& item, jsonArray)
-        {
-            foreach (const QJsonValue& i, item.toArray())
-            {
-                v.push_back(i.toInt());
-            }
-
-            color = v.back();
-            v.pop_back();
-            y = v.back();
-            v.pop_back();
-            x = v.back();
-            v.pop_back();
-
-            gameGrid[x][y].setData(color);
-        }
-
         if (fileExists(filePath))
         {
-            std::cout << "\nThe file exists\n";
+
+            QFile file(filePath);
+            file.open(QIODevice::ReadOnly);
+
+            QByteArray rawData = file.readAll();
+
+            // Parse document
+            QJsonDocument doc(QJsonDocument::fromJson(rawData));
+
+            // Get JSON object
+            QJsonObject json = doc.object();
+
+            // Access properties
+            this->row = json["row"].toInt();
+            this->column = json["column"].toInt();
+
+            gameGrid = new Path*[row];
+
+            for (int i = 0; i < row; ++i)
+            {
+                gameGrid[i] = new Path[column];
+            }
+
+            QJsonArray jsonArray = json["level"].toArray();
+
+            std::vector<int> v;
+            int color, x, y = 0;
+
+            foreach (const QJsonValue& item, jsonArray)
+            {
+                foreach (const QJsonValue& i, item.toArray())
+                {
+                    v.push_back(i.toInt());
+                }
+
+                color = v.back();
+                v.pop_back();
+                y = v.back();
+                v.pop_back();
+                x = v.back();
+                v.pop_back();
+
+                gameGrid[x][y].setData(color);
+            }
+
         }
         else
         {
-            std::cout << "\nThe file doesn't exists\n";
+            std::cout << "The file doesn't exist\n";
         }
 
-        //std::ifstream jsonFile(filePath);
-
-        /*std::stringstream ss;
-        ss << "{\"row\": 5,\"column\": 5,\"level\": [[2, 4, 0],[0, 0, 0],[3, 4, 5],[2, 2, 5],[1, 0, 1],[2, 3, 1],[4, 4, 4],[3, 1, 4]]}";
-
-        ptree root;
-        read_json(ss, root);
-
-        this->row = root.get<int>("row");
-        this->column = root.get<int>("column");
-
-        gameGrid = new Path*[row];
-
-        for (int i = 0; i < row; ++i)
-        {
-            gameGrid[i] = new Path[column];
-        }
-
-        std::vector<int> v;
-        int value, x, y = 0;
-
-        for (ptree::value_type &row : root.get_child("level"))
-        {
-            for (ptree::value_type &cell : row.second)
-            {
-                v.push_back(cell.second.get_value<int>());
-            }
-            value = v.back();
-            v.pop_back();
-            y = v.back();
-            v.pop_back();
-            x = v.back();
-            v.pop_back();
-
-            gameGrid[x][y].setData(value);
-        }*/
     }
     catch (std::exception const& e)
     {
@@ -173,6 +128,12 @@ void Grid::setPath(int i, int j, Path path)
     gameGrid[i][j] = path;
 }
 
+void Grid::setPosition(int i, int j)
+{
+    gameGrid[i][j].x = i;
+    gameGrid[i][j].y = j;
+}
+
 int Grid::getNbRow()
 {
     return row;
@@ -186,19 +147,7 @@ int Grid::getNbColumn()
 //Finds if the game is won
 bool Grid::isCompleted()
 {
-    int completedPaths = 0;
-    int totalPaths = 0;
-
-    for(int i = 0; i < row; i++)
-    {
-        for(int j = 0; j < column; j++)
-        {
-            if(!gameGrid[i][j].isCovered())
-            {
-                qDebug() << "Position " << i << " " << j;
-            }
-        }
-    }
+    int completedPaths = 0, totalPaths = 0;
 
     for(int i = 0; i < row; i++)
     {
@@ -216,6 +165,6 @@ bool Grid::isCompleted()
             }
         }
     }
-    qDebug() << "CompletedPaths = " << completedPaths << "\nTotalPaths = " << totalPaths;
+
     return completedPaths == totalPaths/2;
 }

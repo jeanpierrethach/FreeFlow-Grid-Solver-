@@ -20,6 +20,7 @@ public:
     Path getPath(int, int);
     Path** getGrid(){ return gameGrid; }
 
+    void setPosition(int, int);
     void setPath(int, int, Path);
     bool isCompleted();
 

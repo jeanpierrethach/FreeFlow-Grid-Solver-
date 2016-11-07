@@ -13,49 +13,43 @@
 #include <QPushButton>
 
 QColor color[9] = {QColor(237, 28, 36), QColor(0, 162, 232), QColor(102, 24, 126),
-    QColor(244, 233, 11), QColor(255, 127, 39), QColor(144, 233, 50),
-    QColor(0, 0, 0), QColor(185, 122, 87), QColor(254, 109, 221)};
+                   QColor(244, 233, 11), QColor(255, 127, 39), QColor(144, 233, 50),
+                   QColor(0, 0, 0), QColor(185, 122, 87), QColor(254, 109, 221)};
 
 QColor currentColor[9] = {QColor(237, 28, 36, 100), QColor(0, 162, 232, 100),
-    QColor(102, 24, 126, 100), QColor(244, 233, 11, 100),
-    QColor(255, 127, 39, 100), QColor(144, 233, 50, 100),
-    QColor(0, 0, 0, 100), QColor(185, 122, 87, 100),
-    QColor(254, 109, 221, 100)};
+                          QColor(102, 24, 126, 100), QColor(244, 233, 11, 100),
+                          QColor(255, 127, 39, 100), QColor(144, 233, 50, 100),
+                          QColor(0, 0, 0, 100), QColor(185, 122, 87, 100),
+                          QColor(254, 109, 221, 100)};
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-    {
-        ui->setupUi(this);
+{
+    ui->setupUi(this);
 
-        label=ui->congratulation;
-        label->setText("Congratulation!");
-        label->hide();
-        this->setFixedWidth(width);
-        this->setFixedHeight(height + 140);
+    this->setFixedWidth(width);
+    this->setFixedHeight(height + bottomSpace);
 
-        connect(ui->back, SIGNAL(clicked()), this, SLOT(back()));
-        connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
+    ui->back->setGeometry(30, height + height/24, 140, bottomSpace/3);
+    ui->restart->setGeometry(width - 170, height + height/24, 140, bottomSpace/3);
 
-        setLevel();
+    connect(ui->back, SIGNAL(clicked()), this, SLOT(back()));
+    connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
 
-        // set pos x,y (to change when reading data or in constructor)
-        // or use method to set position
-        for (int i = 0; i < grid->getNbRow(); ++i)
-        {
-            for (int j = 0; j < grid->getNbColumn(); ++j)
-            {
-                grid->getGrid()[j][i].x = j;
-                grid->getGrid()[j][i].y = i;
-            }
-        }
-        currentX = NOTACTIVE;
-        currentY = NOTACTIVE;
-    }
+    resizeGrid();
+
+    setLevel();
+
+    setPositionStart();
+
+    currentX = NOTACTIVE;
+    currentY = NOTACTIVE;
+}
 
 MainWindow::~MainWindow()
 {
-    delete ui;   
+    delete ui;
     delete grid;
 }
 
@@ -101,6 +95,30 @@ void MainWindow::setLevel()
     grid = new Grid(":/Other/levels/level2.json");
 }
 
+void MainWindow::setPositionStart()
+{
+    for (int i = 0; i < grid->getNbRow(); ++i)
+    {
+        for (int j = 0; j < grid->getNbColumn(); ++j)
+        {
+            grid->setPosition(i, j);
+        }
+    }
+}
+
+void MainWindow::resizeGrid()
+{
+    // resize grid to a square
+    if (width > height)
+    {
+        width = height;
+    }
+    if (height > width)
+    {
+        height = width;
+    }
+}
+
 void MainWindow::paintEvent(QPaintEvent* )
 {
     painter = new QPainter(this);
@@ -128,7 +146,7 @@ void MainWindow::drawGrid()
 
 void MainWindow::setPositionCase()
 {
-    // sets position of x,y of each cases
+    // sets the center position (x,y) of each cases
     for (int i = 0; i < grid->getNbRow(); ++i)
     {
         for (int j = 0; j < grid->getNbColumn(); ++j)
@@ -142,8 +160,8 @@ void MainWindow::setPositionCase()
 void MainWindow::drawRectangleGrid()
 {
     // draw grid with 4 points (top left, top right, bottom right, bottom left)
-    QPoint gridPoints[4] = {QPoint(leftside, up), QPoint(width - rightside, up),
-        QPoint(width - rightside, up + height), QPoint(leftside, up + height)};
+    QPoint gridPoints[4] = {QPoint(leftside, up), QPoint(width + rightside, up),
+                            QPoint(width + rightside, up + height), QPoint(leftside, up + height)};
     painter->drawPolygon(gridPoints, 4);
 }
 
@@ -153,14 +171,14 @@ void MainWindow::drawRowColumnLines()
     for (int i = 1; i < grid->getNbRow(); ++i)
     {
         painter->drawLine(QPoint(leftside, up + i * intervalHeight),
-        QPoint(width - rightside, up + i * intervalHeight));
+                          QPoint(width + rightside, up + i * intervalHeight));
     }
 
     // draw column lines
     for (int i = 1; i < grid->getNbColumn(); ++i)
     {
         painter->drawLine(QPoint(leftside + i * intervalWidth, up),
-        QPoint(leftside + i * intervalWidth, up + height));
+                          QPoint(leftside + i * intervalWidth, up + height));
     }
 }
 
@@ -191,12 +209,12 @@ void MainWindow::drawColorLine()
             if (grid->getGrid()[i][j].previous[0] != 0)
             {
                 painter->setPen(QPen(QBrush(color[grid->getGrid()[i][j].getColor()]),
-                    15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-                    painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
+                                15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+                painter->setBrush(color[grid->getGrid()[i][j].getColor()]);
 
                 painter->drawLine(QPoint(intervalWidth/2 + offset + intervalWidth * grid->getGrid()[i][j].previous[0]->x,
-                    intervalHeight/2 + offset + intervalHeight * grid->getGrid()[i][j].previous[0]->y),
-                    QPoint(intervalWidth/2 + offset  + intervalWidth * i, intervalHeight/2 + offset + intervalHeight * j));
+                                  intervalHeight/2 + offset + intervalHeight * grid->getGrid()[i][j].previous[0]->y),
+                        QPoint(intervalWidth/2 + offset  + intervalWidth * i, intervalHeight/2 + offset + intervalHeight * j));
             }
         }
     }
@@ -252,8 +270,6 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
             pressClearPathCase(x, y);
 
             pressClearPathOrigin(x, y);
-
-            qDebug() << "Mouse pressed: Left button";
         }
     }
 
@@ -309,12 +325,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
         mousePosition.setX(e->x());
         mousePosition.setY(e->y());
 
-        // tracks and prints the mouse position
-        positionCaseX = (e->x() - offset) / (height / grid->getNbColumn());
-        positionCaseY = (e->y() - offset) / (width / grid->getNbRow());
-        qDebug() << ("X:" + QString::number(e->x()) + ", Y:" + QString::number(e->y())
-                     + " posCaseX: " + positionCaseX + "posCaseY: " + positionCaseY);
-
         if (grid->getGrid()[x][y].isOrigin())
         {
             grid->getGrid()[x][y].setCovered(true);
@@ -340,27 +350,27 @@ void MainWindow::moveActions(int x, int y)
     }
     // when the second origin is connected to the first origin
     else if (grid->getGrid()[x][y].isOrigin()
-            && grid->getGrid()[currentX][currentY].getColor() == grid->getGrid()[x][y].getColor()
-            && !pathConnected)
+             && grid->getGrid()[currentX][currentY].getColor() == grid->getGrid()[x][y].getColor()
+             && !pathConnected)
     {
         moveToConnectSecondOrigin(x, y);
     }
     // if the user wants to create a path on another colored path
     else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[currentX][currentY].getColor()
-            && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] != 0 && !pathConnected)
+             && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] != 0 && !pathConnected)
     {
         moveToOverridePath(x, y);
     }
     // clear only the last case from another colored path
     else if (grid->getGrid()[x][y].getColor() != grid->getGrid()[currentX][currentY].getColor()
-            && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] == 0 && !pathConnected)
+             && grid->getGrid()[x][y].isOrigin() == false && grid->getGrid()[x][y].next[0] == 0 && !pathConnected)
     {
         moveToClearLastCase(x, y);
     }
     // allow user to go back when creating a path
     else if (grid->getGrid()[x][y].getColor() == grid->getGrid()[currentX][currentY].getColor()
-            && grid->getGrid()[x][y].hasFlag() && grid->getGrid()[x][y].isCovered()
-            && grid->getGrid()[currentX][currentY].isOrigin() == false && !pathConnected)
+             && grid->getGrid()[x][y].hasFlag() && grid->getGrid()[x][y].isCovered()
+             && grid->getGrid()[currentX][currentY].isOrigin() == false && !pathConnected)
     {
         moveBackwards(x, y);
     }
@@ -368,7 +378,6 @@ void MainWindow::moveActions(int x, int y)
 
 void MainWindow::moveToBlankCase(int x, int y)
 {
-    qDebug() << "Entered blank case";
     grid->getGrid()[currentX][currentY].next[0] = &grid->getGrid()[x][y];
     grid->getGrid()[x][y].previous[0] = &grid->getGrid()[currentX][currentY];
     grid->getGrid()[x][y].setColor(grid->getGrid()[currentX][currentY].getColor());
@@ -382,7 +391,6 @@ void MainWindow::moveToConnectSecondOrigin(int x, int y)
 {
     if (grid->getGrid()[x][y].getFirstOrigin() == false)
     {
-        qDebug() << "Entered second origin case";
         grid->getGrid()[x][y].setSecondOrigin(true);
         grid->getGrid()[currentX][currentY].next[0] = &grid->getGrid()[x][y];
         grid->getGrid()[x][y].previous[0] = &grid->getGrid()[currentX][currentY];
@@ -395,8 +403,10 @@ void MainWindow::moveToConnectSecondOrigin(int x, int y)
         //Check if game is won
         if(grid->isCompleted())
         {
+            currentX = NOTACTIVE;
+            currentY = NOTACTIVE;
+
             gameIsWon();
-            qDebug() << "\n\n\n\n\n\n------You won the game-----\n\n\n";
         }
     }
 }
@@ -431,10 +441,8 @@ void MainWindow::moveBackwards(int x, int y)
     }
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent* e)
+void MainWindow::mouseReleaseEvent(QMouseEvent*)
 {
-    qDebug() << "Mouse released at: " + QString::number(e->x()) + ","
-                + QString::number(e->y());
     currentX = NOTACTIVE;
     currentY = NOTACTIVE;
 
@@ -472,16 +480,8 @@ void MainWindow::clearPathColorCase(Path* temp)
 
 void MainWindow::gameIsWon()
 {
-    //TODO do stuff when game is won.
-    //label->setText("Congratulations");
-    //label=ui->congratulation;
-    //label->show();
-
     QMessageBox msg;
     msg.setText("Congratulations!");
-    //msg.setFixedSize(400,200);
     msg.setBaseSize(QSize(400,200));
     msg.exec();
-
-
 }
