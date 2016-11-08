@@ -1,123 +1,433 @@
 #include "gridbuilder.h"
 
-int** GridBuilder::adjacentPathMatrix;
-
 GridBuilder::GridBuilder()
 {
 
 }
 
-Grid GridBuilder::buildGrid(int row, int col)
+Grid* GridBuilder::buildGrid(Grid* grid, int row, int col)
+{
+    int** adjacentPathMatrix = new int*[row];
+    for(int i = 0; i < row; i++)
+    {
+        adjacentPathMatrix[i] = new int[col];
+    }
+    fillAdjacentPathMatrix(grid, adjacentPathMatrix);
+
+    while(!grid->isCompleted())
+    {
+        QPoint* pos;
+
+        //If there is two adjacent free blocks that only connects to eachother do something
+        pos = findPairOfLoneBlocks(grid, adjacentPathMatrix);
+        if(pos->x() >= 0)
+        {
+            //TODO TRY TO FILL PAIR
+            //try to fill pair of lone blocks, if you cant, restart
+            destroyAdjacentPathMatrix(adjacentPathMatrix, row);
+            return grid;
+        }
+        else
+        {
+            //If there is a standAlone free block, try to move an adjacent endPoint, otherwise impossible, restart from scratch
+            pos = findLoneBlock(grid, adjacentPathMatrix);
+            if(pos->x() >= 0)
+            {
+                //Move adjacent endPoint
+                //if success keep on
+                //else restart
+                destroyAdjacentPathMatrix(adjacentPathMatrix, row);
+                return grid;
+            }
+            else
+            {
+                //If there is a dead end, make it the start of a path
+                pos = findDeadEnd(grid, adjacentPathMatrix);
+                if(pos->x() >= 0)
+                {
+                    buildPathStartingPoint(pos, grid);
+                }
+                else
+                {
+                    //Start random path from here
+                    QPoint* point = getRandomFreeBlock(grid);
+                    if(point->x() < 0) return grid;
+                    buildPathStartingPoint(point, grid);
+                }
+            }
+        }
+    }
+
+    destroyAdjacentPathMatrix(adjacentPathMatrix, row);
+
+    return grid;
+}
+
+Grid* GridBuilder::buildGrid(int row, int col)
 {
     Grid* grid = new Grid(row, col);
 
     while(!grid->isCompleted())
     {
-        QPoint pos = findLoneBlock(*grid);
+        delete grid;
+        grid = new Grid(row, col);
+        buildGrid(grid, row, col);
+    }
 
-        //If there is a standAlone free block, try to move an adjacent endPoint, otherwise impossible, restart from scratch
-        if(pos.x() >= 0)
+    int color = 1;
+    for(int i = 0; i < grid->getNbRow(); i++)
+    {
+        for(int j = 0; j < grid->getNbColumn(); j++)
         {
-            //Move adjacent endPoint
-            //if success keep on
-            //else restart
-        }
-
-        //If there is two adjacent free blocks that only connects to eachother do something
-        pos = findPairOfLoneBlocks(*grid);
-        if(pos.x >= 0)
-        {
-            //try to fill pair of lone blocks, if you cant restart
-        }
-
-        //If there is a dead end, make it the start of a path
-        pos = findDeadEnd(*grid);
-        if(pos.x() >= 0)
-        {
-            buildPathFromPoint(pos, *grid);
+            //if(grid->getGrid()[i][j].isOrigin())
+            //{
+                grid->getGrid()[i][j].setColor(1);
+            //}
         }
     }
 
-    return *grid;
+    return grid;
+
+    /*
+    int** adjacentPathMatrix = new int*[row];
+    for(int i = 0; i < row; i++)
+    {
+        adjacentPathMatrix[i] = new int[col];
+    }
+    fillAdjacentPathMatrix(grid, adjacentPathMatrix);
+
+    while(!grid->isCompleted())
+    {
+        QPoint* pos;
+
+        //If there is two adjacent free blocks that only connects to eachother do something
+        pos = findPairOfLoneBlocks(grid, adjacentPathMatrix);
+        if(pos->x() >= 0)
+        {
+            //TODO TRY TO FILL PAIR
+            //try to fill pair of lone blocks, if you cant, restart
+            destroyAdjacentPathMatrix(adjacentPathMatrix, row);
+            return buildGrid(row, col);
+        }
+        else
+        {
+            //If there is a standAlone free block, try to move an adjacent endPoint, otherwise impossible, restart from scratch
+            pos = findLoneBlock(grid, adjacentPathMatrix);
+            if(pos->x() >= 0)
+            {
+                //Move adjacent endPoint
+                //if success keep on
+                //else restart
+                destroyAdjacentPathMatrix(adjacentPathMatrix, row);
+                return buildGrid(row, col);
+            }
+            else
+            {
+                //If there is a dead end, make it the start of a path
+                pos = findDeadEnd(grid, adjacentPathMatrix);
+                if(pos->x() >= 0)
+                {
+                    buildPathStartingPoint(pos, grid);
+                }
+                else
+                {
+                    //Start random path from here
+                    QPoint* point = getRandomFreeBlock(grid);
+                    if(point->x() < 0) return grid;
+                    buildPathStartingPoint(point, grid);
+                }
+            }
+        }
+    }
+
+    destroyAdjacentPathMatrix(adjacentPathMatrix, row);
+
+    return grid;
+    */
+}
+
+void GridBuilder::buildPathStartingPoint(QPoint* startingPos, Grid* grid)
+{
+    Path path = grid->getPath(startingPos->x(), startingPos->y());
+
+    grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
+    //path.setCovered(true);
+
+
+    grid->getGrid()[startingPos->x()][startingPos->y()].setOrigin(true);
+    //path.setOrigin(true);
+
+
+    grid->getGrid()[startingPos->x()][startingPos->y()].setFirstOrigin(true);
+    //path.setFirstOrigin(true);
+
+    buildPath(startingPos, grid);
 }
 
 //TODO build Path starting at startingPos
-void GridBuilder::buildPathFromPoint(QPoint startingPos, Grid grid)
+void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
 {
-    Path p = grid.getPath(startingPos.x(), startingPos.y());
+    int possibleMoves = numberOfFreeAdjacentPositions(startingPos, grid);
+    Path path = grid->getPath(startingPos->x(), startingPos->y());
+
+    //path.setCovered(true);
+    grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
+
+    if(possibleMoves == 0)
+    {
+        //path.setOrigin(true);
+        grid->getGrid()[startingPos->x()][startingPos->y()].setOrigin(true);
+        //path.setPathComplete(true);
+        grid->getGrid()[startingPos->x()][startingPos->y()].setPathComplete(true);
+    }
+    else if(possibleMoves == 1)
+    {
+        QPoint* nextPathPos = getRandomAdjacentFreeBlock(startingPos, grid);
+        Path nextPath = grid->getPath(nextPathPos->x(), nextPathPos->y());
+        //nextPath.setCovered(true);
+        grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setCovered(true);
+        //nextPath.previous[0] = &path;
+        grid->getGrid()[nextPathPos->x()][nextPathPos->y()].previous[0] = &(grid->getGrid()[startingPos->x()][startingPos->y()]);
+
+        //grid->getPath(startingPos->x(), startingPos->y()).next[0] = &nextPath;
+        grid->getGrid()[startingPos->x()][startingPos->y()].next[0] = &(grid->getGrid()[nextPathPos->x()][nextPathPos->y()]);
+
+        buildPath(nextPathPos, grid);
+    }
+    else
+    {
+
+        if(path.isOrigin() || getRandomNumberFrom0To(grid->getNbColumn() + 1) != 0)
+        {
+
+            QPoint* nextPathPos = getRandomAdjacentFreeBlock(startingPos, grid);
+            Path nextPath = grid->getPath(nextPathPos->x(), nextPathPos->y());
+
+            //nextPath.setCovered(true);
+            grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setCovered(true);
+
+            //nextPath.previous[0] = &path;
+            grid->getGrid()[nextPathPos->x()][nextPathPos->y()].previous[0] = &(grid->getGrid()[startingPos->x()][startingPos->y()]);
+
+            grid->getGrid()[startingPos->x()][startingPos->y()].next[0] = &(grid->getGrid()[nextPathPos->x()][nextPathPos->y()]);
+            //grid->getPath(startingPos->x(), startingPos->y()).next[0] = &nextPath;
+
+            buildPath(nextPathPos, grid);
+        }
+        else
+        {
+            path.setOrigin(true);
+            path.setPathComplete(true);
+        }
+    }
+
 }
 
-QPoint GridBuilder::findDeadEnd(Grid grid)
+QPoint* GridBuilder::findDeadEnd(Grid* grid, int** adjacentPathMatrix)
 {
-    return findXAdjacentFreeBlocks(grid, 1);
+    return findXAdjacentFreeBlocks(grid, 1, adjacentPathMatrix);
 }
 
-QPoint GridBuilder::findLoneBlock(Grid grid)
+QPoint*  GridBuilder::findLoneBlock(Grid* grid, int** adjacentPathMatrix)
 {
-    return findXAdjacentFreeBlocks(grid, 0);
+    return findXAdjacentFreeBlocks(grid, 0, adjacentPathMatrix);
 }
 
-int GridBuilder::numberOfFreeAdjacentPositions(QPoint pos, Grid grid)
+int GridBuilder::numberOfFreeAdjacentPositions(QPoint* pos, Grid* grid)
 {
     int count = 0;
 
     //up
-    if(pos.x() - 1 >= 0 && !grid.getPath(pos.x() - 1, pos.y()).isCovered()) count++;
+    if(pos->x() - 1 >= 0 && !grid->getPath(pos->x() - 1, pos->y()).isCovered()) count++;
     //down
-    if(pos.x() + 1 <= grid.getNbRow() - 1 && !grid.getPath(pos.x() + 1, pos.y()).isCovered()) count++;
+    if(pos->x() + 1 <= grid->getNbRow() - 1 && !grid->getPath(pos->x() + 1, pos->y()).isCovered()) count++;
     //left
-    if(pos.y() - 1 >= 0 && !grid.getPath(pos.x(), pos.y() - 1).isCovered()) count++;
+    if(pos->y() - 1 >= 0 && !grid->getPath(pos->x(), pos->y() - 1).isCovered()) count++;
     //right
-    if(pos.y() + 1 <= grid.getNbColumn() - 1 && !grid.getPath(pos.x(), pos.y() + 1).isCovered()) count++;
+    if(pos->y() + 1 <= grid->getNbColumn() - 1 && !grid->getPath(pos->x(), pos->y() + 1).isCovered()) count++;
 
     return count;
 }
 
-QPoint GridBuilder::findXAdjacentFreeBlocks(Grid grid, int x)
+QPoint*  GridBuilder::findXAdjacentFreeBlocks(Grid* grid, int x, int** adjacentPathMatrix)
 {
-    fillAdjacentPathMatrix(grid);
-    int row = grid.getNbRow();
-    int col = grid.getNbColumn();
+    fillAdjacentPathMatrix(grid, adjacentPathMatrix);
+    int row = grid->getNbRow();
+    int col = grid->getNbColumn();
     for(int i = 0; i < row; i++)
     {
         for(int j = 0; j < col; j++)
         {
             if(adjacentPathMatrix[i][j] == x)
             {
-                return QPoint(i,j);
+                return new QPoint(i,j);
             }
         }
     }
-    return QPoint(-1,-1);
+    return new QPoint(-1,-1);
 }
 
-void GridBuilder::fillAdjacentPathMatrix(Grid grid)
+void GridBuilder::fillAdjacentPathMatrix(Grid* grid, int** adjacentPathMatrix)
 {
-    for(int i = 0; i < grid.getNbRow(); i++)
+    for(int i = 0; i < grid->getNbRow(); i++)
     {
-        for(int j = 0; j < grid.getNbColumn(); i++)
+        for(int j = 0; j < grid->getNbColumn(); j++)
         {
-            adjacentPathMatrix[i][j] = numberOfFreeAdjacentPositions(QPoint(i,j), grid);
+            QPoint* point = new QPoint(i,j);
+            adjacentPathMatrix[i][j] = numberOfFreeAdjacentPositions(point, grid);
+
         }
     }
 }
 
-QPoint GridBuilder::findPairOfLoneBlocks(Grid grid)
+QPoint* GridBuilder::findPairOfLoneBlocks(Grid* grid, int** adjacentPathMatrix)
 {
-    for(int i = 0; i < grid.getNbRow(); i++)
+    for(int i = 0; i < grid->getNbRow(); i++)
     {
-        for(int j = 0; j < grid.getNbColumn(); j++)
+        for(int j = 0; j < grid->getNbColumn(); j++)
         {
             if(adjacentPathMatrix[i][j] == 1)
             {
                 //if there is another single one to the right or under we have a pair
-                if((i + 1 < grid.getNbRow() && adjacentPathMatrix[i+1][j] == 1)
-                        || (j + 1 < grid.getNbColumn() && adjacentPathMatrix[i][j+1] == 1))
+                if((i + 1 < grid->getNbRow() && adjacentPathMatrix[i+1][j] == 1)
+                        || (j + 1 < grid->getNbColumn() && adjacentPathMatrix[i][j+1] == 1))
                 {
-                    return QPoint(i,j);
+                    return new QPoint(i,j);
                 }
             }
         }
     }
-    return QPoint(-1,-1);
+    return new QPoint(-1,-1);
+}
+
+void GridBuilder::destroyAdjacentPathMatrix(int **adjacentPathMatrix, int row)
+{
+    for(int i = 0; i < row; ++i){
+        delete[] adjacentPathMatrix[i];
+    }
+
+    delete[] adjacentPathMatrix;
+}
+
+QPoint* GridBuilder::getRandomFreeBlock(Grid* grid)
+{
+    int nbOfFreeBlocks = 0;
+    for(int i = 0; i < grid->getNbRow(); i++)
+    {
+        for(int j = 0; j < grid->getNbColumn(); j++)
+        {
+            if(!grid->getPath(i,j).isCovered()) nbOfFreeBlocks++;
+        }
+    }
+
+    int pos = getRandomNumberFrom0To(nbOfFreeBlocks);
+
+    for(int i = 0; i < grid->getNbRow(); i++)
+    {
+        for(int j = 0; j < grid->getNbColumn(); j++)
+        {
+            if(!grid->getPath(i,j).isCovered())
+            {
+                pos--;
+                if(pos == 0)
+                {
+                    return new QPoint(i,j);
+                }
+            }
+        }
+    }
+
+    //Should never hit this
+    qDebug() << "\nERROR\nERROR\nERROR\nERROR\nERROR SHOULD NEVER HIT THIS\n";
+    return new QPoint(-1,-1);
+}
+
+int GridBuilder::getRandomNumberFrom0To(int max)
+{
+    std::srand(std::time(0)); // use current time as seed for random generator
+    return std::rand() % max;
+}
+
+QPoint* GridBuilder::getRandomAdjacentFreeBlock(QPoint* pos, Grid* grid)
+{
+    QPoint qp = QPoint(pos->x(), pos->y());
+    int num = numberOfFreeAdjacentPositions(&qp, grid);
+    int direction = getRandomNumberFrom0To(num);
+
+    //up
+    if(pos->x() - 1 >= 0 && !grid->getPath(pos->x() - 1, pos->y()).isCovered())
+    {
+        if(direction == 0) return new QPoint(pos->x() - 1, pos->y());
+        --direction;
+    }
+
+    //down
+    if(pos->x() + 1 <= grid->getNbRow() - 1 && !grid->getPath(pos->x() + 1, pos->y()).isCovered())
+    {
+        if(direction == 0) return new QPoint(pos->x() + 1, pos->y());
+        --direction;
+    }
+    //left
+    if(pos->y() - 1 >= 0 && !grid->getPath(pos->x(), pos->y() - 1).isCovered())
+    {
+        if(direction == 0) return new QPoint(pos->x(), pos->y() - 1);
+        --direction;
+    }
+    //right
+    if(pos->y() + 1 <= grid->getNbColumn() - 1 && !grid->getPath(pos->x(), pos->y() + 1).isCovered())
+    {
+        if(direction == 0) return new QPoint(pos->x(), pos->y() + 1);
+        --direction;
+    }
+
+    //SHOULD NEVER HIT THIS
+    qDebug() << "ERROR";
+    return new QPoint(-1,-1);
+}
+
+bool GridBuilder::moveAdjacentEndPoint(QPoint* pos, Grid* grid)
+{
+    Path adjacentOrigin;
+    //up
+    if(pos->x() - 1 >= 0 && grid->getPath(pos->x() - 1, pos->y()).isOrigin())
+    {
+        adjacentOrigin = grid->getPath(pos->x()-1, pos->y());
+    }
+    //down
+    else if(pos->x() + 1 <= grid->getNbRow() - 1 && grid->getPath(pos->x() + 1, pos->y()).isOrigin())
+    {
+        adjacentOrigin = grid->getPath(pos->x() + 1, pos->y());
+    }
+    //left
+    else if(pos->y() - 1 >= 0 && grid->getPath(pos->x(), pos->y() - 1).isOrigin())
+    {
+        adjacentOrigin = grid->getPath(pos->x(), pos->y() - 1);
+    }
+    //right
+    else if(pos->y() + 1 <= grid->getNbColumn() - 1 && grid->getPath(pos->x(), pos->y() + 1).isOrigin())
+    {
+        adjacentOrigin = grid->getPath(pos->x(), pos->y() + 1);
+    }
+    else
+    {
+        return false;
+    }
+
+    Path path = grid->getPath(pos->x(), pos->y());
+    path.setOrigin(true);
+    adjacentOrigin.setOrigin(false);
+    adjacentOrigin.setPathComplete(false);
+    if(adjacentOrigin.next == NULL)
+    {
+        path.setPathComplete(true);
+        path.previous[0] = &adjacentOrigin;
+        adjacentOrigin.next[0] = &path;
+    }
+    else
+    {
+        adjacentOrigin.previous[0] = &path;
+        path.next[0] = &adjacentOrigin;
+    }
+
+    return true;
 }
