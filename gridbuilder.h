@@ -19,6 +19,8 @@ public:
 
 private:
 
+    static int color;
+
     static Grid* buildGrid(Grid*, int, int);
 
     static void destroyAdjacentPathMatrix(int**, int);

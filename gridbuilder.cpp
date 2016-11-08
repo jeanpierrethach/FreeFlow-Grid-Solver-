@@ -1,5 +1,7 @@
 #include "gridbuilder.h"
 
+int GridBuilder::color = -1;
+
 GridBuilder::GridBuilder()
 {
 
@@ -65,16 +67,18 @@ Grid* GridBuilder::buildGrid(Grid* grid, int row, int col)
 
 Grid* GridBuilder::buildGrid(int row, int col)
 {
+    std::srand(std::time(0));
     Grid* grid = new Grid(row, col);
 
     while(!grid->isCompleted())
     {
+        color = -1;
         delete grid;
         grid = new Grid(row, col);
         buildGrid(grid, row, col);
     }
 
-    int color = 1;
+    /*int color = 1;
     for(int i = 0; i < grid->getNbRow(); i++)
     {
         for(int j = 0; j < grid->getNbColumn(); j++)
@@ -85,7 +89,7 @@ Grid* GridBuilder::buildGrid(int row, int col)
             //}
         }
     }
-
+*/
     return grid;
 
     /*
@@ -148,11 +152,13 @@ Grid* GridBuilder::buildGrid(int row, int col)
 
 void GridBuilder::buildPathStartingPoint(QPoint* startingPos, Grid* grid)
 {
+    color++;
     Path path = grid->getPath(startingPos->x(), startingPos->y());
 
     grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
     //path.setCovered(true);
 
+    grid->getGrid()[startingPos->x()][startingPos->y()].setColor(color);
 
     grid->getGrid()[startingPos->x()][startingPos->y()].setOrigin(true);
     //path.setOrigin(true);
@@ -173,6 +179,9 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
     //path.setCovered(true);
     grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
 
+    //setting color
+    grid->getGrid()[startingPos->x()][startingPos->y()].setColor(color);
+
     if(possibleMoves == 0)
     {
         //path.setOrigin(true);
@@ -189,6 +198,8 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
         //nextPath.previous[0] = &path;
         grid->getGrid()[nextPathPos->x()][nextPathPos->y()].previous[0] = &(grid->getGrid()[startingPos->x()][startingPos->y()]);
 
+        grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setColor(true);
+
         //grid->getPath(startingPos->x(), startingPos->y()).next[0] = &nextPath;
         grid->getGrid()[startingPos->x()][startingPos->y()].next[0] = &(grid->getGrid()[nextPathPos->x()][nextPathPos->y()]);
 
@@ -197,7 +208,7 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
     else
     {
 
-        if(path.isOrigin() || getRandomNumberFrom0To(grid->getNbColumn() + 1) != 0)
+        if(path.isOrigin() || getRandomNumberFrom0To(grid->getNbColumn() / 2) != 1)
         {
 
             QPoint* nextPathPos = getRandomAdjacentFreeBlock(startingPos, grid);
@@ -212,12 +223,17 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
             grid->getGrid()[startingPos->x()][startingPos->y()].next[0] = &(grid->getGrid()[nextPathPos->x()][nextPathPos->y()]);
             //grid->getPath(startingPos->x(), startingPos->y()).next[0] = &nextPath;
 
+            grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setColor(color);
+
             buildPath(nextPathPos, grid);
         }
         else
         {
-            path.setOrigin(true);
-            path.setPathComplete(true);
+            grid->getGrid()[startingPos->x()][startingPos->y()].setOrigin(true);
+            grid->getGrid()[startingPos->x()][startingPos->y()].setPathComplete(true);
+            grid->getGrid()[startingPos->x()][startingPos->y()].setColor(color);
+            //path.setOrigin(true);
+            //path.setPathComplete(true);
         }
     }
 
@@ -258,7 +274,7 @@ QPoint*  GridBuilder::findXAdjacentFreeBlocks(Grid* grid, int x, int** adjacentP
     {
         for(int j = 0; j < col; j++)
         {
-            if(adjacentPathMatrix[i][j] == x)
+            if(adjacentPathMatrix[i][j] == x && !grid->getPath(i,j).isCovered())
             {
                 return new QPoint(i,j);
             }
@@ -286,11 +302,11 @@ QPoint* GridBuilder::findPairOfLoneBlocks(Grid* grid, int** adjacentPathMatrix)
     {
         for(int j = 0; j < grid->getNbColumn(); j++)
         {
-            if(adjacentPathMatrix[i][j] == 1)
+            if(adjacentPathMatrix[i][j] == 1 && !grid->getPath(i,j).isCovered())
             {
                 //if there is another single one to the right or under we have a pair
-                if((i + 1 < grid->getNbRow() && adjacentPathMatrix[i+1][j] == 1)
-                        || (j + 1 < grid->getNbColumn() && adjacentPathMatrix[i][j+1] == 1))
+                if((i + 1 < grid->getNbRow() && adjacentPathMatrix[i+1][j] == 1 && !grid->getPath(i+1,j).isCovered())
+                        || (j + 1 < grid->getNbColumn() && adjacentPathMatrix[i][j+1] == 1 && !grid->getPath(i,j+1).isCovered()))
                 {
                     return new QPoint(i,j);
                 }
@@ -320,6 +336,8 @@ QPoint* GridBuilder::getRandomFreeBlock(Grid* grid)
         }
     }
 
+    if(nbOfFreeBlocks == 0) nbOfFreeBlocks++;
+
     int pos = getRandomNumberFrom0To(nbOfFreeBlocks);
 
     for(int i = 0; i < grid->getNbRow(); i++)
@@ -344,7 +362,7 @@ QPoint* GridBuilder::getRandomFreeBlock(Grid* grid)
 
 int GridBuilder::getRandomNumberFrom0To(int max)
 {
-    std::srand(std::time(0)); // use current time as seed for random generator
+     // use current time as seed for random generator
     return std::rand() % max;
 }
 
