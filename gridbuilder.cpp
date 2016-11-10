@@ -77,12 +77,14 @@ Grid* GridBuilder::buildGrid(int row, int col)
         grid = new Grid(row, col);
         buildGrid(grid, row, col);
     }
+
+    return grid;
 }
 
 void GridBuilder::buildPathStartingPoint(QPoint* startingPos, Grid* grid)
 {
     color++;
-    Path path = grid->getPath(startingPos->x(), startingPos->y());
+    //Path path = grid->getPath(startingPos->x(), startingPos->y());
 
     grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
     //path.setCovered(true);
@@ -103,7 +105,7 @@ void GridBuilder::buildPathStartingPoint(QPoint* startingPos, Grid* grid)
 void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
 {
     int possibleMoves = numberOfFreeAdjacentPositions(startingPos, grid);
-    Path path = grid->getPath(startingPos->x(), startingPos->y());
+    //Path path = grid->getPath(startingPos->x(), startingPos->y());
 
     //path.setCovered(true);
     grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
@@ -137,11 +139,11 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
     else
     {
 
-        if(path.isOrigin() || getRandomNumberFrom0To(grid->getNbColumn() / 2) != 1)
+        if(grid->getGrid()[startingPos->x()][startingPos->y()].isOrigin() || getRandomNumberFrom0To(grid->getNbColumn() / 2) != 1)
         {
 
             QPoint* nextPathPos = getRandomAdjacentFreeBlock(startingPos, grid);
-            Path nextPath = grid->getPath(nextPathPos->x(), nextPathPos->y());
+            //Path nextPath = grid->getPath(nextPathPos->x(), nextPathPos->y());
 
             //nextPath.setCovered(true);
             grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setCovered(true);
