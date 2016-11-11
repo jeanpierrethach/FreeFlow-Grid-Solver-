@@ -4,6 +4,12 @@
 #include "path.h"
 #include <string>
 #include <QFileInfo>
+#include <QByteArray>
+#include <QFile>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
 
 using std::string;
 

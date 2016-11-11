@@ -6,13 +6,6 @@
 #include <vector>
 #include <exception>
 
-#include <QByteArray>
-#include <QFile>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonValue>
-
 Grid::Grid()
 {
     this->row = 0;

@@ -9,9 +9,12 @@
 #include <QPainter>
 #include <QColor>
 #include <QPoint>
+#include <QPushButton>
+#include <QInputDialog>
+
 #include <cmath>
 #include <random>
-#include <QPushButton>
+
 
 QColor color[9] = {QColor(237, 28, 36), QColor(0, 162, 232), QColor(102, 24, 126),
                    QColor(244, 233, 11), QColor(255, 127, 39), QColor(144, 233, 50),
@@ -28,15 +31,19 @@ MainWindow::MainWindow(QWidget* parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("Free Flow");
 
     this->setFixedWidth(width);
     this->setFixedHeight(height + bottomSpace);
 
     ui->back->setGeometry(30, height + height/24, 140, bottomSpace/3);
     ui->restart->setGeometry(width - 170, height + height/24, 140, bottomSpace/3);
+    ui->save->setGeometry(width - 430, height + height/24, 140, bottomSpace/3);
+
 
     connect(ui->back, SIGNAL(clicked()), this, SLOT(back()));
     connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
+    connect(ui->save, SIGNAL(clicked()), this, SLOT(save()));
 
     resizeGrid();
 
@@ -98,6 +105,46 @@ void MainWindow::restart()
         }
     }
     update();
+}
+
+void MainWindow::save()
+{
+
+    QJsonObject jsonObject;
+    jsonObject["row"] = grid->getNbRow();
+    jsonObject["column"] = grid->getNbColumn();
+
+    // TODO : read current grid state and add next/previous dependencies for each point
+
+
+    QJsonDocument doc(jsonObject);
+
+    QString jsonString = doc.toJson(QJsonDocument::Indented);
+
+    QMessageBox msg;
+    bool result;
+    QInputDialog input = new QInputDialog();
+
+    QString fileName = input.getText(this, "Free Flow", "", QLineEdit::Normal, "", &result);
+
+    if (result && !fileName.isEmpty())
+    {
+        QFile saveFile("save/" + fileName + ".json");
+        if(!saveFile.open(QIODevice::WriteOnly)){
+            qDebug() << "Failed to open save file";
+            exit(-1);
+        }
+        saveFile.write(jsonString.toLocal8Bit());
+        saveFile.close();
+
+        msg.setText("Your game has been successfully saved.");
+    }
+    else
+    {
+        msg.setText("Your game hasn't been saved.");
+    }
+    msg.exec();
+
 }
 
 void MainWindow::setGeneratedLevel()

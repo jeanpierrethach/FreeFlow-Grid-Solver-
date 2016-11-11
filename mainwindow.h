@@ -36,6 +36,7 @@ public:
 private slots:
     void back();
     void restart();
+    void save();
 
 public slots:
     void setLevel(int);
