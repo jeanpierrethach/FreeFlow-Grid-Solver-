@@ -52,6 +52,8 @@ private:
     void pressClearPathCase(int, int);
     void pressClearPathOrigin(int, int);
 
+    int generateNumberBetween(int, int);
+
     void moveActions(int, int);
     void moveToBlankCase(int, int);
     void moveToConnectSecondOrigin(int, int);

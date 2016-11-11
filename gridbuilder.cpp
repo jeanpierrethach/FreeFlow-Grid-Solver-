@@ -78,7 +78,27 @@ Grid* GridBuilder::buildGrid(int row, int col)
         buildGrid(grid, row, col);
     }
 
+    clearPaths(grid);
+
     return grid;
+}
+
+void GridBuilder::clearPaths(Grid* grid)
+{
+  for (int i = 0; i < grid->getNbRow(); ++i)
+  {
+      for (int j = 0; j < grid->getNbColumn(); ++j)
+      {
+          if (grid->getGrid()[j][i].isOrigin())
+          {
+              grid->getGrid()[j][i].clearOrigin();
+          }
+          else
+          {
+              grid->getGrid()[j][i].clear();
+          }
+      }
+  }
 }
 
 void GridBuilder::buildPathStartingPoint(QPoint* startingPos, Grid* grid)

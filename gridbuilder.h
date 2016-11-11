@@ -23,6 +23,8 @@ private:
 
     static Grid* buildGrid(Grid*, int, int);
 
+    static void clearPaths(Grid*);
+
     static void destroyAdjacentPathMatrix(int**, int);
 
     static QPoint* getRandomFreeBlock(Grid*);

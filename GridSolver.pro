@@ -36,8 +36,4 @@ RESOURCES += \
 
 DISTFILES += \
     assets/freeflow.png \
-    levels/*.json \
-    levels/level3.json \
-    levels/level4.json \
-    levels/level5.json \
-    levels/level6.json
+    levels/*.json

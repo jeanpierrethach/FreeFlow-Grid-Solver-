@@ -10,6 +10,7 @@
 #include <QColor>
 #include <QPoint>
 #include <cmath>
+#include <random>
 #include <QPushButton>
 
 QColor color[9] = {QColor(237, 28, 36), QColor(0, 162, 232), QColor(102, 24, 126),
@@ -101,11 +102,30 @@ void MainWindow::restart()
 
 void MainWindow::setGeneratedLevel()
 {
-    grid = GridBuilder::buildGrid(12,12);
+    int generatedNumber = generateNumberBetween(7, 12);
+
+    grid = GridBuilder::buildGrid(generatedNumber, generatedNumber);
+
+    qDebug() << generatedNumber;
 
     setPositionStart();
 
     start();
+}
+
+int MainWindow::generateNumberBetween(int min, int max)
+{
+    // random device that will seed the generator
+    std::random_device seeder;
+
+    // mersenne twister engine
+    std::mt19937 engine(seeder());
+
+    // uniform discrete distribution
+    std::uniform_int_distribution<int> dist(min, max);
+
+    // generate the integer
+    return dist(engine);
 }
 
 void MainWindow::setPositionStart()
