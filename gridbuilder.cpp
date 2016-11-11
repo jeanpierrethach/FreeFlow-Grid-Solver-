@@ -77,6 +77,7 @@ Grid* GridBuilder::buildGrid(int row, int col)
         grid = new Grid(row, col);
         buildGrid(grid, row, col);
     }
+    return grid;
 }
 
 void GridBuilder::buildPathStartingPoint(QPoint* startingPos, Grid* grid)

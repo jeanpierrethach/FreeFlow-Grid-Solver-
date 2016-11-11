@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "mainwindow.h"
+#include "levelmenu.h"
 
 namespace Ui {
     class Dialog;
@@ -17,15 +18,19 @@ public:
     ~Dialog();
 
 public slots:
-    void startSlot();
     void leaveSlot();
+    void slotGenerateLevel();
+    void slotLevel(int);
 
 signals:
     void start();
     void leave();
+    void emitLevel(int);
+    void setGeneratedLevel();
 
 private:
     Ui::Dialog* ui;
+    LevelMenu levelMenu;
     QApplication* app;
 };
 

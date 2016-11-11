@@ -20,10 +20,10 @@ Grid::Grid()
 }
 
 bool fileExists(QString path) {
-    QFileInfo check_file(path);
+    QFileInfo checkFile(path);
 
     // check if file exists. If yes then is it really a file and not a directory
-    return (check_file.exists() && check_file.isFile());
+    return (checkFile.exists() && checkFile.isFile());
 }
 
 Grid::Grid(const QString& filePath)
@@ -97,7 +97,7 @@ Grid::Grid(int nbRow, int nbCol)
     this->column = nbCol;
 
     gameGrid = new Path*[nbRow];
-    
+
     for (int i = 0; i < nbRow; ++i)
     {
         gameGrid[i] = new Path[nbCol];

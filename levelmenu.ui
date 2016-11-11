@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LevelMenu</class>
+ <widget class="QDialog" name="LevelMenu">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>291</width>
+    <height>353</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>22</x>
+     <y>19</y>
+     <width>241</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="chooseLevelPlatform"/>
+  </widget>
+  <widget class="QPushButton" name="generate">
+   <property name="geometry">
+    <rect>
+     <x>75</x>
+     <y>280</y>
+     <width>150</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Generate Random Level</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -39,10 +39,6 @@ MainWindow::MainWindow(QWidget* parent) :
 
     resizeGrid();
 
-    setLevel();
-
-    setPositionStart();
-
     currentX = NOTACTIVE;
     currentY = NOTACTIVE;
 }
@@ -52,6 +48,19 @@ MainWindow::~MainWindow()
     delete ui;
     delete grid;
 }
+
+void MainWindow::setLevel(int level)
+{
+
+    QString fileName = ":/Other/levels/level" + QString::number(level) + ".json";
+
+    grid = new Grid(fileName);
+
+    setPositionStart();
+
+    start();
+}
+
 
 void MainWindow::start()
 {
@@ -90,20 +99,23 @@ void MainWindow::restart()
     update();
 }
 
-void MainWindow::setLevel()
+void MainWindow::setGeneratedLevel()
 {
-    grid = GridBuilder::buildGrid(16,16);
-    //grid = new Grid(":/Other/levels/level2.json");
+    grid = GridBuilder::buildGrid(12,12);
 
+    setPositionStart();
+
+    start();
+}
+
+void MainWindow::setPositionStart()
+{
     pos.resize(grid->getNbRow());
     for (int i = 0; i < grid->getNbRow(); ++i)
     {
         pos[i].resize(grid->getNbColumn());
     }
-}
 
-void MainWindow::setPositionStart()
-{
     for (int i = 0; i < grid->getNbRow(); ++i)
     {
         for (int j = 0; j < grid->getNbColumn(); ++j)

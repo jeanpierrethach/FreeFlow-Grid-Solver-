@@ -15,19 +15,29 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     grid.cpp \
     path.cpp \
-    dialog.cpp
+    dialog.cpp \
+    levelmenu.cpp \
+    gridbuilder.cpp
+
 
 HEADERS  += mainwindow.h \
     grid.h \
     path.h \
-    dialog.h
+    dialog.h \
+    levelmenu.h \
+    gridbuilder.h
 
 FORMS    += mainwindow.ui \
-    dialog.ui
+    dialog.ui \
+    levelmenu.ui
 
 RESOURCES += \
     resource.qrc
 
 DISTFILES += \
     assets/freeflow.png \
-    levels/*.json
+    levels/*.json \
+    levels/level3.json \
+    levels/level4.json \
+    levels/level5.json \
+    levels/level6.json

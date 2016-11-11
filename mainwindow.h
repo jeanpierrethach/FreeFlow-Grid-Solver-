@@ -25,8 +25,6 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
-    void setLevel();
-
     void mousePressEvent(QMouseEvent*);
     void mouseMoveEvent(QMouseEvent*);
     void mouseReleaseEvent(QMouseEvent*);
@@ -40,8 +38,10 @@ private slots:
     void restart();
 
 public slots:
+    void setLevel(int);
     void leave();
     void start();
+    void setGeneratedLevel();
 
 signals:
     void backToStart();

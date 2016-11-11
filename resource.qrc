@@ -5,5 +5,9 @@
     <qresource prefix="/Other">
         <file>levels/level1.json</file>
         <file>levels/level2.json</file>
+        <file>levels/level3.json</file>
+        <file>levels/level4.json</file>
+        <file>levels/level5.json</file>
+        <file>levels/level6.json</file>
     </qresource>
 </RCC>
