@@ -22,11 +22,16 @@ public slots:
     void slotGenerateLevel();
     void slotLevel(int);
 
+private slots:
+    void slotLoadLevel();
+    void closeWindow();
+
 signals:
     void start();
     void leave();
     void emitLevel(int);
     void setGeneratedLevel();
+    void loadLevel();
 
 private:
     Ui::Dialog* ui;

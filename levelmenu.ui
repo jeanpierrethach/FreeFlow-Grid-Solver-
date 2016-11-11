@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>291</width>
-    <height>353</height>
+    <height>383</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,6 +35,19 @@
    </property>
    <property name="text">
     <string>Generate Random Level</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="load">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>330</y>
+     <width>95</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Load</string>
    </property>
   </widget>
  </widget>

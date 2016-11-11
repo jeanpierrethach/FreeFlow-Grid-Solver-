@@ -36,7 +36,8 @@ public:
 private slots:
     void back();
     void restart();
-    void save();
+    void saveGame();
+    void loadGame();
 
 public slots:
     void setLevel(int);
@@ -46,6 +47,7 @@ public slots:
 
 signals:
     void backToStart();
+    void closeWindow();
 
 private:
     Ui::MainWindow* ui;

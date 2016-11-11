@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     connect(ui->back, SIGNAL(clicked()), this, SLOT(back()));
     connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
-    connect(ui->save, SIGNAL(clicked()), this, SLOT(save()));
+    connect(ui->save, SIGNAL(clicked()), this, SLOT(saveGame()));
 
     resizeGrid();
 
@@ -107,7 +107,7 @@ void MainWindow::restart()
     update();
 }
 
-void MainWindow::save()
+void MainWindow::saveGame()
 {
 
     QJsonObject jsonObject;
@@ -125,23 +125,69 @@ void MainWindow::save()
     bool result;
     QInputDialog input = new QInputDialog();
 
-    QString fileName = input.getText(this, "Free Flow", "", QLineEdit::Normal, "", &result);
+    QString fileName = input.getText(this, "Free Flow", "Enter a name", QLineEdit::Normal, "", &result);
 
     if (result && !fileName.isEmpty())
     {
         QFile saveFile("save/" + fileName + ".json");
         if(!saveFile.open(QIODevice::WriteOnly)){
             qDebug() << "Failed to open save file";
+            msg.setText("Your game hasn't been saved.");
             exit(-1);
         }
-        saveFile.write(jsonString.toLocal8Bit());
-        saveFile.close();
+        else
+        {
+            saveFile.write(jsonString.toLocal8Bit());
 
-        msg.setText("Your game has been successfully saved.");
+            msg.setText("Your game has been successfully saved.");
+        }
     }
     else
     {
         msg.setText("Your game hasn't been saved.");
+    }
+    msg.exec();
+
+}
+
+void MainWindow::loadGame()
+{
+    QMessageBox msg;
+    bool result;
+    QInputDialog input = new QInputDialog();
+
+    QString fileName = input.getText(this, "Free Flow", "Enter a name", QLineEdit::Normal, "", &result);
+    QString filePath = ("save/" + fileName + ".json");
+
+    if (result && !fileName.isEmpty())
+    {
+        QFile loadFile(filePath);
+        if(!loadFile.exists())
+        {
+            qDebug() << "File doesn't exist";
+            msg.setText("The file name doesn't exist.");
+        }
+        else if(!loadFile.open(QIODevice::ReadOnly))
+        {
+            qDebug() << "Failed to load file";
+            msg.setText("Your game hasn't been loaded.");
+        }
+        else
+        {
+            msg.setText("Your game has been successfully loaded.");
+            
+            // TODO : load json file and construct grid
+            grid = new Grid(filePath);
+
+            setPositionStart();
+
+            emit closeWindow();
+            start();
+        }
+    }
+    else
+    {
+        msg.setText("Your game hasn't been loaded.");
     }
     msg.exec();
 
@@ -332,7 +378,7 @@ void MainWindow::mouseRoundColor()
         {
             painter->setPen(currentColor[grid->getGrid()[currentX][currentY].getColor()]);
             painter->setBrush(currentColor[grid->getGrid()[currentX][currentY].getColor()]);
-            painter->drawEllipse(mousePosition, 40, 40);
+            painter->drawEllipse(mousePosition, 300/grid->getNbRow(), 300/grid->getNbColumn());
         }
     }
 }
