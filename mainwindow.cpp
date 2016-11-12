@@ -7,7 +7,6 @@
 #include <QMouseEvent>
 #include <iostream>
 #include <QPainter>
-#include <QColor>
 #include <QPoint>
 #include <QPushButton>
 #include <QInputDialog>
@@ -18,16 +17,7 @@
 #include <cmath>
 #include <random>
 
-
-QColor color[9] = {QColor(237, 28, 36), QColor(0, 162, 232), QColor(102, 24, 126),
-                   QColor(244, 233, 11), QColor(255, 127, 39), QColor(144, 233, 50),
-                   QColor(0, 0, 0), QColor(185, 122, 87), QColor(254, 109, 221)};
-
-QColor currentColor[9] = {QColor(237, 28, 36, 100), QColor(0, 162, 232, 100),
-                          QColor(102, 24, 126, 100), QColor(244, 233, 11, 100),
-                          QColor(255, 127, 39, 100), QColor(144, 233, 50, 100),
-                          QColor(0, 0, 0, 100), QColor(185, 122, 87, 100),
-                          QColor(254, 109, 221, 100)};
+using std::vector;
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -47,6 +37,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->back, SIGNAL(clicked()), this, SLOT(back()));
     connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
     connect(ui->save, SIGNAL(clicked()), this, SLOT(saveGame()));
+
+    generateColorPalette();
 
     resizeGrid();
 
@@ -287,6 +279,7 @@ void MainWindow::resizeGrid()
 void MainWindow::paintEvent(QPaintEvent* )
 {
     painter = new QPainter(this);
+
     drawGrid();
     drawColorLine();
     fillSquareColor();
@@ -299,7 +292,6 @@ void MainWindow::drawGrid()
     painter->setPen(Qt::black);
     intervalWidth = width / grid->getNbRow();
     intervalHeight = height / grid->getNbColumn();
-
     setPositionCase();
 
     drawRectangleGrid();
@@ -649,4 +641,23 @@ void MainWindow::gameIsWon()
     msg.setText("Congratulations!");
     msg.setBaseSize(QSize(400,200));
     msg.exec();
+}
+
+void MainWindow::generateColorPalette()
+{
+    // hue [0, 360), saturation [0, 255),
+    // lightness [0, 255), alpha-transparency [0, 255]
+    int nbColors = 50;
+
+    for(int i = 0; i < 360; i += 360 / nbColors)
+    {
+        int hue = i;
+        int saturation = 90 + rand() % 100;
+        int lightness = 60 + rand() % 100;
+
+        QColor colorGen = QColor::fromHsl(hue, saturation, lightness, 255);
+        QColor transColorGen = QColor::fromHsl(hue, saturation, lightness, 100);
+        color.push_back(colorGen);
+        currentColor.push_back(transColorGen);
+    }
 }

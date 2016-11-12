@@ -10,6 +10,7 @@
 #include <vector>
 #include "grid.h"
 #include <QLabel>
+#include <QColor>
 
 #define NOTACTIVE -1
 
@@ -56,6 +57,7 @@ private:
     void pressClearPathOrigin(int, int);
 
     int generateNumberBetween(int, int);
+    void generateColorPalette();
 
     void moveActions(int, int);
     void moveToBlankCase(int, int);
@@ -94,6 +96,8 @@ private:
     bool pathConnected;
 
     QPainter* painter;
+    std::vector<QColor> color;
+    std::vector<QColor> currentColor;
 
     int currentX;
     int currentY;
