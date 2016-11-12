@@ -46,7 +46,7 @@ public slots:
     void setGeneratedLevel();
 
 signals:
-    void backToStart();
+    void backToLevelMenu();
     void closeWindow();
 
 private:

@@ -11,6 +11,7 @@
 #include <QPoint>
 #include <QPushButton>
 #include <QInputDialog>
+#include <QVariant>
 
 #include <cmath>
 #include <random>
@@ -85,7 +86,7 @@ void MainWindow::back()
 {
     close();
     restart();
-    emit(backToStart());
+    emit(backToLevelMenu());
 }
 
 void MainWindow::restart()
@@ -114,7 +115,30 @@ void MainWindow::saveGame()
     jsonObject["row"] = grid->getNbRow();
     jsonObject["column"] = grid->getNbColumn();
 
+    QJsonArray array;
+    QJsonArray nestedArray;
+
+
     // TODO : read current grid state and add next/previous dependencies for each point
+    for (int i = 0; i < grid->getNbRow(); ++i)
+    {
+      for (int j = 0; j < grid->getNbColumn(); ++j)
+      {
+        if (grid->getGrid()[i][j].isOrigin())
+        {
+            array.insert(0, grid->getGrid()[i][j].x);
+            array.insert(1, grid->getGrid()[i][j].y);
+            array.insert(2, grid->getGrid()[i][j].getColor());
+            nestedArray.append(array);
+
+            array.removeLast();
+            array.removeLast();
+            array.removeLast();
+        }
+      }
+    }
+    jsonObject["level"] = nestedArray;
+
 
 
     QJsonDocument doc(jsonObject);
@@ -126,6 +150,8 @@ void MainWindow::saveGame()
     QInputDialog input = new QInputDialog();
 
     QString fileName = input.getText(this, "Free Flow", "Enter a name", QLineEdit::Normal, "", &result);
+
+    // TODO : disallow dots in fileName
 
     if (result && !fileName.isEmpty())
     {
@@ -175,8 +201,8 @@ void MainWindow::loadGame()
         else
         {
             msg.setText("Your game has been successfully loaded.");
-            
-            // TODO : load json file and construct grid
+
+            // TODO : load json file and construct grid (conditions in constructor for certain propreties)
             grid = new Grid(filePath);
 
             setPositionStart();
