@@ -13,6 +13,7 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QRegExp>
 
 #include <cmath>
 #include <random>
@@ -152,11 +153,14 @@ void MainWindow::saveGame()
 
     QString fileName = input.getText(this, "Free Flow", "Enter a name", QLineEdit::Normal, "", &result);
 
-    // TODO : disallow dots in fileName
-
-    if (result && !fileName.isEmpty())
+    if (fileName.contains(QRegExp("[^a-zA-Z\\d\\s]")))
     {
-        QFile saveFile("save/" + fileName + ".json");
+        qDebug() << "The file contains special characters.";
+        msg.setText("Invalid name. No special characters allowed.");
+    }
+    else if (result && !fileName.isEmpty())
+    {
+        QFile saveFile("save/" + fileName.trimmed() + ".json");
         if(!saveFile.open(QIODevice::WriteOnly)){
             qDebug() << "Failed to open save file";
             msg.setText("Your game hasn't been saved.");
@@ -194,7 +198,7 @@ void MainWindow::loadGame()
         if(!loadFile.exists())
         {
             qDebug() << "File doesn't exist";
-            msg.setText("The file name doesn't exist.");
+            msg.setText("The file isn't in the correct repository.");
         }
         else if(!loadFile.open(QIODevice::ReadOnly))
         {
