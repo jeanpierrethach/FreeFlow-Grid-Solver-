@@ -40,7 +40,7 @@
   <widget class="QPushButton" name="load">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>170</x>
      <y>330</y>
      <width>95</width>
      <height>30</height>
@@ -48,6 +48,19 @@
    </property>
    <property name="text">
     <string>Load</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="back">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>330</y>
+     <width>95</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Back</string>
    </property>
   </widget>
  </widget>

@@ -27,11 +27,13 @@ public slots:
 private slots:
     void startGeneratedLevel();
     void slotLoadLevel();
+    void backToStart();
 
 signals:
     void emitLevel(int);
     void setGeneratedLevel();
     void loadLevel();
+    void back();
 
 
 private:

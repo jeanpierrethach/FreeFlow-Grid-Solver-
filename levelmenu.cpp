@@ -27,6 +27,7 @@ LevelMenu::LevelMenu(QWidget *parent) :
     connect(&map, SIGNAL(mapped(int)), this, SLOT(slotLevel(int)));
     connect(ui->generate, SIGNAL(clicked()), this, SLOT(startGeneratedLevel()));
     connect(ui->load, SIGNAL(clicked()), this, SLOT(slotLoadLevel()));
+    connect(ui->back, SIGNAL(clicked()), this, SLOT(backToStart()));
 
     for (int i = 0; i < 6; ++i)
     {
@@ -69,4 +70,10 @@ void LevelMenu::startGeneratedLevel()
 void LevelMenu::slotLoadLevel()
 {
     emit loadLevel();
+}
+
+void LevelMenu::backToStart()
+{
+    close();
+    emit back();
 }

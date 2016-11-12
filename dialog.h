@@ -25,6 +25,7 @@ public slots:
 private slots:
     void slotLoadLevel();
     void closeWindow();
+    void openWindow();
 
 signals:
     void start();

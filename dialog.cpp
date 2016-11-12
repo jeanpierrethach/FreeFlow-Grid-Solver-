@@ -18,6 +18,7 @@ Dialog::Dialog(QApplication* a, QWidget* parent) :
     connect(&levelMenu, SIGNAL(emitLevel(int)), this, SLOT(slotLevel(int)));
     connect(&levelMenu, SIGNAL(setGeneratedLevel()), this, SLOT(slotGenerateLevel()));
     connect(&levelMenu, SIGNAL(loadLevel()), this, SLOT(slotLoadLevel()));
+    connect(&levelMenu, SIGNAL(back()), this, SLOT(open()));
 
     QPixmap title(":/Image/assets/freeflow.png");
     ui->title->setPixmap(title);
@@ -48,6 +49,11 @@ void Dialog::slotGenerateLevel()
 void Dialog::slotLoadLevel()
 {
     emit loadLevel();
+}
+
+void Dialog::openWindow()
+{
+    levelMenu.open();
 }
 
 void Dialog::closeWindow()
