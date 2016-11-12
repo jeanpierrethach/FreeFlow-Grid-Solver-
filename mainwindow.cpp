@@ -11,7 +11,8 @@
 #include <QPoint>
 #include <QPushButton>
 #include <QInputDialog>
-#include <QVariant>
+#include <QFileDialog>
+#include <QFileInfo>
 
 #include <cmath>
 #include <random>
@@ -179,13 +180,15 @@ void MainWindow::saveGame()
 void MainWindow::loadGame()
 {
     QMessageBox msg;
-    bool result;
-    QInputDialog input = new QInputDialog();
 
-    QString fileName = input.getText(this, "Free Flow", "Enter a name", QLineEdit::Normal, "", &result);
+    QString filter = "JSON Files (*.json)";
+    QFileInfo selectedFile = QFileDialog::getOpenFileName(this, "Select a file to open", "/home/", filter);
+
+    QString fileName = selectedFile.baseName();
+
     QString filePath = ("save/" + fileName + ".json");
 
-    if (result && !fileName.isEmpty())
+    if (!fileName.isEmpty())
     {
         QFile loadFile(filePath);
         if(!loadFile.exists())
