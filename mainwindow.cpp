@@ -13,11 +13,10 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QRegExp>
+#include <QDir>
 
 #include <cmath>
 #include <random>
-
-using std::vector;
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -38,7 +37,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
     connect(ui->save, SIGNAL(clicked()), this, SLOT(saveGame()));
 
-    generateColorPalette();
+    generateColorPalette(50);
 
     resizeGrid();
 
@@ -133,11 +132,11 @@ void MainWindow::saveGame()
     }
     jsonObject["level"] = nestedArray;
 
-
-
     QJsonDocument doc(jsonObject);
 
     QString jsonString = doc.toJson(QJsonDocument::Indented);
+
+    QDir().mkdir("save");
 
     QMessageBox msg;
     bool result;
@@ -175,6 +174,8 @@ void MainWindow::saveGame()
 
 void MainWindow::loadGame()
 {
+    QDir().mkdir("save");
+
     QMessageBox msg;
 
     QString filter = "JSON Files (*.json)";
@@ -284,6 +285,7 @@ void MainWindow::paintEvent(QPaintEvent* )
     drawColorLine();
     fillSquareColor();
     mouseRoundColor();
+
     delete painter;
 }
 
@@ -292,6 +294,7 @@ void MainWindow::drawGrid()
     painter->setPen(Qt::black);
     intervalWidth = width / grid->getNbRow();
     intervalHeight = height / grid->getNbColumn();
+
     setPositionCase();
 
     drawRectangleGrid();
@@ -643,11 +646,10 @@ void MainWindow::gameIsWon()
     msg.exec();
 }
 
-void MainWindow::generateColorPalette()
+void MainWindow::generateColorPalette(int nbColors)
 {
     // hue [0, 360), saturation [0, 255),
     // lightness [0, 255), alpha-transparency [0, 255]
-    int nbColors = 50;
 
     for(int i = 0; i < 360; i += 360 / nbColors)
     {

@@ -57,7 +57,7 @@ private:
     void pressClearPathOrigin(int, int);
 
     int generateNumberBetween(int, int);
-    void generateColorPalette();
+    void generateColorPalette(int);
 
     void moveActions(int, int);
     void moveToBlankCase(int, int);
