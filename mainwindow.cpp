@@ -111,24 +111,63 @@ void MainWindow::saveGame()
     QJsonArray array;
     QJsonArray nestedArray;
 
-
-    // TODO : read current grid state and add next/previous dependencies for each point
     for (int i = 0; i < grid->getNbRow(); ++i)
     {
       for (int j = 0; j < grid->getNbColumn(); ++j)
       {
-        if (grid->getGrid()[i][j].isOrigin())
-        {
-            array.insert(0, grid->getGrid()[i][j].x);
-            array.insert(1, grid->getGrid()[i][j].y);
-            array.insert(2, grid->getGrid()[i][j].getColor());
-            nestedArray.append(array);
 
-            array.removeLast();
-            array.removeLast();
-            array.removeLast();
-        }
+          QJsonObject settings;
+          QJsonObject settingsFirstOrigin, settingsSecondOrigin, settingsNext, settingsPrevious;
+
+          QJsonArray settingsArray;
+
+          QJsonArray nextValues;
+          QJsonArray previousValues;
+
+          settingsFirstOrigin["name"] = "first origin";
+          settingsFirstOrigin["value"] = grid->getGrid()[i][j].getFirstOrigin();
+
+          settingsSecondOrigin["name"] = "second origin";
+          settingsSecondOrigin["value"] = grid->getGrid()[i][j].getSecondOrigin();
+
+          settingsNext["name"] = "next";
+          if (grid->getGrid()[i][j].next[0] != 0)
+          {
+              nextValues.append(grid->getGrid()[i][j].next[0]->x);
+              nextValues.append(grid->getGrid()[i][j].next[0]->y);
+              nextValues.append(grid->getGrid()[i][j].next[0]->getColor());
+          }
+          settingsNext["value"] = nextValues;
+
+          settingsPrevious["name"] = "previous";
+
+          if (grid->getGrid()[i][j].previous[0] != 0)
+          {
+              previousValues.append(grid->getGrid()[i][j].previous[0]->x);
+              previousValues.append(grid->getGrid()[i][j].previous[0]->y);
+              previousValues.append(grid->getGrid()[i][j].previous[0]->getColor());
+          }
+          settingsPrevious["value"] = previousValues;
+
+          settingsArray.append(settingsFirstOrigin);
+          settingsArray.append(settingsSecondOrigin);
+          settingsArray.append(settingsNext);
+          settingsArray.append(settingsPrevious);
+
+          settings["settings"] = settingsArray;
+
+          array.insert(0, grid->getGrid()[i][j].x);
+          array.insert(1, grid->getGrid()[i][j].y);
+          array.insert(2, grid->getGrid()[i][j].getColor());
+          array.insert(3, settings);
+          nestedArray.append(array);
+
+          array.removeLast();
+          array.removeLast();
+          array.removeLast();
+          array.removeLast();
       }
+
     }
     jsonObject["level"] = nestedArray;
 
