@@ -678,8 +678,8 @@ void MainWindow::clearPathColorCase(Path* temp)
         }
         else if(temp->getColor() == color)
         {
-            temp->previous[0] = 0;
-            temp->setCoveredFlag(false);
+            temp->clearOrigin();
+
             break;
         }
         else
