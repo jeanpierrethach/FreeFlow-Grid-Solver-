@@ -118,11 +118,15 @@ void MainWindow::saveGame()
 
           QJsonObject settings;
           QJsonObject settingsFirstOrigin, settingsSecondOrigin, settingsNext, settingsPrevious;
+          QJsonObject settingsOrigin;
 
           QJsonArray settingsArray;
 
           QJsonArray nextValues;
           QJsonArray previousValues;
+
+          settingsOrigin["name"] = "origin";
+          settingsOrigin["value"] = grid->getGrid()[i][j].isOrigin();
 
           settingsFirstOrigin["name"] = "first origin";
           settingsFirstOrigin["value"] = grid->getGrid()[i][j].getFirstOrigin();
@@ -149,6 +153,7 @@ void MainWindow::saveGame()
           }
           settingsPrevious["value"] = previousValues;
 
+          settingsArray.append(settingsOrigin);
           settingsArray.append(settingsFirstOrigin);
           settingsArray.append(settingsSecondOrigin);
           settingsArray.append(settingsNext);
@@ -241,7 +246,6 @@ void MainWindow::loadGame()
         {
             msg.setText("Your game has been successfully loaded.");
 
-            // TODO : load json file and construct grid (conditions in constructor for certain propreties)
             grid = new Grid(filePath);
 
             setPositionStart();
