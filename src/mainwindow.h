@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <vector>
 #include "grid.h"
+#include "generator.h"
 #include <QLabel>
 #include <QColor>
 
@@ -55,9 +56,6 @@ private:
 
     void pressClearPathCase(int, int);
     void pressClearPathOrigin(int, int);
-
-    int generateNumberBetween(int, int);
-    void generateColorPalette(int);
 
     void moveActions(int, int);
     void moveToBlankCase(int, int);
@@ -107,6 +105,8 @@ private:
 
     Grid* grid;
     QLabel* label;
+
+    Generator gen;
 
 };
 

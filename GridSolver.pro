@@ -19,7 +19,8 @@ SOURCES += src/main.cpp \
     src/path.cpp \
     src/dialog.cpp \
     src/levelmenu.cpp \
-    src/gridbuilder.cpp
+    src/gridbuilder.cpp \
+    src/generator.cpp
 
 
 HEADERS  += src/mainwindow.h \
@@ -27,7 +28,8 @@ HEADERS  += src/mainwindow.h \
     src/path.h \
     src/dialog.h \
     src/levelmenu.h \
-    src/gridbuilder.h
+    src/gridbuilder.h \
+    src/generator.h
 
 FORMS    += src/mainwindow.ui \
     src/dialog.ui \

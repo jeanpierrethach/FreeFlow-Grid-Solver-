@@ -16,7 +16,6 @@
 #include <QDir>
 
 #include <cmath>
-#include <random>
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -37,7 +36,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
     connect(ui->save, SIGNAL(clicked()), this, SLOT(saveGame()));
 
-    generateColorPalette(50);
+    color = gen.getColorList("color");
+    currentColor = gen.getColorList("currentColor");
 
     resizeGrid();
 
@@ -268,9 +268,9 @@ void MainWindow::loadGame()
 
 void MainWindow::setGeneratedLevel()
 {
-    int generatedNumber = generateNumberBetween(7, 12);
+    int num = gen.generateNumber();
 
-    grid = GridBuilder::buildGrid(generatedNumber, generatedNumber);
+    grid = GridBuilder::buildGrid(num, num);
 
     qDebug() << generatedNumber;
 
@@ -279,20 +279,7 @@ void MainWindow::setGeneratedLevel()
     start();
 }
 
-int MainWindow::generateNumberBetween(int min, int max)
-{
-    // random device that will seed the generator
-    std::random_device seeder;
 
-    // mersenne twister engine
-    std::mt19937 engine(seeder());
-
-    // uniform discrete distribution
-    std::uniform_int_distribution<int> dist(min, max);
-
-    // generate the integer
-    return dist(engine);
-}
 
 void MainWindow::setPositionStart()
 {
@@ -695,22 +682,4 @@ void MainWindow::gameIsWon()
     msg.setText("Congratulations!");
     msg.setBaseSize(QSize(400,200));
     msg.exec();
-}
-
-void MainWindow::generateColorPalette(int nbColors)
-{
-    // hue [0, 360), saturation [0, 255),
-    // lightness [0, 255), alpha-transparency [0, 255]
-
-    for(int i = 0; i < 360; i += 360 / nbColors)
-    {
-        int hue = i;
-        int saturation = 90 + rand() % 100;
-        int lightness = 60 + rand() % 100;
-
-        QColor colorGen = QColor::fromHsl(hue, saturation, lightness, 255);
-        QColor transColorGen = QColor::fromHsl(hue, saturation, lightness, 100);
-        color.push_back(colorGen);
-        currentColor.push_back(transColorGen);
-    }
 }
