@@ -11,25 +11,27 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = GridSolver
 TEMPLATE = app
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    grid.cpp \
-    path.cpp \
-    dialog.cpp \
-    levelmenu.cpp \
-    gridbuilder.cpp
+INCLUDEPATH += $$PWD/src \
+
+SOURCES += src/main.cpp \
+    src/mainwindow.cpp \
+    src/grid.cpp \
+    src/path.cpp \
+    src/dialog.cpp \
+    src/levelmenu.cpp \
+    src/gridbuilder.cpp
 
 
-HEADERS  += mainwindow.h \
-    grid.h \
-    path.h \
-    dialog.h \
-    levelmenu.h \
-    gridbuilder.h
+HEADERS  += src/mainwindow.h \
+    src/grid.h \
+    src/path.h \
+    src/dialog.h \
+    src/levelmenu.h \
+    src/gridbuilder.h
 
-FORMS    += mainwindow.ui \
-    dialog.ui \
-    levelmenu.ui
+FORMS    += src/mainwindow.ui \
+    src/dialog.ui \
+    src/levelmenu.ui
 
 RESOURCES += \
     resource.qrc
