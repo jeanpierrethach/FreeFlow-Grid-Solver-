@@ -537,10 +537,14 @@ void MainWindow::mouseMoveEvent(QMouseEvent* e)
             grid->getGrid()[x][y].setCovered(true);
         }
 
-        // limits the pathing creation to adjacents cases only
-        if (abs(currentX - x) + abs(currentY - y) == 1)
+        // restrict movement on blank cases towards other blank cases
+        if (grid->getGrid()[currentX][currentY].getColor() != -1)
         {
-            moveActions(x, y);
+            // limits the pathing creation to adjacents cases only
+            if (abs(currentX - x) + abs(currentY - y) == 1)
+            {
+                moveActions(x, y);
+            }
         }
     }
 
