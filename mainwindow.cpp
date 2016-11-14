@@ -118,7 +118,7 @@ void MainWindow::saveGame()
 
           QJsonObject settings;
           QJsonObject settingsFirstOrigin, settingsSecondOrigin, settingsNext, settingsPrevious;
-          QJsonObject settingsOrigin;
+          QJsonObject settingsOrigin, settingsPathComplete;
 
           QJsonArray settingsArray;
 
@@ -133,6 +133,9 @@ void MainWindow::saveGame()
 
           settingsSecondOrigin["name"] = "second origin";
           settingsSecondOrigin["value"] = grid->getGrid()[i][j].getSecondOrigin();
+
+          settingsPathComplete["name"] = "path complete";
+          settingsPathComplete["value"] = grid->getGrid()[i][j].getPathComplete();
 
           settingsNext["name"] = "next";
           if (grid->getGrid()[i][j].next[0] != 0)
@@ -156,6 +159,7 @@ void MainWindow::saveGame()
           settingsArray.append(settingsOrigin);
           settingsArray.append(settingsFirstOrigin);
           settingsArray.append(settingsSecondOrigin);
+          settingsArray.append(settingsPathComplete);
           settingsArray.append(settingsNext);
           settingsArray.append(settingsPrevious);
 

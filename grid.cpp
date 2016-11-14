@@ -51,11 +51,11 @@ Grid::Grid(const QString& filePath)
             QJsonArray jsonArray = json["level"].toArray();
 
             std::vector<int> v, n, p;
-            int color, x, y = 0;
-            bool origin, firstOrigin, secondOrigin = false;
-            int nextColor, nextX, nextY = 0;
-            int previousColor, previousX, previousY = 0;
-            bool nOk, pOk = false;
+            int color = 0, x = 0, y = 0;
+            bool origin = false, firstOrigin = false, secondOrigin = false;
+            int nextColor = 0, nextX = 0, nextY = 0;
+            int previousColor = 0, previousX = 0, previousY = 0;
+            bool nOk = false, pOk = false, pathComplete = false;
 
             foreach (const QJsonValue& item, jsonArray)
             {
@@ -73,46 +73,35 @@ Grid::Grid(const QString& filePath)
 
                             if (name == "origin")
                             {
-                                qDebug() << name;
-                                bool value = settingsItem.toObject().value("value").toBool();
-                                origin = value;
-                                qDebug() << value;
+                                origin = settingsItem.toObject().value("value").toBool();
                             }
                             if (name == "first origin")
                             {
-                                qDebug() << name;
-                                bool value = settingsItem.toObject().value("value").toBool();
-                                firstOrigin = value;
-                                qDebug() << value;
+                                firstOrigin = settingsItem.toObject().value("value").toBool();
                             }
                             else if (name == "second origin")
                             {
-                                qDebug() << name;
-                                bool value = settingsItem.toObject().value("value").toBool();
-                                secondOrigin = value;
-                                qDebug() << value;
+                                secondOrigin = settingsItem.toObject().value("value").toBool();
+                            }
+                            else if (name == "path complete")
+                            {
+                                pathComplete = settingsItem.toObject().value("value").toBool();
                             }
                             else if (name == "next")
                             {
-                                qDebug() << name;
                                 QJsonArray value = settingsItem.toObject().value("value").toArray();
                                 for (int i = 0; i < value.size(); ++i)
                                 {
                                     n.push_back(value[i].toInt());
-                                    qDebug() << value[i].toInt();
                                 }
-                                qDebug() << value;
                             }
                             else if (name == "previous")
                             {
-                                qDebug() << name;
                                 QJsonArray value = settingsItem.toObject().value("value").toArray();
                                 for (int i = 0; i < value.size(); ++i)
                                 {
                                     p.push_back(value[i].toInt());
-                                    qDebug() << value[i].toInt();
                                 }
-                                qDebug() << value;
                             }
                         }
 
@@ -157,11 +146,6 @@ Grid::Grid(const QString& filePath)
                         gameGrid[x][y].setFirstOrigin(true);
                         gameGrid[x][y].setCoveredFlag(true);
                     }
-                    else
-                    {
-                        gameGrid[x][y].setData(color);
-                    }
-
 
                 }
                 else if (secondOrigin)
@@ -172,10 +156,7 @@ Grid::Grid(const QString& filePath)
                         gameGrid[x][y].setData(color);
                         gameGrid[x][y].setSecondOrigin(true);
                         gameGrid[x][y].setCoveredFlag(true);
-                    }
-                    else
-                    {
-                        gameGrid[x][y].setData(color);
+                        gameGrid[x][y].setPathComplete(true);
                     }
                 }
                 else
@@ -183,7 +164,6 @@ Grid::Grid(const QString& filePath)
                     // it is a standard level
                     if (json["standard"].toBool())
                     {
-                        qDebug() << "\n\n\nentered\n\n\n";
                         gameGrid[x][y].setData(color);
                     }
                     // it is a point
