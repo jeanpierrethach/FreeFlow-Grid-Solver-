@@ -139,7 +139,7 @@ Grid::Grid(const QString& filePath)
 
                 if (firstOrigin)
                 {
-                    if (nOk && origin)
+                    if (nOk || origin)
                     {
                         gameGrid[x][y].next[0] = &gameGrid[nextX][nextY];
                         gameGrid[x][y].setData(color);
@@ -150,7 +150,7 @@ Grid::Grid(const QString& filePath)
                 }
                 else if (secondOrigin)
                 {
-                    if (pOk && origin)
+                    if (pOk || origin)
                     {
                         gameGrid[x][y].previous[0] = &gameGrid[previousX][previousY];
                         gameGrid[x][y].setData(color);
