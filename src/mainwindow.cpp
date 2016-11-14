@@ -272,7 +272,7 @@ void MainWindow::setGeneratedLevel()
 
     grid = GridBuilder::buildGrid(num, num);
 
-    qDebug() << generatedNumber;
+    qDebug() << num;
 
     setPositionStart();
 
