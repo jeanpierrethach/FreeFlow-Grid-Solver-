@@ -3,7 +3,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
 #include <exception>
 
 Grid::Grid()
@@ -12,7 +11,8 @@ Grid::Grid()
     this->column = 0;
 }
 
-bool fileExists(QString path) {
+bool Grid::fileExists(const QString& path) {
+
     QFileInfo checkFile(path);
 
     // check if file exists. If yes then is it really a file and not a directory
@@ -25,174 +25,13 @@ Grid::Grid(const QString& filePath)
     {
         if (fileExists(filePath))
         {
+            QJsonObject json = initializeFileReader(filePath);
 
-            QFile file(filePath);
-            file.open(QIODevice::ReadOnly);
+            readGridFormat(json);
 
-            QByteArray rawData = file.readAll();
+            initializeGameGrid();
 
-            // Parse document
-            QJsonDocument doc(QJsonDocument::fromJson(rawData));
-
-            // Get JSON object
-            QJsonObject json = doc.object();
-
-            // Access properties
-            this->row = json["row"].toInt();
-            this->column = json["column"].toInt();
-
-            gameGrid = new Path*[row];
-
-            for (int i = 0; i < row; ++i)
-            {
-                gameGrid[i] = new Path[column];
-            }
-
-            QJsonArray jsonArray = json["level"].toArray();
-
-            std::vector<int> v, n, p;
-            int color = 0, x = 0, y = 0;
-            bool origin = false, firstOrigin = false, secondOrigin = false;
-            int nextColor = 0, nextX = 0, nextY = 0;
-            int previousColor = 0, previousX = 0, previousY = 0;
-            bool nOk = false, pOk = false, pathComplete = false;
-
-            foreach (const QJsonValue& item, jsonArray)
-            {
-                foreach (const QJsonValue& i, item.toArray())
-                {
-                    if (!i.isObject()){
-                        v.push_back(i.toInt());
-                    }
-                    else {
-                        QJsonArray settingsArray = i.toObject()["settings"].toArray();
-
-                        foreach (const QJsonValue& settingsItem, settingsArray)
-                        {
-                            QString name = settingsItem.toObject().value("name").toString();
-
-                            if (name == "origin")
-                            {
-                                origin = settingsItem.toObject().value("value").toBool();
-                            }
-                            if (name == "first origin")
-                            {
-                                firstOrigin = settingsItem.toObject().value("value").toBool();
-                            }
-                            else if (name == "second origin")
-                            {
-                                secondOrigin = settingsItem.toObject().value("value").toBool();
-                            }
-                            else if (name == "path complete")
-                            {
-                                pathComplete = settingsItem.toObject().value("value").toBool();
-                            }
-                            else if (name == "next")
-                            {
-                                QJsonArray value = settingsItem.toObject().value("value").toArray();
-                                for (int i = 0; i < value.size(); ++i)
-                                {
-                                    n.push_back(value[i].toInt());
-                                }
-                            }
-                            else if (name == "previous")
-                            {
-                                QJsonArray value = settingsItem.toObject().value("value").toArray();
-                                for (int i = 0; i < value.size(); ++i)
-                                {
-                                    p.push_back(value[i].toInt());
-                                }
-                            }
-                        }
-
-                    }
-                }
-
-                color = v.back();
-                v.pop_back();
-                y = v.back();
-                v.pop_back();
-                x = v.back();
-                v.pop_back();
-
-                if (!n.empty())
-                {
-                    nextColor = n.back();
-                    n.pop_back();
-                    nextY = n.back();
-                    n.pop_back();
-                    nextX = n.back();
-                    n.pop_back();
-                    nOk = true;
-                }
-
-                if (!p.empty())
-                {
-                    previousColor = p.back();
-                    p.pop_back();
-                    previousY = p.back();
-                    p.pop_back();
-                    previousX = p.back();
-                    p.pop_back();
-                    pOk = true;
-                }
-
-                if (firstOrigin)
-                {
-                    if (nOk || origin)
-                    {
-                        gameGrid[x][y].next[0] = &gameGrid[nextX][nextY];
-                        gameGrid[x][y].setData(color);
-                        gameGrid[x][y].setFirstOrigin(true);
-                        gameGrid[x][y].setCoveredFlag(true);
-                    }
-
-                }
-                else if (secondOrigin)
-                {
-                    if (pOk || origin)
-                    {
-                        gameGrid[x][y].previous[0] = &gameGrid[previousX][previousY];
-                        gameGrid[x][y].setData(color);
-                        gameGrid[x][y].setSecondOrigin(true);
-                        gameGrid[x][y].setCoveredFlag(true);
-                        gameGrid[x][y].setPathComplete(true);
-                    }
-                }
-                else
-                {
-                    // it is a standard level
-                    if (json["standard"].toBool())
-                    {
-                        gameGrid[x][y].setData(color);
-                    }
-                    // it is a point
-                    else
-                    {
-                        // there is a next point to the current grid point
-                        if (nOk)
-                        {
-                            gameGrid[x][y].next[0] = &gameGrid[nextX][nextY];
-                            gameGrid[x][y].setColor(color);
-                            gameGrid[x][y].setCoveredFlag(true);
-                        }
-                        // there is a previous point to the current grid point
-                        if (pOk)
-                        {
-                            gameGrid[x][y].previous[0] = &gameGrid[previousX][previousY];
-                            gameGrid[x][y].setColor(color);
-                            gameGrid[x][y].setCoveredFlag(true);
-                        }
-                        // if the point is an origin
-                        if (origin)
-                        {
-                            gameGrid[x][y].setData(color);
-                        }
-                    }
-                }
-                nOk = false;
-                pOk = false;
-            }
+            analyzeFile(json);
         }
         else
         {
@@ -205,6 +44,202 @@ Grid::Grid(const QString& filePath)
         std::cerr << e.what() << std::endl;
     }
 
+}
+
+QJsonObject Grid::initializeFileReader(const QString& filePath)
+{
+    QFile file(filePath);
+    file.open(QIODevice::ReadOnly);
+
+    QByteArray rawData = file.readAll();
+
+    // Parse document
+    QJsonDocument doc(QJsonDocument::fromJson(rawData));
+
+    // Get JSON object
+    QJsonObject json = doc.object();
+
+    return json;
+}
+
+void Grid::readGridFormat(const QJsonObject& json)
+{
+    // Access properties
+    this->row = json["row"].toInt();
+    this->column = json["column"].toInt();
+}
+
+void Grid::initializeGameGrid()
+{
+    gameGrid = new Path*[row];
+
+    for (int i = 0; i < row; ++i)
+    {
+        gameGrid[i] = new Path[column];
+    }
+}
+
+void Grid::analyzeFile(const QJsonObject& json)
+{
+    QJsonArray jsonArray = json["level"].toArray();
+
+    std::vector<int> pointList, nextList, prevList;
+
+    foreach (const QJsonValue& item, jsonArray)
+    {
+        foreach (const QJsonValue& i, item.toArray())
+        {
+            if (!i.isObject()){
+                pointList.push_back(i.toInt());
+            }
+            else {
+                QJsonArray settingsArray = i.toObject()["settings"].toArray();
+
+                foreach (const QJsonValue& settingsItem, settingsArray)
+                {
+                    QString name = settingsItem.toObject().value("name").toString();
+
+                    if (name == "origin")
+                    {
+                        origin = settingsItem.toObject().value("value").toBool();
+                    }
+                    if (name == "first origin")
+                    {
+                        firstOrigin = settingsItem.toObject().value("value").toBool();
+                    }
+                    else if (name == "second origin")
+                    {
+                        secondOrigin = settingsItem.toObject().value("value").toBool();
+                    }
+                    else if (name == "path complete")
+                    {
+                        pathComplete = settingsItem.toObject().value("value").toBool();
+                    }
+                    else if (name == "next")
+                    {
+                        QJsonArray value = settingsItem.toObject().value("value").toArray();
+                        for (int i = 0; i < value.size(); ++i)
+                        {
+                            nextList.push_back(value[i].toInt());
+                        }
+                    }
+                    else if (name == "previous")
+                    {
+                        QJsonArray value = settingsItem.toObject().value("value").toArray();
+                        for (int i = 0; i < value.size(); ++i)
+                        {
+                            prevList.push_back(value[i].toInt());
+                        }
+                    }
+                }
+
+            }
+        }
+
+        readPointValues(pointList);
+
+        // it is a standard level
+        if (json["standard"].toBool())
+        {
+            gameGrid[x][y].setData(color);
+        }
+        else
+        {
+            nOk = readNextValues(nextList);
+            pOk = readPreviousValues(prevList);
+
+            setValues();
+        }
+    }
+}
+
+void Grid::readPointValues(std::vector<int>& list)
+{
+    color = list.back();
+    list.pop_back();
+    y = list.back();
+    list.pop_back();
+    x = list.back();
+    list.pop_back();
+}
+
+bool Grid::readNextValues(std::vector<int>& list)
+{
+    if (!list.empty())
+    {
+        nextColor = list.back();
+        list.pop_back();
+        nextY = list.back();
+        list.pop_back();
+        nextX = list.back();
+        list.pop_back();
+        return true;
+    }
+    return false;
+}
+
+bool Grid::readPreviousValues(std::vector<int>& list)
+{
+    if (!list.empty())
+    {
+        previousColor = list.back();
+        list.pop_back();
+        previousY = list.back();
+        list.pop_back();
+        previousX = list.back();
+        list.pop_back();
+        return true;
+    }
+    return false;
+}
+
+void Grid::setValues()
+{
+    if (firstOrigin)
+    {
+        if (nOk || origin)
+        {
+            gameGrid[x][y].next[0] = &gameGrid[nextX][nextY];
+            gameGrid[x][y].setData(color);
+            gameGrid[x][y].setFirstOrigin(true);
+            gameGrid[x][y].setCoveredFlag(true);
+        }
+
+    }
+    else if (secondOrigin)
+    {
+        if (pOk || origin)
+        {
+            gameGrid[x][y].previous[0] = &gameGrid[previousX][previousY];
+            gameGrid[x][y].setData(color);
+            gameGrid[x][y].setSecondOrigin(true);
+            gameGrid[x][y].setCoveredFlag(true);
+            gameGrid[x][y].setPathComplete(true);
+        }
+    }
+    // it is a point
+    else
+    {
+        // there is a next point to the current grid point
+        if (nOk)
+        {
+            gameGrid[x][y].next[0] = &gameGrid[nextX][nextY];
+            gameGrid[x][y].setColor(color);
+            gameGrid[x][y].setCoveredFlag(true);
+        }
+        // there is a previous point to the current grid point
+        if (pOk)
+        {
+            gameGrid[x][y].previous[0] = &gameGrid[previousX][previousY];
+            gameGrid[x][y].setColor(color);
+            gameGrid[x][y].setCoveredFlag(true);
+        }
+        // if the point is an origin
+        if (origin)
+        {
+            gameGrid[x][y].setData(color);
+        }
+    }
 }
 
 Grid::Grid(int nbRow, int nbCol)
