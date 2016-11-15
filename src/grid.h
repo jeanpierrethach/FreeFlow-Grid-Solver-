@@ -48,14 +48,18 @@ private:
 
     bool fileExists(const QString&);
 
-    QJsonObject initializeFileReader(const QString&);
+    QJsonObject initializeJsonObject(const QString&);
     void readGridFormat(const QJsonObject&);
     void initializeGameGrid();
     void analyzeFile(const QJsonObject&);
 
+    void readJsonValues(const QJsonValue&, std::vector<int>&, std::vector<int>&);
+
+    void addValues(std::vector<int>&, const QJsonValue&);
+
     void readPointValues(std::vector<int>&);
-    bool readNextValues(std::vector<int>&);
-    bool readPreviousValues(std::vector<int>&);
+    bool hasNextValues(std::vector<int>&);
+    bool hasPreviousValues(std::vector<int>&);
 
     void setValues();
 

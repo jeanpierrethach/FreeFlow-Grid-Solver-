@@ -25,7 +25,7 @@ Grid::Grid(const QString& filePath)
     {
         if (fileExists(filePath))
         {
-            QJsonObject json = initializeFileReader(filePath);
+            QJsonObject json = initializeJsonObject(filePath);
 
             readGridFormat(json);
 
@@ -46,7 +46,7 @@ Grid::Grid(const QString& filePath)
 
 }
 
-QJsonObject Grid::initializeFileReader(const QString& filePath)
+QJsonObject Grid::initializeJsonObject(const QString& filePath)
 {
     QFile file(filePath);
     file.open(QIODevice::ReadOnly);
@@ -89,48 +89,18 @@ void Grid::analyzeFile(const QJsonObject& json)
     {
         foreach (const QJsonValue& i, item.toArray())
         {
+            // values of the point (x,y,color)
             if (!i.isObject()){
                 pointList.push_back(i.toInt());
             }
-            else {
+            // settings of the point
+            else
+            {
                 QJsonArray settingsArray = i.toObject()["settings"].toArray();
 
                 foreach (const QJsonValue& settingsItem, settingsArray)
                 {
-                    QString name = settingsItem.toObject().value("name").toString();
-
-                    if (name == "origin")
-                    {
-                        origin = settingsItem.toObject().value("value").toBool();
-                    }
-                    if (name == "first origin")
-                    {
-                        firstOrigin = settingsItem.toObject().value("value").toBool();
-                    }
-                    else if (name == "second origin")
-                    {
-                        secondOrigin = settingsItem.toObject().value("value").toBool();
-                    }
-                    else if (name == "path complete")
-                    {
-                        pathComplete = settingsItem.toObject().value("value").toBool();
-                    }
-                    else if (name == "next")
-                    {
-                        QJsonArray value = settingsItem.toObject().value("value").toArray();
-                        for (int i = 0; i < value.size(); ++i)
-                        {
-                            nextList.push_back(value[i].toInt());
-                        }
-                    }
-                    else if (name == "previous")
-                    {
-                        QJsonArray value = settingsItem.toObject().value("value").toArray();
-                        for (int i = 0; i < value.size(); ++i)
-                        {
-                            prevList.push_back(value[i].toInt());
-                        }
-                    }
+                    readJsonValues(settingsItem, nextList, prevList);
                 }
 
             }
@@ -145,11 +115,51 @@ void Grid::analyzeFile(const QJsonObject& json)
         }
         else
         {
-            nOk = readNextValues(nextList);
-            pOk = readPreviousValues(prevList);
+            nOk = hasNextValues(nextList);
+            pOk = hasPreviousValues(prevList);
 
             setValues();
         }
+    }
+}
+
+void Grid::readJsonValues(const QJsonValue& settingsItem,
+                          std::vector<int>& nextList, std::vector<int>& prevList)
+{
+    QString name = settingsItem.toObject().value("name").toString();
+
+    if (name == "origin")
+    {
+        origin = settingsItem.toObject().value("value").toBool();
+    }
+    if (name == "first origin")
+    {
+        firstOrigin = settingsItem.toObject().value("value").toBool();
+    }
+    else if (name == "second origin")
+    {
+        secondOrigin = settingsItem.toObject().value("value").toBool();
+    }
+    else if (name == "path complete")
+    {
+        pathComplete = settingsItem.toObject().value("value").toBool();
+    }
+    else if (name == "next")
+    {
+        addValues(nextList, settingsItem);
+    }
+    else if (name == "previous")
+    {
+        addValues(prevList, settingsItem);
+    }
+}
+
+void Grid::addValues(std::vector<int>& list, const QJsonValue& settingsItem)
+{
+    QJsonArray value = settingsItem.toObject().value("value").toArray();
+    for (int i = 0; i < value.size(); ++i)
+    {
+        list.push_back(value[i].toInt());
     }
 }
 
@@ -163,7 +173,7 @@ void Grid::readPointValues(std::vector<int>& list)
     list.pop_back();
 }
 
-bool Grid::readNextValues(std::vector<int>& list)
+bool Grid::hasNextValues(std::vector<int>& list)
 {
     if (!list.empty())
     {
@@ -178,7 +188,7 @@ bool Grid::readNextValues(std::vector<int>& list)
     return false;
 }
 
-bool Grid::readPreviousValues(std::vector<int>& list)
+bool Grid::hasPreviousValues(std::vector<int>& list)
 {
     if (!list.empty())
     {
