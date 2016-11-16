@@ -103,167 +103,31 @@ void MainWindow::restart()
 
 void MainWindow::saveGame()
 {
+    bool result = false;
 
-    QJsonObject jsonObject;
-    jsonObject["row"] = grid->getNbRow();
-    jsonObject["column"] = grid->getNbColumn();
-
-    QJsonArray array;
-    QJsonArray nestedArray;
-
-    for (int i = 0; i < grid->getNbRow(); ++i)
-    {
-      for (int j = 0; j < grid->getNbColumn(); ++j)
-      {
-
-          QJsonObject settings;
-          QJsonObject settingsFirstOrigin, settingsSecondOrigin, settingsNext, settingsPrevious;
-          QJsonObject settingsOrigin, settingsPathComplete;
-
-          QJsonArray settingsArray;
-
-          QJsonArray nextValues;
-          QJsonArray previousValues;
-
-          settingsOrigin["name"] = "origin";
-          settingsOrigin["value"] = grid->getGrid()[i][j].isOrigin();
-
-          settingsFirstOrigin["name"] = "first origin";
-          settingsFirstOrigin["value"] = grid->getGrid()[i][j].getFirstOrigin();
-
-          settingsSecondOrigin["name"] = "second origin";
-          settingsSecondOrigin["value"] = grid->getGrid()[i][j].getSecondOrigin();
-
-          settingsPathComplete["name"] = "path complete";
-          settingsPathComplete["value"] = grid->getGrid()[i][j].getPathComplete();
-
-          settingsNext["name"] = "next";
-          if (grid->getGrid()[i][j].next[0] != 0)
-          {
-              nextValues.append(grid->getGrid()[i][j].next[0]->x);
-              nextValues.append(grid->getGrid()[i][j].next[0]->y);
-              nextValues.append(grid->getGrid()[i][j].next[0]->getColor());
-          }
-          settingsNext["value"] = nextValues;
-
-          settingsPrevious["name"] = "previous";
-
-          if (grid->getGrid()[i][j].previous[0] != 0)
-          {
-              previousValues.append(grid->getGrid()[i][j].previous[0]->x);
-              previousValues.append(grid->getGrid()[i][j].previous[0]->y);
-              previousValues.append(grid->getGrid()[i][j].previous[0]->getColor());
-          }
-          settingsPrevious["value"] = previousValues;
-
-          settingsArray.append(settingsOrigin);
-          settingsArray.append(settingsFirstOrigin);
-          settingsArray.append(settingsSecondOrigin);
-          settingsArray.append(settingsPathComplete);
-          settingsArray.append(settingsNext);
-          settingsArray.append(settingsPrevious);
-
-          settings["settings"] = settingsArray;
-
-          array.insert(0, grid->getGrid()[i][j].x);
-          array.insert(1, grid->getGrid()[i][j].y);
-          array.insert(2, grid->getGrid()[i][j].getColor());
-          array.insert(3, settings);
-          nestedArray.append(array);
-
-          array.removeLast();
-          array.removeLast();
-          array.removeLast();
-          array.removeLast();
-      }
-
-    }
-    jsonObject["level"] = nestedArray;
-
-    QJsonDocument doc(jsonObject);
-
-    QString jsonString = doc.toJson(QJsonDocument::Indented);
-
-    QDir().mkdir("save");
-
-    QMessageBox msg;
-    bool result;
     QInputDialog input = new QInputDialog();
 
     QString fileName = input.getText(this, "Free Flow", "Enter a name", QLineEdit::Normal, "", &result);
 
-    if (fileName.contains(QRegExp("[^a-zA-Z\\d\\s]")))
-    {
-        qDebug() << "The file contains special characters.";
-        msg.setText("Invalid name. No special characters allowed.");
-    }
-    else if (result && !fileName.isEmpty())
-    {
-        QFile saveFile("save/" + fileName.trimmed() + ".json");
-        if(!saveFile.open(QIODevice::WriteOnly)){
-            qDebug() << "Failed to open save file";
-            msg.setText("Your game hasn't been saved.");
-            exit(-1);
-        }
-        else
-        {
-            saveFile.write(jsonString.toLocal8Bit());
-
-            msg.setText("Your game has been successfully saved.");
-        }
-    }
-    else
-    {
-        msg.setText("Your game hasn't been saved.");
-    }
-    msg.exec();
-
+    storer = new GameStorer();
+    storer->saveFile(grid, fileName, result);
+    delete storer;
 }
 
 void MainWindow::loadGame()
 {
-    QDir().mkdir("save");
-
-    QMessageBox msg;
-
     QString filter = "JSON Files (*.json)";
     QFileInfo selectedFile = QFileDialog::getOpenFileName(this, "Select a file to open", "/home/", filter);
 
-    QString fileName = selectedFile.baseName();
+    storer = new GameStorer();
 
-    QString filePath = ("save/" + fileName + ".json");
-
-    if (!fileName.isEmpty())
+    if(storer->loadFile(grid, selectedFile))
     {
-        QFile loadFile(filePath);
-        if(!loadFile.exists())
-        {
-            qDebug() << "File doesn't exist";
-            msg.setText("The file isn't in the correct repository.");
-        }
-        else if(!loadFile.open(QIODevice::ReadOnly))
-        {
-            qDebug() << "Failed to load file";
-            msg.setText("Your game hasn't been loaded.");
-        }
-        else
-        {
-            msg.setText("Your game has been successfully loaded.");
-
-            grid = new Grid(filePath);
-
-            setPositionStart();
-
-            emit closeWindow();
-            start();
-        }
+        setPositionStart();
+        emit closeWindow();
+        start();
     }
-    else
-    {
-        msg.setText("Your game hasn't been loaded.");
-    }
-    msg.exec();
-
+    delete storer;
 }
 
 void MainWindow::setGeneratedLevel()

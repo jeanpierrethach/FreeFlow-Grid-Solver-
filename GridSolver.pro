@@ -20,7 +20,8 @@ SOURCES += src/main.cpp \
     src/dialog.cpp \
     src/levelmenu.cpp \
     src/gridbuilder.cpp \
-    src/generator.cpp
+    src/generator.cpp \
+    src/gamestorer.cpp
 
 
 HEADERS  += src/mainwindow.h \
@@ -29,7 +30,8 @@ HEADERS  += src/mainwindow.h \
     src/dialog.h \
     src/levelmenu.h \
     src/gridbuilder.h \
-    src/generator.h
+    src/generator.h \
+    src/gamestorer.h
 
 FORMS    += src/mainwindow.ui \
     src/dialog.ui \

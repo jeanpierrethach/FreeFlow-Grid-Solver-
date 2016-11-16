@@ -3,6 +3,7 @@
 
 #include "dialog.h"
 #include "gridbuilder.h"
+#include "gamestorer.h"
 
 #include <QMessageBox>
 #include <QMainWindow>
@@ -106,6 +107,7 @@ private:
     Grid* grid;
     QLabel* label;
 
+    GameStorer* storer;
     Generator gen;
 
 };
