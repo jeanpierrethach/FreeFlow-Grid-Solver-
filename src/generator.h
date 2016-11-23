@@ -10,7 +10,7 @@ class Generator
 public:
     Generator();
 
-    std::vector<QColor> Generator::getColorList(QString);
+    std::vector<QColor> getColorList(QString);
     int generateNumber();
 
 private:

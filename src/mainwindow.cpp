@@ -105,9 +105,9 @@ void MainWindow::saveGame()
 {
     bool result = false;
 
-    QInputDialog input = new QInputDialog();
+    QInputDialog* input = new QInputDialog();
 
-    QString fileName = input.getText(this, "Free Flow", "Enter a name", QLineEdit::Normal, "", &result);
+    QString fileName = input->getText(this, "Free Flow", "Enter a name", QLineEdit::Normal, "", &result);
 
     storer = new GameStorer();
     storer->saveFile(grid, fileName, result);

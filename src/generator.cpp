@@ -47,15 +47,14 @@ int Generator::generateNumber()
 
 int Generator::generateNumber(int min, int max)
 {
-    // random device that will seed the generator
-    std::random_device seeder;
+    // random number generator from Stroustrup:
+    // http://www.stroustrup.com/C++11FAQ.html#std-random
+    static std::default_random_engine re {};
 
-    // mersenne twister engine
-    std::mt19937 engine(seeder());
+    using Dist = std::uniform_int_distribution<int>;
 
-    // uniform discrete distribution
-    std::uniform_int_distribution<int> dist(min, max);
+    static Dist uid {};
 
-    // generate the integer
-    return dist(engine);
+    return uid(re, Dist::param_type{min,max});
+
 }
