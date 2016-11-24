@@ -1,7 +1,7 @@
 #ifndef GRID_H
 #define GRID_H
 
-#include "path.h"
+#include "point.h"
 #include <string>
 #include <QFileInfo>
 #include <QByteArray>
@@ -22,13 +22,13 @@ public:
     Grid(int, int);
     ~Grid();
 
-    Path getElement();
+    Point getElement();
 
-    Path getPath(int, int);
-    Path** getGrid(){ return gameGrid; }
+    Point getPath(int, int);
+    Point** getGrid(){ return gameGrid; }
 
     void setPosition(int, int);
-    void setPath(int, int, Path);
+    void setPath(int, int, Point);
     bool isCompleted();
 
     int getNbRow();
@@ -63,7 +63,7 @@ private:
 
     void setValues();
 
-    Path** gameGrid;
+    Point** gameGrid;
 
 
 };

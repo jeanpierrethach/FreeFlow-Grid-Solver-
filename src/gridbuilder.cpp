@@ -143,7 +143,7 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
     else if(possibleMoves == 1)
     {
         QPoint* nextPathPos = getRandomAdjacentFreeBlock(startingPos, grid);
-        Path nextPath = grid->getPath(nextPathPos->x(), nextPathPos->y());
+        Point nextPath = grid->getPath(nextPathPos->x(), nextPathPos->y());
         //nextPath.setCovered(true);
         grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setCovered(true);
         //nextPath.previous[0] = &path;
@@ -306,8 +306,6 @@ QPoint* GridBuilder::getRandomFreeBlock(Grid* grid)
         }
     }
 
-    //Should never hit this
-    qDebug() << "\nERROR\nERROR\nERROR\nERROR\nERROR SHOULD NEVER HIT THIS\n";
     return new QPoint(-1,-1);
 }
 
@@ -356,7 +354,7 @@ QPoint* GridBuilder::getRandomAdjacentFreeBlock(QPoint* pos, Grid* grid)
 
 bool GridBuilder::moveAdjacentEndPoint(QPoint* pos, Grid* grid)
 {
-    Path adjacentOrigin;
+    Point adjacentOrigin;
     //up
     if(pos->x() - 1 >= 0 && grid->getPath(pos->x() - 1, pos->y()).isOrigin())
     {
@@ -382,7 +380,7 @@ bool GridBuilder::moveAdjacentEndPoint(QPoint* pos, Grid* grid)
         return false;
     }
 
-    Path path = grid->getPath(pos->x(), pos->y());
+    Point path = grid->getPath(pos->x(), pos->y());
     path.setOrigin(true);
     adjacentOrigin.setOrigin(false);
     adjacentOrigin.setPathComplete(false);

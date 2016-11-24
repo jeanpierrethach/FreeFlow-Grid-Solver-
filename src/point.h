@@ -1,18 +1,13 @@
 #ifndef PATH_H
 #define PATH_H
 
-struct Point {
-    int x;
-    int y;
-};
-
-class Path
+class Point
 {
 public:
-    Path();
-    ~Path();
-    Path(int);
-    Path(int, bool);
+    Point();
+    ~Point();
+    Point(int);
+    Point(int, bool);
 
     const int getColor();
     bool isOrigin();
@@ -38,8 +33,8 @@ public:
 
     int x,y;
 
-    Path* next[1];
-    Path* previous[1];
+    Point* next[1];
+    Point* previous[1];
 
 private:
 

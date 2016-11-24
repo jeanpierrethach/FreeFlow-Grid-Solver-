@@ -34,7 +34,7 @@ public:
 
     void paintEvent(QPaintEvent*);
 
-    void clearPathColorCase(Path*);
+    void clearPathColorCase(Point*);
 
 private slots:
     void back();

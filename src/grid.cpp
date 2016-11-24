@@ -71,11 +71,11 @@ void Grid::readGridFormat(const QJsonObject& json)
 
 void Grid::initializeGameGrid()
 {
-    gameGrid = new Path*[row];
+    gameGrid = new Point*[row];
 
     for (int i = 0; i < row; ++i)
     {
-        gameGrid[i] = new Path[column];
+        gameGrid[i] = new Point[column];
     }
 }
 
@@ -257,11 +257,11 @@ Grid::Grid(int nbRow, int nbCol)
     this->row = nbRow;
     this->column = nbCol;
 
-    gameGrid = new Path*[nbRow];
+    gameGrid = new Point*[nbRow];
 
     for (int i = 0; i < nbRow; ++i)
     {
-        gameGrid[i] = new Path[nbCol];
+        gameGrid[i] = new Point[nbCol];
     }
 }
 
@@ -274,12 +274,12 @@ Grid::~Grid()
     delete [] gameGrid;
 }
 
-Path Grid::getPath(int i, int j)
+Point Grid::getPath(int i, int j)
 {
     return gameGrid[i][j];
 }
 
-void Grid::setPath(int i, int j, Path path)
+void Grid::setPath(int i, int j, Point path)
 {
     gameGrid[i][j] = path;
 }
@@ -309,7 +309,7 @@ bool Grid::isCompleted()
     {
         for(int j = 0; j < column; j++)
         {
-            Path path = gameGrid[i][j];
+            Point path = gameGrid[i][j];
             if(!path.isCovered() && !path.isOrigin())
             {
                 return false;

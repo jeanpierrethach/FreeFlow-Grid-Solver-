@@ -1,6 +1,6 @@
-#include "path.h"
+#include "point.h"
 
-Path::Path()
+Point::Point()
 {
     this->color = -1;
     this->origin = false;
@@ -13,47 +13,47 @@ Path::Path()
     this->secondOrigin = false;
 }
 
-Path::~Path()
+Point::~Point()
 {
 
 }
 
 // Path
-Path::Path(int color)
+Point::Point(int color)
 {
     this->color = color;
 }
 
 // Path that is an origin
-Path::Path(int color, bool origin)
+Point::Point(int color, bool origin)
 {
     this->origin = origin;
     this->color = color;
 }
 
-const int Path::getColor()
+const int Point::getColor()
 {
     return color;
 }
 
-bool Path::isOrigin()
+bool Point::isOrigin()
 {
     return origin;
 }
 
-bool Path::isCovered()
+bool Point::isCovered()
 {
     return covered;
 }
 
-void Path::clear()
+void Point::clear()
 {
     this->color = -1;
     this->origin = false;
     clearOrigin();
 }
 
-void Path::clearOrigin()
+void Point::clearOrigin()
 {
     this->covered = false;
     this->previous[0] = 0;

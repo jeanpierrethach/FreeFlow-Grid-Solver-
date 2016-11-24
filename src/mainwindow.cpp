@@ -340,7 +340,7 @@ void MainWindow::pressClearPathCase(int x, int y)
     if (grid->getGrid()[x][y].getColor() != -1 && grid->getGrid()[x][y].next[0] != 0
             && grid->getGrid()[x][y].next[0]->getColor() == grid->getGrid()[x][y].getColor())
     {
-        Path* temp = grid->getGrid()[x][y].next[0];
+        Point* temp = grid->getGrid()[x][y].next[0];
         clearPathColorCase(temp);
     }
 }
@@ -475,8 +475,8 @@ void MainWindow::moveToConnectSecondOrigin(int x, int y)
 
 void MainWindow::moveToOverridePath(int x, int y)
 {
-    Path* temp = grid->getGrid()[x][y].next[0];
-    Path* temp2 = grid->getGrid()[x][y].previous[0];
+    Point* temp = grid->getGrid()[x][y].next[0];
+    Point* temp2 = grid->getGrid()[x][y].previous[0];
     temp2->next[0] = 0;
     grid->getGrid()[x][y].clear();
 
@@ -486,7 +486,7 @@ void MainWindow::moveToOverridePath(int x, int y)
 
 void MainWindow::moveToClearLastCase(int x, int y)
 {
-    Path* temp = grid->getGrid()[x][y].previous[0];
+    Point* temp = grid->getGrid()[x][y].previous[0];
     temp->next[0] = 0;
     grid->getGrid()[x][y].clear();
     pathConnected = false;
@@ -511,7 +511,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent*)
     update();
 }
 
-void MainWindow::clearPathColorCase(Path* temp)
+void MainWindow::clearPathColorCase(Point* temp)
 {
     int color = temp->getColor();
 
