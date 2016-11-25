@@ -18,13 +18,11 @@ Cell::~Cell()
 
 }
 
-// Path
 Cell::Cell(int color)
 {
     this->color = color;
 }
 
-// Path that is an origin
 Cell::Cell(int color, bool origin)
 {
     this->origin = origin;

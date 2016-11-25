@@ -380,20 +380,20 @@ bool GridBuilder::moveAdjacentEndPoint(QPoint* pos, Grid* grid)
         return false;
     }
 
-    Cell point = grid->getCell(pos->x(), pos->y());
-    point.setOrigin(true);
+    Cell cell = grid->getCell(pos->x(), pos->y());
+    cell.setOrigin(true);
     adjacentOrigin.setOrigin(false);
     adjacentOrigin.setPathComplete(false);
     if(adjacentOrigin.next == NULL)
     {
-        point.setPathComplete(true);
-        point.previous[0] = &adjacentOrigin;
-        adjacentOrigin.next[0] = &point;
+        cell.setPathComplete(true);
+        cell.previous[0] = &adjacentOrigin;
+        adjacentOrigin.next[0] = &cell;
     }
     else
     {
-        adjacentOrigin.previous[0] = &point;
-        point.next[0] = &adjacentOrigin;
+        adjacentOrigin.previous[0] = &cell;
+        cell.next[0] = &adjacentOrigin;
     }
 
     return true;
