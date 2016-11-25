@@ -1,15 +1,15 @@
-#ifndef PATH_H
-#define PATH_H
+#ifndef CELL_H
+#define CELL_H
 
-class Point
+class Cell
 {
 public:
-    Point();
-    ~Point();
-    Point(int);
-    Point(int, bool);
+    Cell();
+    ~Cell();
+    Cell(int);
+    Cell(int, bool);
 
-    const int getColor();
+    int getColor();
     bool isOrigin();
     bool isCovered();
     bool hasFlag() { return this->flag; }
@@ -33,8 +33,8 @@ public:
 
     int x,y;
 
-    Point* next[1];
-    Point* previous[1];
+    Cell* next[1];
+    Cell* previous[1];
 
 private:
 

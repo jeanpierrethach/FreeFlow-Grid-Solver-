@@ -7,8 +7,8 @@
 
 Grid::Grid()
 {
-    this->row = 0;
-    this->column = 0;
+    this->nbRow = 0;
+    this->nbColumn = 0;
 }
 
 bool Grid::fileExists(const QString& path) {
@@ -65,17 +65,17 @@ QJsonObject Grid::initializeJsonObject(const QString& filePath)
 void Grid::readGridFormat(const QJsonObject& json)
 {
     // Access properties
-    this->row = json["row"].toInt();
-    this->column = json["column"].toInt();
+    this->nbRow = json["row"].toInt();
+    this->nbColumn = json["column"].toInt();
 }
 
 void Grid::initializeGameGrid()
 {
-    gameGrid = new Point*[row];
+    gameGrid = new Cell*[nbRow];
 
-    for (int i = 0; i < row; ++i)
+    for (int i = 0; i < nbRow; ++i)
     {
-        gameGrid[i] = new Point[column];
+        gameGrid[i] = new Cell[nbColumn];
     }
 }
 
@@ -106,7 +106,7 @@ void Grid::analyzeFile(const QJsonObject& json)
             }
         }
 
-        readPointValues(pointList);
+        readCellValues(pointList);
 
         // it is a standard level
         if (json["standard"].toBool())
@@ -163,7 +163,7 @@ void Grid::addValues(std::vector<int>& list, const QJsonValue& settingsItem)
     }
 }
 
-void Grid::readPointValues(std::vector<int>& list)
+void Grid::readCellValues(std::vector<int>& list)
 {
     color = list.back();
     list.pop_back();
@@ -254,32 +254,32 @@ void Grid::setValues()
 
 Grid::Grid(int nbRow, int nbCol)
 {
-    this->row = nbRow;
-    this->column = nbCol;
+    this->nbRow = nbRow;
+    this->nbColumn = nbCol;
 
-    gameGrid = new Point*[nbRow];
+    gameGrid = new Cell*[nbRow];
 
     for (int i = 0; i < nbRow; ++i)
     {
-        gameGrid[i] = new Point[nbCol];
+        gameGrid[i] = new Cell[nbCol];
     }
 }
 
 Grid::~Grid()
 {
-    for (int i = 0; i < this->row; ++i)
+    for (int i = 0; i < this->nbRow; ++i)
     {
         delete [] gameGrid[i];
     }
     delete [] gameGrid;
 }
 
-Point Grid::getPath(int i, int j)
+Cell Grid::getCell(int i, int j)
 {
     return gameGrid[i][j];
 }
 
-void Grid::setPath(int i, int j, Point point)
+void Grid::setCell(int i, int j, Cell point)
 {
     gameGrid[i][j] = point;
 }
@@ -292,12 +292,12 @@ void Grid::setPosition(int i, int j)
 
 int Grid::getNbRow()
 {
-    return row;
+    return nbRow;
 }
 
 int Grid::getNbColumn()
 {
-    return column;
+    return nbColumn;
 }
 
 //Finds if the game is won
@@ -305,11 +305,11 @@ bool Grid::isCompleted()
 {
     int completedPaths = 0, totalPaths = 0;
 
-    for(int i = 0; i < row; i++)
+    for(int i = 0; i < nbRow; i++)
     {
-        for(int j = 0; j < column; j++)
+        for(int j = 0; j < nbColumn; j++)
         {
-            Point point = gameGrid[i][j];
+            Cell point = gameGrid[i][j];
             if(!point.isCovered() && !point.isOrigin())
             {
                 return false;

@@ -1,7 +1,7 @@
 #ifndef GRID_H
 #define GRID_H
 
-#include "point.h"
+#include "cell.h"
 #include <string>
 #include <QFileInfo>
 #include <QByteArray>
@@ -22,13 +22,13 @@ public:
     Grid(int, int);
     ~Grid();
 
-    Point getElement();
+    Cell getElement();
 
-    Point getPath(int, int);
-    Point** getGrid(){ return gameGrid; }
+    Cell getCell(int, int);
+    Cell** getGrid(){ return gameGrid; }
 
     void setPosition(int, int);
-    void setPath(int, int, Point);
+    void setCell(int, int, Cell);
     bool isCompleted();
 
     int getNbRow();
@@ -36,8 +36,8 @@ public:
 
 
 private:
-    int row;
-    int column;
+    int nbRow;
+    int nbColumn;
 
     int color = 0, x = 0, y = 0;
     int nextColor = 0, nextX = 0, nextY = 0;
@@ -57,13 +57,13 @@ private:
 
     void addValues(std::vector<int>&, const QJsonValue&);
 
-    void readPointValues(std::vector<int>&);
+    void readCellValues(std::vector<int>&);
     bool hasNextValues(std::vector<int>&);
     bool hasPreviousValues(std::vector<int>&);
 
     void setValues();
 
-    Point** gameGrid;
+    Cell** gameGrid;
 
 
 };

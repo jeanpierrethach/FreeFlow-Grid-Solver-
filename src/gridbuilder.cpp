@@ -143,7 +143,7 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
     else if(possibleMoves == 1)
     {
         QPoint* nextPathPos = getRandomAdjacentFreeBlock(startingPos, grid);
-        Point nextPath = grid->getPath(nextPathPos->x(), nextPathPos->y());
+        Cell nextPath = grid->getCell(nextPathPos->x(), nextPathPos->y());
         //nextPath.setCovered(true);
         grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setCovered(true);
         //nextPath.previous[0] = &path;
@@ -205,13 +205,13 @@ int GridBuilder::numberOfFreeAdjacentPositions(QPoint* pos, Grid* grid)
     int count = 0;
 
     //up
-    if(pos->x() - 1 >= 0 && !grid->getPath(pos->x() - 1, pos->y()).isCovered()) count++;
+    if(pos->x() - 1 >= 0 && !grid->getCell(pos->x() - 1, pos->y()).isCovered()) count++;
     //down
-    if(pos->x() + 1 <= grid->getNbRow() - 1 && !grid->getPath(pos->x() + 1, pos->y()).isCovered()) count++;
+    if(pos->x() + 1 <= grid->getNbRow() - 1 && !grid->getCell(pos->x() + 1, pos->y()).isCovered()) count++;
     //left
-    if(pos->y() - 1 >= 0 && !grid->getPath(pos->x(), pos->y() - 1).isCovered()) count++;
+    if(pos->y() - 1 >= 0 && !grid->getCell(pos->x(), pos->y() - 1).isCovered()) count++;
     //right
-    if(pos->y() + 1 <= grid->getNbColumn() - 1 && !grid->getPath(pos->x(), pos->y() + 1).isCovered()) count++;
+    if(pos->y() + 1 <= grid->getNbColumn() - 1 && !grid->getCell(pos->x(), pos->y() + 1).isCovered()) count++;
 
     return count;
 }
@@ -225,7 +225,7 @@ QPoint*  GridBuilder::findXAdjacentFreeBlocks(Grid* grid, int x, int** adjacentP
     {
         for(int j = 0; j < col; j++)
         {
-            if(adjacentPathMatrix[i][j] == x && !grid->getPath(i,j).isCovered())
+            if(adjacentPathMatrix[i][j] == x && !grid->getCell(i,j).isCovered())
             {
                 return new QPoint(i,j);
             }
@@ -253,11 +253,11 @@ QPoint* GridBuilder::findPairOfLoneBlocks(Grid* grid, int** adjacentPathMatrix)
     {
         for(int j = 0; j < grid->getNbColumn(); j++)
         {
-            if(adjacentPathMatrix[i][j] == 1 && !grid->getPath(i,j).isCovered())
+            if(adjacentPathMatrix[i][j] == 1 && !grid->getCell(i,j).isCovered())
             {
                 //if there is another single one to the right or under we have a pair
-                if((i + 1 < grid->getNbRow() && adjacentPathMatrix[i+1][j] == 1 && !grid->getPath(i+1,j).isCovered())
-                        || (j + 1 < grid->getNbColumn() && adjacentPathMatrix[i][j+1] == 1 && !grid->getPath(i,j+1).isCovered()))
+                if((i + 1 < grid->getNbRow() && adjacentPathMatrix[i+1][j] == 1 && !grid->getCell(i+1,j).isCovered())
+                        || (j + 1 < grid->getNbColumn() && adjacentPathMatrix[i][j+1] == 1 && !grid->getCell(i,j+1).isCovered()))
                 {
                     return new QPoint(i,j);
                 }
@@ -283,7 +283,7 @@ QPoint* GridBuilder::getRandomFreeBlock(Grid* grid)
     {
         for(int j = 0; j < grid->getNbColumn(); j++)
         {
-            if(!grid->getPath(i,j).isCovered()) nbOfFreeBlocks++;
+            if(!grid->getCell(i,j).isCovered()) nbOfFreeBlocks++;
         }
     }
 
@@ -295,7 +295,7 @@ QPoint* GridBuilder::getRandomFreeBlock(Grid* grid)
     {
         for(int j = 0; j < grid->getNbColumn(); j++)
         {
-            if(!grid->getPath(i,j).isCovered())
+            if(!grid->getCell(i,j).isCovered())
             {
                 pos--;
                 if(pos == 0)
@@ -322,26 +322,26 @@ QPoint* GridBuilder::getRandomAdjacentFreeBlock(QPoint* pos, Grid* grid)
     int direction = getRandomNumberFrom0To(num);
 
     //up
-    if(pos->x() - 1 >= 0 && !grid->getPath(pos->x() - 1, pos->y()).isCovered())
+    if(pos->x() - 1 >= 0 && !grid->getCell(pos->x() - 1, pos->y()).isCovered())
     {
         if(direction == 0) return new QPoint(pos->x() - 1, pos->y());
         --direction;
     }
 
     //down
-    if(pos->x() + 1 <= grid->getNbRow() - 1 && !grid->getPath(pos->x() + 1, pos->y()).isCovered())
+    if(pos->x() + 1 <= grid->getNbRow() - 1 && !grid->getCell(pos->x() + 1, pos->y()).isCovered())
     {
         if(direction == 0) return new QPoint(pos->x() + 1, pos->y());
         --direction;
     }
     //left
-    if(pos->y() - 1 >= 0 && !grid->getPath(pos->x(), pos->y() - 1).isCovered())
+    if(pos->y() - 1 >= 0 && !grid->getCell(pos->x(), pos->y() - 1).isCovered())
     {
         if(direction == 0) return new QPoint(pos->x(), pos->y() - 1);
         --direction;
     }
     //right
-    if(pos->y() + 1 <= grid->getNbColumn() - 1 && !grid->getPath(pos->x(), pos->y() + 1).isCovered())
+    if(pos->y() + 1 <= grid->getNbColumn() - 1 && !grid->getCell(pos->x(), pos->y() + 1).isCovered())
     {
         if(direction == 0) return new QPoint(pos->x(), pos->y() + 1);
         --direction;
@@ -354,33 +354,33 @@ QPoint* GridBuilder::getRandomAdjacentFreeBlock(QPoint* pos, Grid* grid)
 
 bool GridBuilder::moveAdjacentEndPoint(QPoint* pos, Grid* grid)
 {
-    Point adjacentOrigin;
+    Cell adjacentOrigin;
     //up
-    if(pos->x() - 1 >= 0 && grid->getPath(pos->x() - 1, pos->y()).isOrigin())
+    if(pos->x() - 1 >= 0 && grid->getCell(pos->x() - 1, pos->y()).isOrigin())
     {
-        adjacentOrigin = grid->getPath(pos->x()-1, pos->y());
+        adjacentOrigin = grid->getCell(pos->x()-1, pos->y());
     }
     //down
-    else if(pos->x() + 1 <= grid->getNbRow() - 1 && grid->getPath(pos->x() + 1, pos->y()).isOrigin())
+    else if(pos->x() + 1 <= grid->getNbRow() - 1 && grid->getCell(pos->x() + 1, pos->y()).isOrigin())
     {
-        adjacentOrigin = grid->getPath(pos->x() + 1, pos->y());
+        adjacentOrigin = grid->getCell(pos->x() + 1, pos->y());
     }
     //left
-    else if(pos->y() - 1 >= 0 && grid->getPath(pos->x(), pos->y() - 1).isOrigin())
+    else if(pos->y() - 1 >= 0 && grid->getCell(pos->x(), pos->y() - 1).isOrigin())
     {
-        adjacentOrigin = grid->getPath(pos->x(), pos->y() - 1);
+        adjacentOrigin = grid->getCell(pos->x(), pos->y() - 1);
     }
     //right
-    else if(pos->y() + 1 <= grid->getNbColumn() - 1 && grid->getPath(pos->x(), pos->y() + 1).isOrigin())
+    else if(pos->y() + 1 <= grid->getNbColumn() - 1 && grid->getCell(pos->x(), pos->y() + 1).isOrigin())
     {
-        adjacentOrigin = grid->getPath(pos->x(), pos->y() + 1);
+        adjacentOrigin = grid->getCell(pos->x(), pos->y() + 1);
     }
     else
     {
         return false;
     }
 
-    Point point = grid->getPath(pos->x(), pos->y());
+    Cell point = grid->getCell(pos->x(), pos->y());
     point.setOrigin(true);
     adjacentOrigin.setOrigin(false);
     adjacentOrigin.setPathComplete(false);

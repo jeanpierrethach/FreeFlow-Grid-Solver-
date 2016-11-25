@@ -1,6 +1,6 @@
-#include "point.h"
+#include "cell.h"
 
-Point::Point()
+Cell::Cell()
 {
     this->color = -1;
     this->origin = false;
@@ -13,47 +13,47 @@ Point::Point()
     this->secondOrigin = false;
 }
 
-Point::~Point()
+Cell::~Cell()
 {
 
 }
 
 // Path
-Point::Point(int color)
+Cell::Cell(int color)
 {
     this->color = color;
 }
 
 // Path that is an origin
-Point::Point(int color, bool origin)
+Cell::Cell(int color, bool origin)
 {
     this->origin = origin;
     this->color = color;
 }
 
-const int Point::getColor()
+int Cell::getColor()
 {
     return color;
 }
 
-bool Point::isOrigin()
+bool Cell::isOrigin()
 {
     return origin;
 }
 
-bool Point::isCovered()
+bool Cell::isCovered()
 {
     return covered;
 }
 
-void Point::clear()
+void Cell::clear()
 {
     this->color = -1;
     this->origin = false;
     clearOrigin();
 }
 
-void Point::clearOrigin()
+void Cell::clearOrigin()
 {
     this->covered = false;
     this->previous[0] = 0;
