@@ -279,9 +279,9 @@ Point Grid::getPath(int i, int j)
     return gameGrid[i][j];
 }
 
-void Grid::setPath(int i, int j, Point path)
+void Grid::setPath(int i, int j, Point point)
 {
-    gameGrid[i][j] = path;
+    gameGrid[i][j] = point;
 }
 
 void Grid::setPosition(int i, int j)
@@ -309,15 +309,15 @@ bool Grid::isCompleted()
     {
         for(int j = 0; j < column; j++)
         {
-            Point path = gameGrid[i][j];
-            if(!path.isCovered() && !path.isOrigin())
+            Point point = gameGrid[i][j];
+            if(!point.isCovered() && !point.isOrigin())
             {
                 return false;
             }
-            else if(path.isOrigin())
+            else if(point.isOrigin())
             {
                 totalPaths++;
-                completedPaths += path.getPathComplete() ? 1 : 0;
+                completedPaths += point.getPathComplete() ? 1 : 0;
             }
         }
     }
