@@ -7,21 +7,6 @@ Generator::Generator()
     generateColorPalette(50);
 }
 
-std::vector<QColor> Generator::getColorList(QString listName)
-{
-    std::vector<QColor> list;
-    if (listName == "color")
-    {
-        list = color;
-    }
-    else if (listName == "currentColor")
-    {
-        list = currentColor;
-    }
-
-    return list;
-}
-
 void Generator::generateColorPalette(int nbColors)
 {
     // hue [0, 360), saturation [0, 255),
@@ -36,7 +21,7 @@ void Generator::generateColorPalette(int nbColors)
         QColor colorGen = QColor::fromHsl(hue, saturation, lightness, 255);
         QColor transColorGen = QColor::fromHsl(hue, saturation, lightness, 100);
         color.push_back(colorGen);
-        currentColor.push_back(transColorGen);
+        backgroundColor.push_back(transColorGen);
     }
 }
 

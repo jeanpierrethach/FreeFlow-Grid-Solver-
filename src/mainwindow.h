@@ -96,7 +96,7 @@ private:
 
     QPainter* painter;
     std::vector<QColor> color;
-    std::vector<QColor> currentColor;
+    std::vector<QColor> backgroundColor;
 
     int currentX;
     int currentY;

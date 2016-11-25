@@ -10,7 +10,14 @@ class Generator
 public:
     Generator();
 
-    std::vector<QColor> getColorList(QString);
+    std::vector<QColor> getColorList() {
+        return color;
+    }
+
+    std::vector<QColor> getBackgroundColorList() {
+        return backgroundColor;
+    }
+
     int generateNumber();
 
 private:
@@ -18,7 +25,7 @@ private:
     int generateNumber(int, int);
 
     std::vector<QColor> color;
-    std::vector<QColor> currentColor;
+    std::vector<QColor> backgroundColor;
 };
 
 #endif // GENERATOR_H

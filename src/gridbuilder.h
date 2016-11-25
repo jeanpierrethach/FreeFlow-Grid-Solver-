@@ -19,7 +19,7 @@ public:
 
 private:
 
-    static int color;
+    static int currentColor;
 
     static Grid* buildGrid(Grid*, int, int);
 

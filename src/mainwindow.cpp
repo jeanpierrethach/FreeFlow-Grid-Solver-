@@ -36,8 +36,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
     connect(ui->save, SIGNAL(clicked()), this, SLOT(saveGame()));
 
-    color = gen.getColorList("color");
-    currentColor = gen.getColorList("currentColor");
+    color = gen.getColorList();
+    backgroundColor = gen.getBackgroundColorList();
 
     resizeGrid();
 
@@ -287,8 +287,8 @@ void MainWindow::fillSquareColor()
         {
             if (grid->getGrid()[i][j].getColor() != -1 && grid->getGrid()[i][j].hasFlag())
             {
-                painter->setPen(currentColor[grid->getGrid()[i][j].getColor()]);
-                painter->setBrush(currentColor[grid->getGrid()[i][j].getColor()]);
+                painter->setPen(backgroundColor[grid->getGrid()[i][j].getColor()]);
+                painter->setBrush(backgroundColor[grid->getGrid()[i][j].getColor()]);
                 painter->drawRect(offset + intervalWidth * i, offset + intervalHeight * j, intervalWidth, intervalHeight);
             }
         }
@@ -302,8 +302,8 @@ void MainWindow::mouseRoundColor()
     {
         if (grid->getGrid()[currentX][currentY].getColor() != -1)
         {
-            painter->setPen(currentColor[grid->getGrid()[currentX][currentY].getColor()]);
-            painter->setBrush(currentColor[grid->getGrid()[currentX][currentY].getColor()]);
+            painter->setPen(backgroundColor[grid->getGrid()[currentX][currentY].getColor()]);
+            painter->setBrush(backgroundColor[grid->getGrid()[currentX][currentY].getColor()]);
             painter->drawEllipse(mousePosition, 300/grid->getNbRow(), 300/grid->getNbColumn());
         }
     }

@@ -1,6 +1,6 @@
 #include "gridbuilder.h"
 
-int GridBuilder::color = -1;
+int GridBuilder::currentColor = -1;
 
 GridBuilder::GridBuilder()
 {
@@ -72,7 +72,7 @@ Grid* GridBuilder::buildGrid(int row, int col)
 
     while(!grid->isCompleted())
     {
-        color = -1;
+        currentColor = -1;
         delete grid;
         grid = new Grid(row, col);
         buildGrid(grid, row, col);
@@ -103,13 +103,13 @@ void GridBuilder::clearPaths(Grid* grid)
 
 void GridBuilder::buildPathStartingPoint(QPoint* startingPos, Grid* grid)
 {
-    color++;
+    currentColor++;
     //Path path = grid->getPath(startingPos->x(), startingPos->y());
 
     grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
     //path.setCovered(true);
 
-    grid->getGrid()[startingPos->x()][startingPos->y()].setColor(color);
+    grid->getGrid()[startingPos->x()][startingPos->y()].setColor(currentColor);
 
     grid->getGrid()[startingPos->x()][startingPos->y()].setOrigin(true);
     //path.setOrigin(true);
@@ -131,7 +131,7 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
     grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
 
     //setting color
-    grid->getGrid()[startingPos->x()][startingPos->y()].setColor(color);
+    grid->getGrid()[startingPos->x()][startingPos->y()].setColor(currentColor);
 
     if(possibleMoves == 0)
     {
@@ -174,7 +174,7 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
             grid->getGrid()[startingPos->x()][startingPos->y()].next[0] = &(grid->getGrid()[nextPathPos->x()][nextPathPos->y()]);
             //grid->getPath(startingPos->x(), startingPos->y()).next[0] = &nextPath;
 
-            grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setColor(color);
+            grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setColor(currentColor);
 
             buildPath(nextPathPos, grid);
         }
@@ -182,7 +182,7 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
         {
             grid->getGrid()[startingPos->x()][startingPos->y()].setOrigin(true);
             grid->getGrid()[startingPos->x()][startingPos->y()].setPathComplete(true);
-            grid->getGrid()[startingPos->x()][startingPos->y()].setColor(color);
+            grid->getGrid()[startingPos->x()][startingPos->y()].setColor(currentColor);
             //path.setOrigin(true);
             //path.setPathComplete(true);
         }
