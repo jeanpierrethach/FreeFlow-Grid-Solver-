@@ -17,6 +17,8 @@ public:
     bool getFirstOrigin() { return this->firstOrigin; }
     bool getSecondOrigin() { return this->secondOrigin; }
 
+    void setCellInformation(int color, bool origin, bool covered, Cell* previous, Cell* next, bool flag, bool pathComplete, bool firstOrigin, bool secondOrigin);
+
     void setColor(int color) { this->color = color; }
     void setData(int color) { this->color = color; this->origin = true; }
     void setOrigin(bool b) { this->origin = b; }

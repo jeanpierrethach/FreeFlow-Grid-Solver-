@@ -61,3 +61,15 @@ void Cell::clearOrigin()
     this->firstOrigin = false;
     this->secondOrigin = false;
 }
+
+void Cell::setCellInformation(int color, bool origin, bool covered, Cell* previous, Cell* next, bool flag, bool pathComplete, bool firstOrigin, bool secondOrigin) {
+    this->color = color;
+    this->origin = origin;
+    this->covered = covered;
+    this->previous[0] = previous;
+    this->next[0] = next;
+    this->flag = flag;
+    this->pathComplete = pathComplete;
+    this->firstOrigin = firstOrigin;
+    this->secondOrigin = secondOrigin;
+}
