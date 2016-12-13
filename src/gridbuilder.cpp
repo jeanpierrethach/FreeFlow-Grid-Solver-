@@ -24,7 +24,6 @@ Grid* GridBuilder::buildGrid(Grid* grid, int row, int col)
         pos = findPairOfLoneBlocks(grid, adjacentPathMatrix);
         if(pos->x() >= 0)
         {
-            //TODO TRY TO FILL PAIR
             //try to fill pair of lone blocks, if you cant, restart
             destroyAdjacentPathMatrix(adjacentPathMatrix, row);
             return grid;
@@ -104,54 +103,42 @@ void GridBuilder::clearPaths(Grid* grid)
 void GridBuilder::buildPathStartingPoint(QPoint* startingPos, Grid* grid)
 {
     currentColor++;
-    //Path path = grid->getPath(startingPos->x(), startingPos->y());
 
     grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
-    //path.setCovered(true);
 
     grid->getGrid()[startingPos->x()][startingPos->y()].setColor(currentColor);
 
     grid->getGrid()[startingPos->x()][startingPos->y()].setOrigin(true);
-    //path.setOrigin(true);
-
 
     grid->getGrid()[startingPos->x()][startingPos->y()].setFirstOrigin(true);
-    //path.setFirstOrigin(true);
 
     buildPath(startingPos, grid);
 }
 
-//TODO build Path starting at startingPos
 void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
 {
     int possibleMoves = numberOfFreeAdjacentPositions(startingPos, grid);
-    //Path path = grid->getPath(startingPos->x(), startingPos->y());
 
-    //path.setCovered(true);
     grid->getGrid()[startingPos->x()][startingPos->y()].setCovered(true);
 
-    //setting color
     grid->getGrid()[startingPos->x()][startingPos->y()].setColor(currentColor);
 
     if(possibleMoves == 0)
     {
-        //path.setOrigin(true);
         grid->getGrid()[startingPos->x()][startingPos->y()].setOrigin(true);
-        //path.setPathComplete(true);
         grid->getGrid()[startingPos->x()][startingPos->y()].setPathComplete(true);
     }
     else if(possibleMoves == 1)
     {
         QPoint* nextPathPos = getRandomAdjacentFreeBlock(startingPos, grid);
         Cell nextPath = grid->getCell(nextPathPos->x(), nextPathPos->y());
-        //nextPath.setCovered(true);
+
         grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setCovered(true);
-        //nextPath.previous[0] = &path;
+
         grid->getGrid()[nextPathPos->x()][nextPathPos->y()].previous[0] = &(grid->getGrid()[startingPos->x()][startingPos->y()]);
 
         grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setColor(true);
 
-        //grid->getPath(startingPos->x(), startingPos->y()).next[0] = &nextPath;
         grid->getGrid()[startingPos->x()][startingPos->y()].next[0] = &(grid->getGrid()[nextPathPos->x()][nextPathPos->y()]);
 
         buildPath(nextPathPos, grid);
@@ -163,16 +150,12 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
         {
 
             QPoint* nextPathPos = getRandomAdjacentFreeBlock(startingPos, grid);
-            //Path nextPath = grid->getPath(nextPathPos->x(), nextPathPos->y());
 
-            //nextPath.setCovered(true);
             grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setCovered(true);
 
-            //nextPath.previous[0] = &path;
             grid->getGrid()[nextPathPos->x()][nextPathPos->y()].previous[0] = &(grid->getGrid()[startingPos->x()][startingPos->y()]);
 
             grid->getGrid()[startingPos->x()][startingPos->y()].next[0] = &(grid->getGrid()[nextPathPos->x()][nextPathPos->y()]);
-            //grid->getPath(startingPos->x(), startingPos->y()).next[0] = &nextPath;
 
             grid->getGrid()[nextPathPos->x()][nextPathPos->y()].setColor(currentColor);
 
@@ -183,8 +166,6 @@ void GridBuilder::buildPath(QPoint* startingPos, Grid* grid)
             grid->getGrid()[startingPos->x()][startingPos->y()].setOrigin(true);
             grid->getGrid()[startingPos->x()][startingPos->y()].setPathComplete(true);
             grid->getGrid()[startingPos->x()][startingPos->y()].setColor(currentColor);
-            //path.setOrigin(true);
-            //path.setPathComplete(true);
         }
     }
 
@@ -347,8 +328,6 @@ QPoint* GridBuilder::getRandomAdjacentFreeBlock(QPoint* pos, Grid* grid)
         --direction;
     }
 
-    //SHOULD NEVER HIT THIS
-    qDebug() << "ERROR";
     return new QPoint(-1,-1);
 }
 
