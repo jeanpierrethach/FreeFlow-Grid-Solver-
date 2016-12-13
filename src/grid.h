@@ -28,6 +28,7 @@ public:
     Cell* getCellPtr(int, int);
     Cell** getGrid(){ return gameGrid; }
 
+
     void setPosition(int, int);
     void setCell(int, int, Cell);
     bool isCompleted();

@@ -329,3 +329,5 @@ bool Grid::isCompleted()
 
     return completedPaths == totalPaths/2;
 }
+
+

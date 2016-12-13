@@ -168,15 +168,25 @@ void MainWindow::solve()
 
 void MainWindow::solveRec(Cell* currentCell)
 {
+    repaint();
+    usleep(30000);
+
+    if(currentCell->getPathComplete()) {
+        return;
+    }
+
     Cell* nextCell = new Cell();
     int x = currentCell->x;
     int y = currentCell->y;
     std::cout << "posX: " << x << " " << "posY: " << y << "\n";
     nextCell = grid->getCellPtr(x, y);
 
+    //if(currentCell->isOrigin())
+        currentCell->setCovered(true);
+
     // TODO
     // if find adjacent second origin -> connects with its position
-    /*if (nextCell->x-1 >= 0 && grid->getCell(x-1,y).isOrigin() && grid->getCell(x-1,y).getColor() == currentCell->getColor())
+    if (nextCell->x-1 >= 0 && grid->getCell(x-1,y).isOrigin() && grid->getCell(x-1,y).getColor() == currentCell->getColor() && !grid->getCell(x-1,y).isCovered())
     {
         grid->getGrid()[x-1][y].setCovered(true);
         grid->getGrid()[x-1][y].setColor(grid->getGrid()[x][y].getColor());
@@ -186,7 +196,7 @@ void MainWindow::solveRec(Cell* currentCell)
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x-1][y];
         solveRec(grid->getCellPtr(x-1,y));
     }
-    else if (nextCell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).isOrigin() && grid->getCell(x,y+1).getColor() == currentCell->getColor())
+    else if (nextCell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).isOrigin() && grid->getCell(x,y+1).getColor() == currentCell->getColor() && !grid->getCell(x,y+1).isCovered())
     {
         grid->getGrid()[x][y+1].setCovered(true);
         grid->getGrid()[x][y+1].setColor(grid->getGrid()[x][y].getColor());
@@ -196,7 +206,7 @@ void MainWindow::solveRec(Cell* currentCell)
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y+1];
         solveRec(grid->getCellPtr(x,y+1));
     }
-    else if (nextCell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).isOrigin() && grid->getCell(x+1,y).getColor() == currentCell->getColor())
+    else if (nextCell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).isOrigin() && grid->getCell(x+1,y).getColor() == currentCell->getColor() && !grid->getCell(x+1,y).isCovered())
     {
         grid->getGrid()[x+1][y].setCovered(true);
         grid->getGrid()[x+1][y].setColor(grid->getGrid()[x][y].getColor());
@@ -206,7 +216,7 @@ void MainWindow::solveRec(Cell* currentCell)
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x+1][y];
         solveRec(grid->getCellPtr(x+1,y));
     }
-    else if (nextCell->y-1 >= 0 && grid->getCell(x,y-1).isOrigin() && grid->getCell(x,y-1).getColor() == currentCell->getColor())
+    else if (nextCell->y-1 >= 0 && grid->getCell(x,y-1).isOrigin() && grid->getCell(x,y-1).getColor() == currentCell->getColor() && !grid->getCell(x,y-1).isCovered())
     {
         grid->getGrid()[x][y-1].setCovered(true);
         grid->getGrid()[x][y-1].setColor(grid->getGrid()[x][y].getColor());
@@ -215,14 +225,14 @@ void MainWindow::solveRec(Cell* currentCell)
         grid->getGrid()[x][y-1].setPathComplete(true);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y-1];
         solveRec(grid->getCellPtr(x,y-1));
-    }*/
+    }
     //else if
 
     // TODO
     // must change to all if + implement backtracking
     // or call the ifs after calling solveRec?
 
-    if (nextCell->x-1 >= 0 && grid->getCell(x-1,y).isOrigin() == false && grid->getCell(x-1,y).isCovered() == false)
+    else if (nextCell->x-1 >= 0 && grid->getCell(x-1,y).isOrigin() == false && grid->getCell(x-1,y).isCovered() == false)
     {
         std::cout << "testleft\n";
         grid->getGrid()[x-1][y].setCovered(true);
@@ -260,6 +270,7 @@ void MainWindow::solveRec(Cell* currentCell)
     }
     // TODO
     // else if cant find second origin -> backtracks, may remove color from history
+
 }
 
 
