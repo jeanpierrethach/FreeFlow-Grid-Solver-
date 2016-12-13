@@ -53,6 +53,19 @@
      <string>Save</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="solve">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>760</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Solve</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

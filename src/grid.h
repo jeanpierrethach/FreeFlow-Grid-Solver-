@@ -25,6 +25,7 @@ public:
     Cell getElement();
 
     Cell getCell(int, int);
+    Cell* getCellPtr(int, int);
     Cell** getGrid(){ return gameGrid; }
 
     void setPosition(int, int);

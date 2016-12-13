@@ -279,6 +279,11 @@ Cell Grid::getCell(int i, int j)
     return gameGrid[i][j];
 }
 
+Cell* Grid::getCellPtr(int i, int j)
+{
+    return &gameGrid[i][j];
+}
+
 void Grid::setCell(int i, int j, Cell cell)
 {
     gameGrid[i][j] = cell;

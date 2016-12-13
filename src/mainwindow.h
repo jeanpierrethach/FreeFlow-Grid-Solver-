@@ -41,6 +41,7 @@ private slots:
     void restart();
     void saveGame();
     void loadGame();
+    void solve();
 
 public slots:
     void setLevel(int);
@@ -54,6 +55,8 @@ signals:
 
 private:
     Ui::MainWindow* ui;
+
+    void solveRec(Cell*);
 
     void pressClearPathCase(int, int);
     void pressClearPathOrigin(int, int);
