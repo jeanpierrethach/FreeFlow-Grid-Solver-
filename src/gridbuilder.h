@@ -17,6 +17,8 @@ public:
     static Grid* buildGrid(int row, int col);
     GridBuilder();
 
+    static int getRandomNumberFrom0To(int max);
+
 private:
 
     static int currentColor;
@@ -28,8 +30,6 @@ private:
     static void destroyAdjacentPathMatrix(int**, int);
 
     static QPoint* getRandomFreeBlock(Grid*);
-
-    static int getRandomNumberFrom0To(int max);
 
     static QPoint* findXAdjacentFreeBlocks(Grid*, int x, int** adjacentPathMatrix);
     static QPoint* findLoneBlock(Grid*, int** adjacentPathMatrix);

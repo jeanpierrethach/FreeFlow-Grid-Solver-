@@ -73,3 +73,14 @@ void Cell::setCellInformation(int color, bool origin, bool covered, Cell* previo
     this->firstOrigin = firstOrigin;
     this->secondOrigin = secondOrigin;
 }
+
+bool Cell::isPartOfCompletedPath() {
+
+    Cell* iterator = new Cell();
+    iterator = this;
+    while(iterator->next[0] != 0) {
+        iterator = iterator->next[0];
+    }
+    return iterator->getPathComplete();
+
+}

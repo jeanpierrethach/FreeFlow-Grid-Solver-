@@ -32,6 +32,7 @@ public:
 
     void clear();
     void clearOrigin();
+    bool isPartOfCompletedPath();
 
     int x,y;
 
