@@ -183,6 +183,20 @@ bool MainWindow::mandatoryMove()
                 {
                     numberOfExits++;
                 }
+                if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == cell->getColor() && grid->getCell(x-1,y).isOrigin()
+                        && cell->previous[0] != 0 && cell->previous[0]->isOrigin())
+                {
+                    if (grid->getCell(x-1,y).next[0] != 0 && cell->x == grid->getCell(x-1,y).next[0]->x
+                            && cell->y == grid->getCell(x-1,y).next[0]->y)
+                    {
+
+                    }
+                    else
+                    {
+                        numberOfExits++;
+                    }
+
+                }
                 if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == -1) //|| grid->getCell(x-1,y).getColor() == cell->getColor()))
                 {
                     caseChosen = 0;
@@ -219,6 +233,20 @@ bool MainWindow::mandatoryMove()
                 {
                     numberOfExits++;
                 }
+                if (cell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).getColor() == cell->getColor() && grid->getCell(x,y+1).isOrigin()
+                        && cell->previous[0] != 0 && cell->previous[0]->isOrigin())
+                {
+                    if (grid->getCell(x,y+1).next[0] != 0 && cell->x == grid->getCell(x,y+1).next[0]->x
+                            && cell->y == grid->getCell(x,y+1).next[0]->y)
+                    {
+
+                    }
+                    else
+                    {
+                        numberOfExits++;
+                    }
+
+                }
                 if (cell->y+1 < grid->getNbRow() && (grid->getCell(x,y+1).getColor() == -1)) // || grid->getCell(x,y+1).getColor() == cell->getColor()))
                 {
                     caseChosen = 1;
@@ -254,6 +282,20 @@ bool MainWindow::mandatoryMove()
                 {
                     numberOfExits++;
                 }
+                if (cell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).getColor() == cell->getColor() && grid->getCell(x+1,y).isOrigin()
+                        && cell->previous[0] != 0 && cell->previous[0]->isOrigin())
+                {
+                    if (grid->getCell(x+1,y).next[0] != 0 && cell->x == grid->getCell(x+1,y).next[0]->x
+                            && cell->y == grid->getCell(x+1,y).next[0]->y)
+                    {
+
+                    }
+                    else
+                    {
+                        numberOfExits++;
+                    }
+
+                }
                 if (cell->x+1 < grid->getNbColumn() && (grid->getCell(x+1,y).getColor() == -1)) // || grid->getCell(x+1,y).getColor() == cell->getColor()))
                 {
                     caseChosen = 2;
@@ -287,6 +329,20 @@ bool MainWindow::mandatoryMove()
                         && cell->previous[0] != 0 && !cell->previous[0]->isOrigin())
                 {
                     numberOfExits++;
+                }
+                if (cell->y-1 >= 0 && grid->getCell(x,y-1).getColor() == cell->getColor() && grid->getCell(x,y-1).isOrigin()
+                        && cell->previous[0] != 0 && cell->previous[0]->isOrigin())
+                {
+                    if (grid->getCell(x,y-1).next[0] != 0 && cell->x == grid->getCell(x,y-1).next[0]->x
+                            && cell->y == grid->getCell(x,y-1).next[0]->y)
+                    {
+
+                    }
+                    else
+                    {
+                        numberOfExits++;
+                    }
+
                 }
                 if (cell->y-1 >= 0 && (grid->getCell(x,y-1).getColor() == -1)) // || grid->getCell(x,y-1).getColor() == cell->getColor()))
                 {
