@@ -57,7 +57,7 @@ signals:
 private:
     Ui::MainWindow* ui;
 
-    void solveRec(Cell*, bool);
+    void solveRec(Cell*, bool, bool);
 
     void pressClearPathCase(int, int);
     void pressClearPathOrigin(int, int);
@@ -69,7 +69,13 @@ private:
     void moveToClearLastCase(int, int);
     void moveBackwards(int, int);
 
+    void reversePath(Cell* cell);
 
+    bool cellIsPartOfHimself(Cell* current, Cell* target);
+
+    void setNextCell(Cell* current, Cell* next);
+
+    bool adjacentCellIsCompatible(int, int, int);
     bool mandatoryMove();
 
     void setPositionStart();

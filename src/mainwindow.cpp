@@ -30,8 +30,8 @@ MainWindow::MainWindow(QWidget* parent) :
 
     ui->back->setGeometry(30, height + height/24, 140, bottomSpace/3);
     ui->restart->setGeometry(width - 170, height + height/24, 140, bottomSpace/3);
-    ui->save->setGeometry(width - 430, height + height/24, 140, bottomSpace/3);
-    ui->solve->setGeometry(150, height + height/24, 140, bottomSpace/3);
+    ui->save->setGeometry(width - 340, height + height/24, 140, bottomSpace/3);
+    ui->solve->setGeometry(200, height + height/24, 140, bottomSpace/3);
 
     connect(ui->back, SIGNAL(clicked()), this, SLOT(back()));
     connect(ui->restart, SIGNAL(clicked()), this, SLOT(restart()));
@@ -145,7 +145,7 @@ bool MainWindow::mandatoryMove()
         {
             //int color = grid->getGrid()[i][j].getColor();
 
-            if (grid->getGrid()[i][j].isOrigin()) //&& std::find(listOfOriginsColor.begin(), listOfOriginsColor.end(), color) == listOfOriginsColor.end())
+            if (grid->getGrid()[i][j].isOrigin() && !grid->getCellPtr(i,j)->isPartOfCompletedPath()) //&& std::find(listOfOriginsColor.begin(), listOfOriginsColor.end(), color) == listOfOriginsColor.end())
             {
                 cell = grid->getCellPtr(i, j);//&grid->getGrid()[i][j];
                 //std::cout << "found origin\n";
@@ -369,7 +369,7 @@ bool MainWindow::mandatoryMove()
                     Cell* nextCell = new Cell();
                     switch(caseChosen) {
                         case(0):
-
+                        didAMandatoryMove = true;
                         nextCell = grid->getCellPtr(x-1, y);
                         grid->getGrid()[x-1][y].setCovered(true);
                         grid->getGrid()[x-1][y].setColor(grid->getGrid()[x][y].getColor());
@@ -381,6 +381,7 @@ bool MainWindow::mandatoryMove()
 
                         break;
                     case(1):
+                        didAMandatoryMove = true;
                         nextCell = grid->getCellPtr(x,y+1);
                         grid->getGrid()[x][y+1].setCovered(true);
                         grid->getGrid()[x][y+1].setColor(grid->getGrid()[x][y].getColor());
@@ -392,6 +393,7 @@ bool MainWindow::mandatoryMove()
 
                         break;
                     case(2):
+                        didAMandatoryMove = true;
                         nextCell = grid->getCellPtr(x+1,y);
 
                         grid->getGrid()[x+1][y].setCovered(true);
@@ -404,6 +406,7 @@ bool MainWindow::mandatoryMove()
 
                         break;
                     case(3):
+                        didAMandatoryMove = true;
                         nextCell = grid->getCellPtr(x, y-1);
 
                         grid->getGrid()[x][y-1].setCovered(true);
@@ -418,7 +421,7 @@ bool MainWindow::mandatoryMove()
                     }
 
 
-                    didAMandatoryMove = true;
+
 
 
                 }
@@ -427,6 +430,8 @@ bool MainWindow::mandatoryMove()
 
         }
     }
+
+
 
     //TODO remove ?
     //repaint();
@@ -437,6 +442,40 @@ bool MainWindow::mandatoryMove()
 
 }
 
+void MainWindow::reversePath(Cell* cell) {
+    Cell* current = new Cell();
+    current = cell;
+    if(current->next[0] != 0) {
+        Cell* next = new Cell();
+        next = current->next[0];
+
+        Cell* previous = new Cell();
+        if (current->previous[0] != 0){
+            previous = current->previous[0];
+        }
+        else
+        {
+            previous = 0;
+        }
+
+        while(current->next[0] != 0)
+        {
+            current->previous[0] = next;
+            current->next[0] = previous;
+
+            current = next;
+            previous = current->previous[0];
+            next = current->next[0];
+        }
+        if(current->previous[0] != 0)
+        {
+            current->next[0] = current->previous[0];
+            current->previous[0] = 0;
+        }
+
+    }
+}
+
 void MainWindow::solve()
 {
     Cell* temp2 = new Cell();
@@ -444,16 +483,70 @@ void MainWindow::solve()
     int nbOfColors = 0;
     std::vector<int> listOfOriginsColor;
 
-    //TODO
-    for (int i = 0; i < 50; i++)
+    // Do the mandatory moves
+    /*for (int i = 0; i < 50; i++)
     {
         mandatoryMove();
+        //
+    }*/
+    while(mandatoryMove());
+
+    //Reverse the path of the second origin
+    std::vector<bool> reversePath(nbOfColors);
+    for(bool b : reversePath) {
+        b = false;
     }
+    for (int i = 0; i < grid->getNbRow(); ++i)
+    {
+        for (int j = 0; j < grid->getNbColumn(); ++j)
+        {
+            if (grid->getGrid()[i][j].isOrigin())
+            {
+                if(reversePath[grid->getGrid()[i][j].getColor()]) {
+                    Cell* current = new Cell();
+                    current = grid->getCellPtr(i,j);
+                    if(current->next[0] != 0) {
+                        Cell* next = new Cell();
+                        next = current->next[0];
+
+                        Cell* previous = new Cell();
+                        if (current->previous[0] != 0){
+                            previous = current->previous[0];
+                        }
+                        else
+                        {
+                            previous = 0;
+                        }
+
+                        while(current->next[0] != 0)
+                        {
+                            current->previous[0] = next;
+                            current->next[0] = previous;
+
+                            current = next;
+                            previous = current->previous[0];
+                            next = current->next[0];
+                        }
+                        if(current->previous[0] != 0)
+                        {
+                            current->next[0] = current->previous[0];
+                            current->previous[0] = 0;
+                        }
+
+                    }
+                } else {
+                    reversePath[grid->getGrid()[i][j].getColor()] = true;
+                }
+
+            }
+        }
+    }
+
 
 
     // for .. solveRec(temp2, false);
 
-/*
+    //Try to recursively solve each path starting from point i,j
     for (int i = 0; i < grid->getNbRow(); ++i)
     {
         for (int j = 0; j < grid->getNbColumn(); ++j)
@@ -465,15 +558,53 @@ void MainWindow::solve()
                 listOfOriginsColor.push_back(color);
                 nbOfColors++;
                 temp2 = grid->getCellPtr(i,j);
-                solveRec(temp2, false);
-                if(!grid->getGrid()[i][j].isPartOfCompletedPath()) {
-                    pressClearPathOrigin(i,j);
+                while(temp2->next != 0 && temp2->next[0] != 0) {
+                    temp2 = temp2->next[0];
                 }
+
+                solveRec(temp2, false, true);
+                if(!grid->getGrid()[i][j].isPartOfCompletedPath()) {
+                    //pressClearPathOrigin(i,j);
+                    pressClearPathCase(temp2->x, temp2->y);
+                    if(temp2->isOrigin()) {
+                        temp2->next[0] = 0;
+                    }
+                    /*
+                    if (temp2->isOrigin()){
+                        pressClearPathOrigin(temp2->x,temp2->y);
+                    }
+                    else
+                    {
+                        pressClearPathCase(temp2->x, temp2->y);
+                    }
+                    */
+                    //retry counterCW
+                    solveRec(temp2, false, false);
+                    if(!grid->getGrid()[i][j].isPartOfCompletedPath()) {
+                        pressClearPathCase(temp2->x, temp2->y);
+                        if(temp2->isOrigin()) {
+                            temp2->next[0] = 0;
+                        }
+                        /*
+                        if (temp2->isOrigin()){
+                            pressClearPathOrigin(temp2->x,temp2->y);
+                        }
+                        else
+                        {
+                            pressClearPathCase(temp2->x, temp2->y);
+                        }
+                        */
+                        //pressClearPathOrigin(i,j);
+                    }
+                }
+                //while(mandatoryMove());
             }
 
         }
     }
 
+    std::cout << "TEST";
+    //Check which color is completed
 
     std::vector<bool> pathCompletedColor(nbOfColors);
     for (int i = 0; i < grid->getNbRow(); ++i)
@@ -489,8 +620,10 @@ void MainWindow::solve()
     }
     repaint();
     usleep(30000);
-*/
-    /*for (int i = 0; i < grid->getNbRow(); ++i)
+
+    //Clear the paths that arent completed
+/*
+    for (int i = 0; i < grid->getNbRow(); ++i)
     {
         for (int j = 0; j < grid->getNbColumn(); ++j)
         {
@@ -500,7 +633,10 @@ void MainWindow::solve()
             }
         }
     }*/
-/*
+
+    //Try to complete what is left to do randomly (hope for the best)
+ //REMOVE THIS
+
     for (int i = 0; i < grid->getNbRow(); ++i)
     {
         for (int j = 0; j < grid->getNbColumn(); ++j)
@@ -510,31 +646,104 @@ void MainWindow::solve()
                 int tries = 0;
                 pathCompletedColor[grid->getGrid()[i][j].getColor()] = true;
                 bool isCompleted = false;
-                while (!isCompleted && tries < 50) {
-                    if(tries > 0)
-                        pressClearPathOrigin(i, j);
 
+                Cell* cell = new Cell();
+                cell = grid->getCellPtr(i, j);
+                while(cell->next[0] != 0) {
+                    cell = cell->next[0];
+                }
+
+                while (!isCompleted && tries < 50) {
+
+                    pressClearPathCase(cell->x, cell->y);
+                    if(cell->isOrigin()) {
+                        cell->next[0] = 0;
+                    }
+/*
+                    if (cell->isOrigin()){
+                        pressClearPathOrigin(cell->x,cell->y);
+                    }
+                    else
+                    {
+                        pressClearPathCase(cell->x, cell->y);
+                    }
+  */
                     tries++;
 
-                    Cell* cell = new Cell();
-                    cell = grid->getCellPtr(i, j);
-                    solveRec(cell,true);
-                    isCompleted = cell->isPartOfCompletedPath();
+                    //Cell* cellRec = new Cell();
+                    //cellRec = grid->getCellPtr(cell->x, cell->y);
+
+                    solveRec(grid->getCellPtr(i,j),true, true);
+                    isCompleted = grid->getCellPtr(i,j)->isPartOfCompletedPath();
+                    //std::cout << isCompleted;
 
                 }
                 if(!grid->getGrid()[i][j].isPartOfCompletedPath())
-                    pressClearPathOrigin(i, j);
+                {
+                    //clearPathColorCase(initialCell);
+                    pressClearPathCase(cell->x, cell->y);
+                    if(cell->isOrigin()) {
+                        cell->next[0] = 0;
+                    }
+/*
+                    if (cell->isOrigin()){
+                        pressClearPathOrigin(cell->x,cell->y);
+                    }
+                    else
+                    {
+                        pressClearPathCase(cell->x, cell->y);
+                    }
+  */
+                }
             }
         }
-    }
+
+}
 
 
-*/
     update();
 
 }
 
-void MainWindow::solveRec(Cell* currentCell, bool isRandom)
+bool MainWindow::adjacentCellIsCompatible(int x, int y, int color) {
+    return  grid->getCell(x,y).isOrigin() &&
+            grid->getCell(x,y).getColor() == color &&
+            !grid->getCell(x,y).isCovered();
+            //&& grid->getCell(x,y).previous[0] == 0;
+}
+
+void MainWindow::setNextCell(Cell* current, Cell* next) {
+    next->setCovered(true);
+    next->setColor(current->getColor());
+    next->previous[0] = current;
+    if(next->isOrigin()) {
+        next->setSecondOrigin(true);
+        next->setPathComplete(true);
+    } else {
+        Cell* it = next;
+        while(it->next[0] != 0) {
+            it = it->next[0];
+        }
+        if(it->isOrigin()) {
+            it->setSecondOrigin(true);
+            it->setPathComplete(true);
+        }
+    }
+    current->next[0] = next;
+}
+
+bool MainWindow::cellIsPartOfHimself(Cell* current, Cell* target) {
+    Cell* it = new Cell();
+    it = current;
+    while(it->previous[0] != 0) {
+        if(it->x == target->x && it->y == target->y)
+            return true;
+        it = it->previous[0];
+    }
+    return false;
+}
+
+void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
 {
     repaint();
     usleep(30000);
@@ -550,9 +759,124 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom)
 
     currentCell->setCovered(true);
 
-    // TODO
-    // if find adjacent second origin -> connects with its position
-    if (nextCell->x-1 >= 0 && grid->getCell(x-1,y).isOrigin() && grid->getCell(x-1,y).getColor() == currentCell->getColor() && !grid->getCell(x-1,y).isCovered())
+    // TODO check if can connect to path with
+    //check connect with free path
+    //if
+
+    // verify path free then connect
+    if (nextCell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == currentCell->getColor()
+            && !grid->getCell(x-1,y).isOrigin() && !cellIsPartOfHimself(nextCell, grid->getCellPtr(x-1,y)) &&
+            //(grid->getCellPtr(x-1,y)->next[0] == 0 ||
+             grid->getCellPtr(x-1,y)->previous[0] == 0)
+    {
+        /*if(grid->getGrid()[x-1][y].next[0] == 0)
+        {
+            reversePath(grid->getCellPtr(x-1,y));
+        }*/
+
+        grid->getGrid()[x-1][y].setCovered(true);
+        grid->getGrid()[x-1][y].setColor(grid->getGrid()[x][y].getColor());
+        grid->getGrid()[x-1][y].previous[0] = nextCell;
+        grid->getGrid()[x][y].next[0] = &grid->getGrid()[x-1][y];
+
+
+            Cell* it = grid->getCellPtr(x-1,y);
+            while(it->next[0] != 0) {
+                it = it->next[0];
+            }
+            if(it->isOrigin()) {
+                it->setSecondOrigin(true);
+                it->setPathComplete(true);
+            }
+        return;
+    }
+    else if (nextCell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).getColor() == currentCell->getColor()
+             && !grid->getCell(x,y+1).isOrigin() && !cellIsPartOfHimself(nextCell, grid->getCellPtr(x,y+1)) &&
+             //(grid->getCellPtr(x,y+1)->next[0] == 0 ||
+                 grid->getCellPtr(x,y+1)->previous[0] == 0)
+     {
+        /*if(grid->getGrid()[x][y+1].next[0] == 0)
+        {
+            reversePath(grid->getCellPtr(x,y+1));
+        }*/
+         grid->getGrid()[x][y+1].setCovered(true);
+         grid->getGrid()[x][y+1].setColor(grid->getGrid()[x][y].getColor());
+         grid->getGrid()[x][y+1].previous[0] = nextCell;
+         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y+1];
+
+
+             Cell* it = grid->getCellPtr(x,y+1);
+             while(it->next[0] != 0) {
+                 it = it->next[0];
+             }
+             if(it->isOrigin()) {
+                 it->setSecondOrigin(true);
+                 it->setPathComplete(true);
+             }
+         return;
+     }
+    else if (nextCell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).getColor() == currentCell->getColor()
+             && !grid->getCell(x+1,y).isOrigin() && !cellIsPartOfHimself(nextCell, grid->getCellPtr(x+1,y))
+             &&
+             //(grid->getCellPtr(x+1,y)->next[0] == 0 ||
+             grid->getCellPtr(x+1,y)->previous[0] == 0)
+     {
+        /*
+        if(grid->getGrid()[x+1][y].next[0] == 0)
+        {
+            reversePath(grid->getCellPtr(x+1,y));
+        }
+        */
+         grid->getGrid()[x+1][y].setCovered(true);
+         grid->getGrid()[x+1][y].setColor(grid->getGrid()[x][y].getColor());
+         grid->getGrid()[x+1][y].previous[0] = nextCell;
+         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x+1][y];
+
+
+             Cell* it = grid->getCellPtr(x+1,y);
+             while(it->next[0] != 0) {
+                 it = it->next[0];
+             }
+             if(it->isOrigin()) {
+                 it->setSecondOrigin(true);
+                 it->setPathComplete(true);
+             }
+         return;
+     }
+    else if (nextCell->y-1 >= 0  && grid->getCell(x,y-1).getColor() == currentCell->getColor()
+             && !grid->getCell(x,y-1).isOrigin() && !cellIsPartOfHimself(nextCell, grid->getCellPtr(x,y-1))
+             &&
+             //(grid->getCellPtr(x,y-1)->next[0] == 0 ||
+             grid->getCellPtr(x,y-1)->previous[0] == 0)
+     {
+        /*
+        if(grid->getGrid()[x][y-1].next[0] == 0)
+        {
+            reversePath(grid->getCellPtr(x,y-1));
+        }
+        */
+         grid->getGrid()[x][y-1].setCovered(true);
+         grid->getGrid()[x][y-1].setColor(grid->getGrid()[x][y].getColor());
+         grid->getGrid()[x][y-1].previous[0] = nextCell;
+         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y-1];
+
+
+             Cell* it = grid->getCellPtr(x,y-1);
+             while(it->next[0] != 0) {
+                 it = it->next[0];
+             }
+             if(it->isOrigin()) {
+                 it->setSecondOrigin(true);
+                 it->setPathComplete(true);
+             }
+         return;
+     }
+
+    // Verify origin then connect
+    else if (nextCell->x-1 >= 0 && grid->getCell(x-1,y).isOrigin()
+             && grid->getCell(x-1,y).getColor() == currentCell->getColor() && grid->getCell(x-1,y).next[0] == 0)//!grid->getCell(x-1,y).isCovered())
+
+    // && adjacentCellIsCompatible(x-1,y, currentCell->getColor()))
     {
         grid->getGrid()[x-1][y].setCovered(true);
         grid->getGrid()[x-1][y].setColor(grid->getGrid()[x][y].getColor());
@@ -560,9 +884,13 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom)
         grid->getGrid()[x-1][y].setSecondOrigin(true);
         grid->getGrid()[x-1][y].setPathComplete(true);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x-1][y];
-        solveRec(grid->getCellPtr(x-1,y), isRandom);
+
+//        setNextCell(currentCell, grid->getCellPtr(x-1,y));
+        solveRec(grid->getCellPtr(x-1,y), isRandom, clockTurn);
     }
-    else if (nextCell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).isOrigin() && grid->getCell(x,y+1).getColor() == currentCell->getColor() && !grid->getCell(x,y+1).isCovered())
+    else if (nextCell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).isOrigin()
+             && grid->getCell(x,y+1).getColor() == currentCell->getColor() && grid->getCell(x,y+1).next[0] == 0)//&& !grid->getCell(x,y+1).isCovered())
+    //  && adjacentCellIsCompatible(x,y+1,currentCell->getColor()))//
     {
         grid->getGrid()[x][y+1].setCovered(true);
         grid->getGrid()[x][y+1].setColor(grid->getGrid()[x][y].getColor());
@@ -570,9 +898,13 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom)
         grid->getGrid()[x][y+1].setSecondOrigin(true);
         grid->getGrid()[x][y+1].setPathComplete(true);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y+1];
-        solveRec(grid->getCellPtr(x,y+1), isRandom);
+
+        //setNextCell(currentCell, grid->getCellPtr(x,y+1));
+        solveRec(grid->getCellPtr(x,y+1), isRandom,clockTurn);
     }
-    else if (nextCell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).isOrigin() && grid->getCell(x+1,y).getColor() == currentCell->getColor() && !grid->getCell(x+1,y).isCovered())
+    else if (nextCell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).isOrigin()
+             && grid->getCell(x+1,y).getColor() == currentCell->getColor() && grid->getCell(x+1,y).next[0] == 0)//&& !grid->getCell(x+1,y).isCovered())
+    // && adjacentCellIsCompatible(x+1,y,currentCell->getColor()))//
     {
         grid->getGrid()[x+1][y].setCovered(true);
         grid->getGrid()[x+1][y].setColor(grid->getGrid()[x][y].getColor());
@@ -580,9 +912,13 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom)
         grid->getGrid()[x+1][y].setSecondOrigin(true);
         grid->getGrid()[x+1][y].setPathComplete(true);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x+1][y];
-        solveRec(grid->getCellPtr(x+1,y), isRandom);
+
+//        setNextCell(currentCell, grid->getCellPtr(x+1,y));
+        solveRec(grid->getCellPtr(x+1,y), isRandom,clockTurn);
     }
-    else if (nextCell->y-1 >= 0 && grid->getCell(x,y-1).isOrigin() && grid->getCell(x,y-1).getColor() == currentCell->getColor() && !grid->getCell(x,y-1).isCovered())
+    else if (nextCell->y-1 >= 0 && grid->getCell(x,y-1).isOrigin()
+             && grid->getCell(x,y-1).getColor() == currentCell->getColor() && grid->getCell(x,y-1).next[0] == 0)//&& !grid->getCell(x,y-1).isCovered())
+    // adjacentCellIsCompatible(x,y-1,currentCell->getColor()))//
     {
         grid->getGrid()[x][y-1].setCovered(true);
         grid->getGrid()[x][y-1].setColor(grid->getGrid()[x][y].getColor());
@@ -590,19 +926,19 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom)
         grid->getGrid()[x][y-1].setSecondOrigin(true);
         grid->getGrid()[x][y-1].setPathComplete(true);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y-1];
-        solveRec(grid->getCellPtr(x,y-1), isRandom);
-    }
-    //else if
 
-    // TODO
-    // must change to all if + implement backtracking
-    // or call the ifs after calling solveRec?
+        //setNextCell(currentCell, grid->getCellPtr(x,y-1));
+        solveRec(grid->getCellPtr(x,y-1), isRandom,clockTurn);
+    }
     else {
         //int random = !isRandom ? 0 : GridBuilder::getRandomNumberFrom0To(4);
 
         std::vector<int> order(4);
         for(int i = 0; i < 4; i++) {
-            order[i] = !isRandom ? i : GridBuilder::getRandomNumberFrom0To(100);
+            int val = !isRandom ? i : GridBuilder::getRandomNumberFrom0To(100);
+            if(!isRandom && !clockTurn)
+                val = 10 - val;
+            order[i] = val;
         }
 
         bool enteredARecursion = false;
@@ -626,7 +962,7 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom)
                         grid->getGrid()[x-1][y].setColor(grid->getGrid()[x][y].getColor());
                         grid->getGrid()[x-1][y].previous[0] = nextCell;
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x-1][y];
-                        solveRec(grid->getCellPtr(x-1,y), isRandom);
+                        solveRec(grid->getCellPtr(x-1,y), isRandom,clockTurn);
                     }
                 break;
             case(1):
@@ -638,7 +974,7 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom)
                         grid->getGrid()[x][y+1].setColor(grid->getGrid()[x][y].getColor());
                         grid->getGrid()[x][y+1].previous[0] = nextCell;
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y+1];
-                        solveRec(grid->getCellPtr(x,y+1), isRandom);
+                        solveRec(grid->getCellPtr(x,y+1), isRandom,clockTurn);
                     }
                 break;
             case(2):
@@ -650,7 +986,7 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom)
                         grid->getGrid()[x+1][y].setColor(grid->getGrid()[x][y].getColor());
                         grid->getGrid()[x+1][y].previous[0] = nextCell;
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x+1][y];
-                        solveRec(grid->getCellPtr(x+1,y), isRandom);
+                        solveRec(grid->getCellPtr(x+1,y), isRandom,clockTurn);
                     }
                 break;
             case(3):
@@ -662,7 +998,7 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom)
                         grid->getGrid()[x][y-1].setColor(grid->getGrid()[x][y].getColor());
                         grid->getGrid()[x][y-1].previous[0] = nextCell;
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y-1];
-                        solveRec(grid->getCellPtr(x,y-1), isRandom);
+                        solveRec(grid->getCellPtr(x,y-1), isRandom,clockTurn);
                     }
                 break;
             }
