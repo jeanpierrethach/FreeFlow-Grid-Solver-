@@ -168,6 +168,11 @@ bool MainWindow::mandatoryMove()
                 int caseChosen = -1;
 
 
+                if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == cell->getColor() && grid->getCell(x-1,y).isOrigin()
+                        && cell->isOrigin())
+                {
+                    numberOfExits++;
+                }
                 if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == cell->getColor() && !grid->getCell(x-1,y).isOrigin()
                         && grid->getCell(x-1,y).next[0] == 0)
                 {
@@ -199,6 +204,11 @@ bool MainWindow::mandatoryMove()
                 }
 
 
+                if (cell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).getColor() == cell->getColor() && grid->getCell(x,y+1).isOrigin()
+                        && cell->isOrigin())
+                {
+                    numberOfExits++;
+                }
                 if (cell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).getColor() == cell->getColor() && !grid->getCell(x,y+1).isOrigin()
                         && grid->getCell(x,y+1).next[0] == 0)
                 {
@@ -229,6 +239,11 @@ bool MainWindow::mandatoryMove()
                 }
 
 
+                if (cell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).getColor() == cell->getColor() && grid->getCell(x+1,y).isOrigin()
+                        && cell->isOrigin())
+                {
+                    numberOfExits++;
+                }
                 if (cell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).getColor() == cell->getColor() && !grid->getCell(x+1,y).isOrigin()
                         && grid->getCell(x+1,y).next[0] == 0)
                 {
@@ -258,7 +273,11 @@ bool MainWindow::mandatoryMove()
 
                 }
 
-
+                if (cell->y-1 >= 0 && grid->getCell(x,y-1).getColor() == cell->getColor() && grid->getCell(x,y-1).isOrigin()
+                        && cell->isOrigin())
+                {
+                    numberOfExits++;
+                }
                 if (cell->y-1 >= 0 && grid->getCell(x,y-1).getColor() == cell->getColor() && !grid->getCell(x,y-1).isOrigin()
                         && grid->getCell(x,y-1).next[0] == 0)
                 {
@@ -370,7 +389,7 @@ void MainWindow::solve()
     std::vector<int> listOfOriginsColor;
 
     //TODO
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 50; i++)
     {
         mandatoryMove();
     }
