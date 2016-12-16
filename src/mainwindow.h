@@ -76,6 +76,8 @@ private:
     bool adjacentCellIsCompatible(int, int, int);
     bool mandatoryMove();
 
+    void verifySecondOrigin(int, int);
+
     void setPositionStart();
     void setPositionCase();
     void resizeGrid();
