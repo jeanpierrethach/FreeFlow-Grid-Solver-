@@ -14,6 +14,7 @@
 #include "generator.h"
 #include <QLabel>
 #include <QColor>
+#include "solver.h"
 
 #define NOTACTIVE -1
 
@@ -26,13 +27,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
     void mousePressEvent(QMouseEvent*);
     void mouseMoveEvent(QMouseEvent*);
     void mouseReleaseEvent(QMouseEvent*);
-
     void paintEvent(QPaintEvent*);
 
     void clearPathColorCase(Cell*);
@@ -57,10 +58,8 @@ signals:
 private:
     Ui::MainWindow* ui;
 
-    void solveRec(Cell*, bool, bool);
-
-    void pressClearPathCase(int, int);
     void pressClearPathOrigin(int, int);
+    void pressClearPathCase(int, int);
 
     void moveActions(int, int);
     void moveToBlankCase(int, int);
@@ -69,20 +68,6 @@ private:
     void moveToClearLastCase(int, int);
     void moveBackwards(int, int);
 
-    void reversePath(Cell* cell);
-
-    bool cellIsPartOfHimself(Cell* current, Cell* target);
-
-    bool adjacentCellIsCompatible(int, int, int);
-    bool mandatoryMove();
-
-    void confirmSecondOriginFrom(int, int);
-    void connectToLoneSecondOrigin(int x, int y, int color, Cell* nextCell);
-    void reversePathFromSecondOrigin(int);
-    void solveFromEdgeOfOrigin(int);
-    void solveRandomly(const std::vector<bool>&);
-    void fillGrid();
-    void matchEmptyCaseWithPath(Cell** adjacentCell, Cell** adjacentCell2, bool* matching, Cell** bottomBlank, Cell** topBlank);
     void repaintAndWait();
 
     void setPositionStart();
@@ -128,6 +113,8 @@ private:
 
     GameStorer* storer;
     Generator gen;
+    Solver* solver;
+
 
 };
 
