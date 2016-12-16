@@ -573,8 +573,60 @@ void MainWindow::solveFromEdgeOfOrigin(int nbOfColors)
     }
 }
 
+void MainWindow::solveRandomly(const std::vector<bool>& pathCompleted)
+{
+    //Try to complete what is left to do randomly (hope for the best)
+    std::vector<bool> pathCompletedColor(pathCompleted.size());
+
+    for(bool b : pathCompletedColor) {
+        std::cout << "Path complete =" << b << "\n";
+    }
+
+    for (int i = 0; i < grid->getNbRow(); ++i)
+    {
+        for (int j = 0; j < grid->getNbColumn(); ++j)
+        {
+            if (grid->getGrid()[i][j].isOrigin() && pathCompletedColor[grid->getGrid()[i][j].getColor()] == false)
+            {
+                int tries = 0;
+                pathCompletedColor[grid->getGrid()[i][j].getColor()] = true;
+                bool isCompleted = false;
+
+                Cell* cell = new Cell();
+                cell = grid->getCellPtr(i, j);
+                while(cell->next[0] != 0) {
+                    cell = cell->next[0];
+                }
+
+                while (!isCompleted && tries < 50) {
+
+                    pressClearPathCase(cell->x, cell->y);
+                    // TODO LOOK condition
+                    if(cell->isOrigin()) {
+                        cell->next[0] = 0;
+                    }
+
+                    tries++;
+
+                    solveRec(cell ,true, true);
+                    isCompleted = grid->getCellPtr(i,j)->isPartOfCompletedPath();
+                }
+                if(!grid->getGrid()[i][j].isPartOfCompletedPath())
+                {
+                    pressClearPathCase(cell->x, cell->y);
+                    // TODO LOOK condition
+                    if(cell->isOrigin()) {
+                        cell->next[0] = 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
 void MainWindow::solve()
 {
+    // TODO LOOK variable and vector initialization
     int nbOfColors = 0;
 
     while(mandatoryMove());
@@ -603,8 +655,6 @@ void MainWindow::solve()
     repaint();
     usleep(30000);
 
-    //if(false) {
-
     //Clear the paths that arent completed
 /*
     for (int i = 0; i < grid->getNbRow(); ++i)
@@ -618,61 +668,9 @@ void MainWindow::solve()
         }
     }*/
 
-    //Try to complete what is left to do randomly (hope for the best)
-    for(bool b : pathCompletedColor) {
-        std::cout << "Path complete =" << b << "\n";
-    }
-
-    for (int i = 0; i < grid->getNbRow(); ++i)
-    {
-        for (int j = 0; j < grid->getNbColumn(); ++j)
-        {
-            if (grid->getGrid()[i][j].isOrigin() && pathCompletedColor[grid->getGrid()[i][j].getColor()] == false)
-            {
-                int tries = 0;
-                pathCompletedColor[grid->getGrid()[i][j].getColor()] = true;
-                bool isCompleted = false;
-
-                Cell* cell = new Cell();
-                cell = grid->getCellPtr(i, j);
-                while(cell->next[0] != 0) {
-                    cell = cell->next[0];
-                }
-
-                while (!isCompleted && tries < 50) {
-
-                    pressClearPathCase(cell->x, cell->y);
-                    if(cell->isOrigin()) {
-                        cell->next[0] = 0;
-                    }
-
-                    tries++;
-
-                    //Cell* cellRec = new Cell();
-                    //cellRec = grid->getCellPtr(cell->x, cell->y);
-
-                    solveRec(cell ,true, true);
-                    isCompleted = grid->getCellPtr(i,j)->isPartOfCompletedPath();
-                    //std::cout << isCompleted;
-
-                }
-                if(!grid->getGrid()[i][j].isPartOfCompletedPath())
-                {
-                    //clearPathColorCase(initialCell);
-                    pressClearPathCase(cell->x, cell->y);
-                    if(cell->isOrigin()) {
-                        cell->next[0] = 0;
-                    }
-                }
-            }
-        }
-
-    //}
-
-}
+    solveRandomly(pathCompletedColor);
 
     update();
-
 }
 
 bool MainWindow::adjacentCellIsCompatible(int x, int y, int color) {

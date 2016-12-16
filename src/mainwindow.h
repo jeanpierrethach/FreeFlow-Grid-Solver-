@@ -80,6 +80,7 @@ private:
     void connectToLoneSecondOrigin(int x, int y, int color, Cell* nextCell);
     void reversePathFromSecondOrigin(int);
     void solveFromEdgeOfOrigin(int);
+    void solveRandomly(const std::vector<bool>&);
 
     void setPositionStart();
     void setPositionCase();
