@@ -333,8 +333,6 @@ bool MainWindow::mandatoryMove()
                         grid->getGrid()[x-1][y].previous[0] = &grid->getGrid()[x][y];
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x-1][y];
                         std::cout << "nextCell case 0 GOING LEFT, x: " << nextCell->x << " ,y: " << nextCell->y << "\n\n";
-                        repaint();
-                        //usleep(300000);
 
                         break;
                     case(1):
@@ -345,8 +343,6 @@ bool MainWindow::mandatoryMove()
                         grid->getGrid()[x][y+1].previous[0] = &grid->getGrid()[x][y];
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y+1];
                         std::cout << "nextCell case 1 GOING DOWN, x: " << nextCell->x << " ,y: " << nextCell->y << "\n\n";
-                        repaint();
-                        //usleep(300000);
 
                         break;
                     case(2):
@@ -358,8 +354,6 @@ bool MainWindow::mandatoryMove()
                         grid->getGrid()[x+1][y].previous[0] = &grid->getGrid()[x][y];
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x+1][y];
                         std::cout << "nextCell case 2 GOING RIGHT, x: " << nextCell->x << " ,y: " << nextCell->y << "\n\n";
-                        repaint();
-                        //usleep(300000);
 
                         break;
                     case(3):
@@ -371,11 +365,11 @@ bool MainWindow::mandatoryMove()
                         grid->getGrid()[x][y-1].previous[0] = &grid->getGrid()[x][y];
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y-1];
                         std::cout << "nextCell case 3 GOING UP, x: " << nextCell->x << " ,y: " << nextCell->y << "\n\n";
-                        repaint();
-                        //usleep(300000);
 
                         break;
                     }
+
+                    repaintAndWait();
                 }
             }
         }
@@ -715,8 +709,6 @@ void MainWindow::solve()
             }
         }
     }
-    repaint();
-    //usleep(30000);
 
     //Clear the paths that arent completed
 /*
@@ -737,10 +729,10 @@ void MainWindow::solve()
 
 
     bool hasEmptyCells = true;
-    //while(hasEmptyCells)
-    //{
-    for(int i=0;i<3;i++)
+    int maxTries = 20;
+    while(hasEmptyCells && maxTries > 0)
     {
+        maxTries--;
         hasEmptyCells = false;
         for(int i = 0; i < grid->getNbRow(); ++i)
         {
@@ -805,8 +797,7 @@ void MainWindow::connectToLoneSecondOrigin(int x, int y, int color, Cell* nextCe
 
 void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
 {
-    repaint();
-    //usleep(30000);
+    repaintAndWait();
 
     if(currentCell->getPathComplete() || currentCell->next[0] != 0) {
         return;
@@ -991,6 +982,12 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
 
 }
 
+void MainWindow::repaintAndWait()
+{
+    repaint();
+    int timeFactor = (16 - grid->getNbRow()) * 2000;
+    usleep(timeFactor);
+}
 
 void MainWindow::setGeneratedLevel()
 {
