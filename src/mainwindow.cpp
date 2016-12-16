@@ -145,7 +145,7 @@ bool MainWindow::mandatoryMove()
         {
             //int color = grid->getGrid()[i][j].getColor();
 
-            if (grid->getGrid()[i][j].isOrigin() && !grid->getCellPtr(i,j)->isPartOfCompletedPath()) //&& std::find(listOfOriginsColor.begin(), listOfOriginsColor.end(), color) == listOfOriginsColor.end())
+            if (grid->getGrid()[i][j].isOrigin() && !grid->getCellPtr(i,j)->isPartOfCompletedPath())
             {
                 cell = grid->getCellPtr(i, j);//&grid->getGrid()[i][j];
                 //std::cout << "found origin\n";
@@ -480,15 +480,18 @@ void MainWindow::reversePathFromSecondOrigin(int nbOfColors)
 {
     //Reverse the path of the second origin
     std::vector<bool> reversableOrigins(nbOfColors);
+
     for (int i = 0; i < grid->getNbRow(); ++i)
     {
         for (int j = 0; j < grid->getNbColumn(); ++j)
         {
             if (grid->getGrid()[i][j].isOrigin())
             {
+                // if it's the first origin then false, else true
                 if(reversableOrigins[grid->getGrid()[i][j].getColor()]) {
                     Cell* current = new Cell();
                     current = grid->getCellPtr(i,j);
+
                     if(current->next[0] != 0) {
                         Cell* next = new Cell();
                         next = current->next[0];
@@ -527,19 +530,10 @@ void MainWindow::reversePathFromSecondOrigin(int nbOfColors)
     }
 }
 
-void MainWindow::solve()
+void MainWindow::solveFromEdgeOfOrigin(int nbOfColors)
 {
-    Cell* temp2 = new Cell();
+    Cell* cell = new Cell();
 
-    int nbOfColors = 0;
-    std::vector<int> listOfOriginsColor;
-
-    while(mandatoryMove());
-
-    reversePathFromSecondOrigin(nbOfColors);
-
-    //Try to recursively solve each path starting from point i,j
-    //for(int p = 0; p < 10; p++) {
     std::vector<bool> solveFromFirstOrigin(nbOfColors);
     for (int i = 0; i < grid->getNbRow(); ++i)
     {
@@ -547,29 +541,28 @@ void MainWindow::solve()
         {
             int color = grid->getGrid()[i][j].getColor();
 
-            if (grid->getGrid()[i][j].isOrigin() && solveFromFirstOrigin[color] == false) //&& std::find(listOfOriginsColor.begin(), listOfOriginsColor.end(), color) == listOfOriginsColor.end())
+            if (grid->getGrid()[i][j].isOrigin() && solveFromFirstOrigin[color] == false)
             {
-                listOfOriginsColor.push_back(color);
                 solveFromFirstOrigin[color] = true;
 
                 nbOfColors++;
-                temp2 = grid->getCellPtr(i,j);
-                while(temp2->next != 0 && temp2->next[0] != 0) {
-                    temp2 = temp2->next[0];
+                cell = grid->getCellPtr(i,j);
+                while(cell->next[0] != 0) {
+                    cell = cell->next[0];
                 }
 
                 // Try Counterclock wise
-                solveRec(temp2, false, true); // p != 0
+                solveRec(cell, false, true); // p != 0
                 if(!grid->getGrid()[i][j].isPartOfCompletedPath())
                 {
-                    pressClearPathCase(temp2->x, temp2->y);
-                    temp2->next[0] = 0;
+                    pressClearPathCase(cell->x, cell->y);
+                    cell->next[0] = 0;
 
                     // Retry Clockwise
-                    solveRec(temp2, false, false); // p != 0
+                    solveRec(cell, false, false); // p != 0
                     if(!grid->getGrid()[i][j].isPartOfCompletedPath()) {
-                        pressClearPathCase(temp2->x, temp2->y);
-                        temp2->next[0] = 0;
+                        pressClearPathCase(cell->x, cell->y);
+                        cell->next[0] = 0;
                     }
                 }
 
@@ -578,8 +571,22 @@ void MainWindow::solve()
 
         }
     }
+}
 
-//}
+void MainWindow::solve()
+{
+    int nbOfColors = 0;
+
+    while(mandatoryMove());
+
+    reversePathFromSecondOrigin(nbOfColors);
+
+    //for(int p = 0; p < 10; p++) {
+
+    //Try to recursively solve each path starting from point i,j
+    solveFromEdgeOfOrigin(nbOfColors);
+
+    //}
 
     //Check which color is completed
     std::vector<bool> pathCompletedColor(nbOfColors);

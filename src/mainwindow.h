@@ -79,6 +79,7 @@ private:
     void confirmSecondOriginFrom(int, int);
     void connectToLoneSecondOrigin(int x, int y, int color, Cell* nextCell);
     void reversePathFromSecondOrigin(int);
+    void solveFromEdgeOfOrigin(int);
 
     void setPositionStart();
     void setPositionCase();
