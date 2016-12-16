@@ -548,7 +548,7 @@ void MainWindow::solve()
 
 
     //Try to recursively solve each path starting from point i,j
-    for(int p = 0; p < 10; p++) {
+    //for(int p = 0; p < 10; p++) {
     std::vector<bool> solveFromFirstOrigin(nbOfColors);
         for (int i = 0; i < grid->getNbRow(); ++i)
     {
@@ -567,7 +567,7 @@ void MainWindow::solve()
                     temp2 = temp2->next[0];
                 }
 
-                solveRec(temp2, p != 0, true);
+                solveRec(temp2, false, true); // p != 0
                 if(!grid->getGrid()[i][j].isPartOfCompletedPath()) {
                     //pressClearPathOrigin(i,j);
                     pressClearPathCase(temp2->x, temp2->y);
@@ -587,7 +587,7 @@ void MainWindow::solve()
                     }
                     */
                     //retry counterCW
-                    solveRec(temp2, p != 0, false);
+                    solveRec(temp2, false, false); // p != 0
                     if(!grid->getGrid()[i][j].isPartOfCompletedPath()) {
                         pressClearPathCase(temp2->x, temp2->y);
 //TEST
@@ -613,7 +613,7 @@ void MainWindow::solve()
 
         }
     }
-}
+//}
 
 
     std::cout << "TEST";
@@ -633,7 +633,7 @@ void MainWindow::solve()
     repaint();
     usleep(30000);
 
-    if(false) {
+    //if(false) {
 
     //Clear the paths that arent completed
 /*
@@ -714,7 +714,7 @@ void MainWindow::solve()
             }
         }
 
-    }
+    //}
 
 }
 
@@ -725,8 +725,7 @@ void MainWindow::solve()
 bool MainWindow::adjacentCellIsCompatible(int x, int y, int color) {
     return  grid->getCell(x,y).isOrigin() &&
             grid->getCell(x,y).getColor() == color &&
-            !grid->getCell(x,y).isCovered();
-            //&& grid->getCell(x,y).previous[0] == 0;
+            grid->getCell(x,y).next[0] == 0;
 }
 
 bool MainWindow::cellIsPartOfHimself(Cell* current, Cell* target) {
@@ -870,10 +869,7 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
      }
 
     // Verify origin then connect
-    else if (nextCell->x-1 >= 0 && grid->getCell(x-1,y).isOrigin()
-             && grid->getCell(x-1,y).getColor() == currentCell->getColor() && grid->getCell(x-1,y).next[0] == 0)//!grid->getCell(x-1,y).isCovered())
-
-    // && adjacentCellIsCompatible(x-1,y, currentCell->getColor()))
+    else if (nextCell->x-1 >= 0 && adjacentCellIsCompatible(x-1,y, currentCell->getColor()))
     {
         grid->getGrid()[x-1][y].setCovered(true);
         grid->getGrid()[x-1][y].setColor(grid->getGrid()[x][y].getColor());
@@ -882,12 +878,9 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
         grid->getGrid()[x-1][y].setPathComplete(true);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x-1][y];
 
-//        setNextCell(currentCell, grid->getCellPtr(x-1,y));
         solveRec(grid->getCellPtr(x-1,y), isRandom, clockTurn);
     }
-    else if (nextCell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).isOrigin()
-             && grid->getCell(x,y+1).getColor() == currentCell->getColor() && grid->getCell(x,y+1).next[0] == 0)//&& !grid->getCell(x,y+1).isCovered())
-    //  && adjacentCellIsCompatible(x,y+1,currentCell->getColor()))//
+    else if (nextCell->y+1 < grid->getNbRow() && adjacentCellIsCompatible(x,y+1,currentCell->getColor()))
     {
         grid->getGrid()[x][y+1].setCovered(true);
         grid->getGrid()[x][y+1].setColor(grid->getGrid()[x][y].getColor());
@@ -896,12 +889,9 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
         grid->getGrid()[x][y+1].setPathComplete(true);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y+1];
 
-        //setNextCell(currentCell, grid->getCellPtr(x,y+1));
         solveRec(grid->getCellPtr(x,y+1), isRandom,clockTurn);
     }
-    else if (nextCell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).isOrigin()
-             && grid->getCell(x+1,y).getColor() == currentCell->getColor() && grid->getCell(x+1,y).next[0] == 0)//&& !grid->getCell(x+1,y).isCovered())
-    // && adjacentCellIsCompatible(x+1,y,currentCell->getColor()))//
+    else if (nextCell->x+1 < grid->getNbColumn() && adjacentCellIsCompatible(x+1,y,currentCell->getColor()))
     {
         grid->getGrid()[x+1][y].setCovered(true);
         grid->getGrid()[x+1][y].setColor(grid->getGrid()[x][y].getColor());
@@ -910,12 +900,9 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
         grid->getGrid()[x+1][y].setPathComplete(true);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x+1][y];
 
-//        setNextCell(currentCell, grid->getCellPtr(x+1,y));
         solveRec(grid->getCellPtr(x+1,y), isRandom,clockTurn);
     }
-    else if (nextCell->y-1 >= 0 && grid->getCell(x,y-1).isOrigin()
-             && grid->getCell(x,y-1).getColor() == currentCell->getColor() && grid->getCell(x,y-1).next[0] == 0)//&& !grid->getCell(x,y-1).isCovered())
-    // adjacentCellIsCompatible(x,y-1,currentCell->getColor()))//
+    else if (nextCell->y-1 >= 0 && adjacentCellIsCompatible(x,y-1,currentCell->getColor()))
     {
         grid->getGrid()[x][y-1].setCovered(true);
         grid->getGrid()[x][y-1].setColor(grid->getGrid()[x][y].getColor());
@@ -924,7 +911,6 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
         grid->getGrid()[x][y-1].setPathComplete(true);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y-1];
 
-        //setNextCell(currentCell, grid->getCellPtr(x,y-1));
         solveRec(grid->getCellPtr(x,y-1), isRandom,clockTurn);
     }
     else {
