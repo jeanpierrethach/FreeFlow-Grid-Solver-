@@ -77,6 +77,7 @@ private:
     bool mandatoryMove();
 
     void verifySecondOrigin(int, int);
+    void connectToLoneSecondOrigin(int x, int y, int color, Cell* nextCell);
 
     void setPositionStart();
     void setPositionCase();

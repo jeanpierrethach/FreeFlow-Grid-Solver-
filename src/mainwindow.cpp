@@ -751,6 +751,15 @@ void MainWindow::verifySecondOrigin(int x, int y)
     }
 }
 
+void MainWindow::connectToLoneSecondOrigin(int x, int y, int color, Cell* nextCell)
+{
+    grid->getGrid()[x][y].setCovered(true);
+    grid->getGrid()[x][y].setColor(color);
+    grid->getGrid()[x][y].previous[0] = nextCell;
+    grid->getGrid()[x][y].setSecondOrigin(true);
+    grid->getGrid()[x][y].setPathComplete(true);
+}
+
 void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
 {
     repaint();
@@ -830,44 +839,36 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
     // Verify origin then connect
     else if (nextCell->x-1 >= 0 && adjacentCellIsCompatible(x-1,y, currentCell->getColor()))
     {
-        grid->getGrid()[x-1][y].setCovered(true);
-        grid->getGrid()[x-1][y].setColor(grid->getGrid()[x][y].getColor());
-        grid->getGrid()[x-1][y].previous[0] = nextCell;
-        grid->getGrid()[x-1][y].setSecondOrigin(true);
-        grid->getGrid()[x-1][y].setPathComplete(true);
+        int color = grid->getGrid()[x][y].getColor();
+
+        connectToLoneSecondOrigin(x-1,y,color,nextCell);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x-1][y];
 
         solveRec(grid->getCellPtr(x-1,y), isRandom, clockTurn);
     }
     else if (nextCell->y+1 < grid->getNbRow() && adjacentCellIsCompatible(x,y+1,currentCell->getColor()))
     {
-        grid->getGrid()[x][y+1].setCovered(true);
-        grid->getGrid()[x][y+1].setColor(grid->getGrid()[x][y].getColor());
-        grid->getGrid()[x][y+1].previous[0] = nextCell;
-        grid->getGrid()[x][y+1].setSecondOrigin(true);
-        grid->getGrid()[x][y+1].setPathComplete(true);
+        int color = grid->getGrid()[x][y].getColor();
+
+        connectToLoneSecondOrigin(x,y+1,color,nextCell);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y+1];
 
         solveRec(grid->getCellPtr(x,y+1), isRandom,clockTurn);
     }
     else if (nextCell->x+1 < grid->getNbColumn() && adjacentCellIsCompatible(x+1,y,currentCell->getColor()))
     {
-        grid->getGrid()[x+1][y].setCovered(true);
-        grid->getGrid()[x+1][y].setColor(grid->getGrid()[x][y].getColor());
-        grid->getGrid()[x+1][y].previous[0] = nextCell;
-        grid->getGrid()[x+1][y].setSecondOrigin(true);
-        grid->getGrid()[x+1][y].setPathComplete(true);
+        int color = grid->getGrid()[x][y].getColor();
+
+        connectToLoneSecondOrigin(x+1,y,color,nextCell);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x+1][y];
 
         solveRec(grid->getCellPtr(x+1,y), isRandom,clockTurn);
     }
     else if (nextCell->y-1 >= 0 && adjacentCellIsCompatible(x,y-1,currentCell->getColor()))
     {
-        grid->getGrid()[x][y-1].setCovered(true);
-        grid->getGrid()[x][y-1].setColor(grid->getGrid()[x][y].getColor());
-        grid->getGrid()[x][y-1].previous[0] = nextCell;
-        grid->getGrid()[x][y-1].setSecondOrigin(true);
-        grid->getGrid()[x][y-1].setPathComplete(true);
+        int color = grid->getGrid()[x][y].getColor();
+
+        connectToLoneSecondOrigin(x,y-1,color,nextCell);
         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y-1];
 
         solveRec(grid->getCellPtr(x,y-1), isRandom,clockTurn);
