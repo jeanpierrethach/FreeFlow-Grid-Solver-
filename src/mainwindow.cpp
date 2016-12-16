@@ -544,9 +544,9 @@ void MainWindow::solveRandomly(const std::vector<bool>& pathCompleted)
 
                     pressClearPathCase(cell->x, cell->y);
                     // TODO LOOK condition
-                    if(cell->isOrigin()) {
+                    //if(cell->isOrigin()) {
                         cell->next[0] = 0;
-                    }
+                    //}
 
                     tries++;
 
@@ -557,11 +557,122 @@ void MainWindow::solveRandomly(const std::vector<bool>& pathCompleted)
                 {
                     pressClearPathCase(cell->x, cell->y);
                     // TODO LOOK condition
-                    if(cell->isOrigin()) {
+                    //if(cell->isOrigin()) {
                         cell->next[0] = 0;
-                    }
+                    //}
                 }
             }
+        }
+    }
+}
+
+void MainWindow::matchEmptyCaseWithPath(Cell** adjacentCell, Cell** adjacentCell2, bool* matching, Cell** bottomBlank, Cell** topBlank)
+{
+
+    if((*adjacentCell)->next[0] == *adjacentCell2) {
+        *matching = true;
+    }
+    else if ((*adjacentCell2)->next[0] == *adjacentCell)
+    {
+        *matching = true;
+        Cell* temp = new Cell();
+
+        temp = *adjacentCell;
+        *adjacentCell = *adjacentCell2;
+        *adjacentCell2 = temp;
+
+        temp = *bottomBlank;
+        *bottomBlank = *topBlank;
+        *topBlank = temp;
+    }
+}
+
+void MainWindow::fillGrid() {
+    for(int x = 0; x < grid->getNbRow(); ++x)
+    {
+        for(int y = 0; y < grid->getNbColumn(); ++y)
+        {
+            bool clearedEmptySpot = false;
+            //Found empty spot
+            if(grid->getCell(x,y).getColor() == -1) {
+                //found a second adjacent empty cell
+                Cell* adjacentCell = new Cell();
+                Cell* adjacentCell2 = new Cell();
+                bool matching = false;
+
+                Cell* firstEmptyCell = new Cell();
+                Cell* secondEmptyCell = new Cell();
+                firstEmptyCell = grid->getCellPtr(x,y);
+                if(y+1 < grid->getNbColumn() && grid->getCell(x,y+1).getColor() == -1)
+                {
+                    secondEmptyCell = grid->getCellPtr(x, y+1);
+
+                    //check parralel on the left
+                    if(x-1 >= 0)
+                    {
+                        adjacentCell = grid->getCellPtr(x-1,y);
+                        adjacentCell2 = grid->getCellPtr(x-1,y+1);
+                        matchEmptyCaseWithPath(&adjacentCell, &adjacentCell2, &matching, &secondEmptyCell, &firstEmptyCell);
+                    }
+                    //check parralel on the right
+                    if(!matching && x+1 < grid->getNbRow())
+                    {
+                        adjacentCell = grid->getCellPtr(x+1,y);
+                        adjacentCell2 = grid->getCellPtr(x+1,y+1);
+                        matchEmptyCaseWithPath(&adjacentCell, &adjacentCell2, &matching, &secondEmptyCell, &firstEmptyCell);
+                    }
+                    if(matching)
+                    {
+                        firstEmptyCell->setColor(adjacentCell->getColor());
+                        secondEmptyCell->setColor(adjacentCell->getColor());
+
+                        firstEmptyCell->previous[0] = adjacentCell;
+                        firstEmptyCell->next[0] = secondEmptyCell;
+
+                        secondEmptyCell->previous[0] = firstEmptyCell;
+                        secondEmptyCell->next[0] = adjacentCell2;
+
+                        adjacentCell->next[0] = firstEmptyCell;
+                        adjacentCell2->previous[0] = secondEmptyCell;
+                    }
+                }
+                else if(x+1 < grid->getNbRow() && grid->getCell(x,y).getColor() == -1 && grid->getCell(x+1,y).getColor() == -1)
+                {
+                    secondEmptyCell = grid->getCellPtr(x+1, y);
+
+                    //check parralel up
+                    if(y-1 >= 0)
+                    {
+                        adjacentCell = grid->getCellPtr(x,y-1);
+                        adjacentCell2 = grid->getCellPtr(x+1,y-1);
+                        matchEmptyCaseWithPath(&adjacentCell, &adjacentCell2, &matching, &secondEmptyCell, &firstEmptyCell);
+                    }
+                    //check parralel down
+                    if(!matching && y+1 < grid->getNbRow())
+                    {
+                        adjacentCell = grid->getCellPtr(x,y+1);
+                        adjacentCell2 = grid->getCellPtr(x+1,y+1);
+                        matchEmptyCaseWithPath(&adjacentCell, &adjacentCell2, &matching, &secondEmptyCell, &firstEmptyCell);
+                    }
+                    if(matching)
+                    {
+                        firstEmptyCell->setColor(adjacentCell->getColor());
+                        secondEmptyCell->setColor(adjacentCell->getColor());
+
+                        firstEmptyCell->previous[0] = adjacentCell;
+                        firstEmptyCell->next[0] = secondEmptyCell;
+
+                        secondEmptyCell->previous[0] = firstEmptyCell;
+                        secondEmptyCell->next[0] = adjacentCell2;
+
+                        adjacentCell->next[0] = firstEmptyCell;
+                        adjacentCell2->previous[0] = secondEmptyCell;
+                    }
+                }
+
+            }
+
+
         }
     }
 }
@@ -572,6 +683,14 @@ void MainWindow::solve()
 
     // TODO LOOK variable and vector initialization
     int nbOfColors = 0;
+    for(int i = 0; i < grid->getNbColumn(); i++) {
+        for(int j = 0; j < grid->getNbRow(); j++) {
+            if(nbOfColors < grid->getCell(i,j).getColor()) {
+                nbOfColors = grid->getCell(i,j).getColor();
+            }
+        }
+    }
+    nbOfColors++;
 
     while(mandatoryMove());
 
@@ -613,6 +732,29 @@ void MainWindow::solve()
     }*/
 
     solveRandomly(pathCompletedColor);
+
+
+
+
+    bool hasEmptyCells = true;
+    //while(hasEmptyCells)
+    //{
+    for(int i=0;i<3;i++)
+    {
+        hasEmptyCells = false;
+        for(int i = 0; i < grid->getNbRow(); ++i)
+        {
+            for(int j = 0; j < grid->getNbColumn(); ++j)
+            {
+                if(grid->getCell(i,j).getColor() == -1)
+                {
+                    hasEmptyCells = true;
+                }
+            }
+        }
+        if(hasEmptyCells)
+            fillGrid();
+    }
 
     update();
 

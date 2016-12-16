@@ -81,6 +81,8 @@ private:
     void reversePathFromSecondOrigin(int);
     void solveFromEdgeOfOrigin(int);
     void solveRandomly(const std::vector<bool>&);
+    void fillGrid();
+    void matchEmptyCaseWithPath(Cell** adjacentCell, Cell** adjacentCell2, bool* matching, Cell** bottomBlank, Cell** topBlank);
 
     void setPositionStart();
     void setPositionCase();
