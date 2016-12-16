@@ -741,7 +741,7 @@ bool MainWindow::cellIsPartOfHimself(Cell* current, Cell* target) {
 
 void MainWindow::verifySecondOrigin(int x, int y)
 {
-    Cell* it = grid->getCellPtr(x-1,y);
+    Cell* it = grid->getCellPtr(x,y);
     while(it->next[0] != 0) {
         it = it->next[0];
     }
@@ -767,21 +767,12 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
 
     currentCell->setCovered(true);
 
-    // TODO check if can connect to path with
-    //check connect with free path
-    //if
-
     // verify path free then connect
     if (nextCell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == currentCell->getColor()
             && !grid->getCell(x-1,y).isOrigin() && !cellIsPartOfHimself(nextCell, grid->getCellPtr(x-1,y)) &&
             //(grid->getCellPtr(x-1,y)->next[0] == 0 ||
              grid->getCellPtr(x-1,y)->previous[0] == 0)
     {
-        /*if(grid->getGrid()[x-1][y].next[0] == 0)
-        {
-            reversePath(grid->getCellPtr(x-1,y));
-        }*/
-
         grid->getGrid()[x-1][y].setCovered(true);
         grid->getGrid()[x-1][y].setColor(grid->getGrid()[x][y].getColor());
         grid->getGrid()[x-1][y].previous[0] = nextCell;
@@ -796,10 +787,6 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
              //(grid->getCellPtr(x,y+1)->next[0] == 0 ||
                  grid->getCellPtr(x,y+1)->previous[0] == 0)
      {
-        /*if(grid->getGrid()[x][y+1].next[0] == 0)
-        {
-            reversePath(grid->getCellPtr(x,y+1));
-        }*/
          grid->getGrid()[x][y+1].setCovered(true);
          grid->getGrid()[x][y+1].setColor(grid->getGrid()[x][y].getColor());
          grid->getGrid()[x][y+1].previous[0] = nextCell;
@@ -815,12 +802,6 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
              //(grid->getCellPtr(x+1,y)->next[0] == 0 ||
              grid->getCellPtr(x+1,y)->previous[0] == 0)
      {
-        /*
-        if(grid->getGrid()[x+1][y].next[0] == 0)
-        {
-            reversePath(grid->getCellPtr(x+1,y));
-        }
-        */
          grid->getGrid()[x+1][y].setCovered(true);
          grid->getGrid()[x+1][y].setColor(grid->getGrid()[x][y].getColor());
          grid->getGrid()[x+1][y].previous[0] = nextCell;
@@ -836,12 +817,6 @@ void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
              //(grid->getCellPtr(x,y-1)->next[0] == 0 ||
              grid->getCellPtr(x,y-1)->previous[0] == 0)
      {
-        /*
-        if(grid->getGrid()[x][y-1].next[0] == 0)
-        {
-            reversePath(grid->getCellPtr(x,y-1));
-        }
-        */
          grid->getGrid()[x][y-1].setCovered(true);
          grid->getGrid()[x][y-1].setColor(grid->getGrid()[x][y].getColor());
          grid->getGrid()[x][y-1].previous[0] = nextCell;
