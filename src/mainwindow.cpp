@@ -143,12 +143,10 @@ bool MainWindow::mandatoryMove()
     {
         for (int j = 0; j < grid->getNbColumn(); ++j)
         {
-            //int color = grid->getGrid()[i][j].getColor();
-
             if (grid->getGrid()[i][j].isOrigin() && !grid->getCellPtr(i,j)->isPartOfCompletedPath())
             {
-                cell = grid->getCellPtr(i, j);//&grid->getGrid()[i][j];
-                //std::cout << "found origin\n";
+                cell = grid->getCellPtr(i, j);
+
                 if(cell->next[0] != 0) {
                     while(cell->next[0] != 0) {
                         cell = cell->next[0];
@@ -167,7 +165,8 @@ bool MainWindow::mandatoryMove()
                 int numberOfExits = 0;
                 int caseChosen = -1;
 
-
+                // (TODO : SIMPLIFY) Verification of every possible exits and its incrementation
+                // Checking left cell
                 if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == cell->getColor() && grid->getCell(x-1,y).isOrigin()
                         && cell->isOrigin())
                 {
@@ -200,24 +199,11 @@ bool MainWindow::mandatoryMove()
                 if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == -1) //|| grid->getCell(x-1,y).getColor() == cell->getColor()))
                 {
                     caseChosen = 0;
-                    /*Cell* iterator = new Cell();
-                    iterator = cell;
-                    while(iterator->previous[0] != 0) {
-                        iterator = iterator->previous[0];
-                        if(iterator->x == x && iterator->y == y){
-                            numberOfExits--;
-                            caseChosen = -1;
-                        }
-                    }*/
-                    //std::cout << "LEFT\n";
 
                     numberOfExits++;
-
-
-
                 }
 
-
+                // Checking down cell
                 if (cell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).getColor() == cell->getColor() && grid->getCell(x,y+1).isOrigin()
                         && cell->isOrigin())
                 {
@@ -250,23 +236,11 @@ bool MainWindow::mandatoryMove()
                 if (cell->y+1 < grid->getNbRow() && (grid->getCell(x,y+1).getColor() == -1)) // || grid->getCell(x,y+1).getColor() == cell->getColor()))
                 {
                     caseChosen = 1;
-                    /*Cell* iterator = new Cell();
-                    iterator = cell;
-                    while(iterator->previous[0] != 0) {
-                        iterator = iterator->previous[0];
-                        if(iterator->x == x && iterator->y == y) {
-                            numberOfExits--;
-                            caseChosen = -1;
-                        }
-                    }*/
-                    //std::cout << "DOWN\n";
 
                     numberOfExits++;
-
-
                 }
 
-
+                // Checking right cell
                 if (cell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).getColor() == cell->getColor() && grid->getCell(x+1,y).isOrigin()
                         && cell->isOrigin())
                 {
@@ -299,22 +273,11 @@ bool MainWindow::mandatoryMove()
                 if (cell->x+1 < grid->getNbColumn() && (grid->getCell(x+1,y).getColor() == -1)) // || grid->getCell(x+1,y).getColor() == cell->getColor()))
                 {
                     caseChosen = 2;
-                    /*Cell* iterator = new Cell();
-                    iterator = cell;
-                    while(iterator->previous[0] != 0) {
-                        iterator = iterator->previous[0];
-                        if(iterator->x == x && iterator->y == y){
-                            numberOfExits--;
-                            caseChosen = -1;
-                        }
-                    }*/
-                    //std::cout << "RIGHT\n";
 
                     numberOfExits++;
-
-
                 }
 
+                // Checking up cell
                 if (cell->y-1 >= 0 && grid->getCell(x,y-1).getColor() == cell->getColor() && grid->getCell(x,y-1).isOrigin()
                         && cell->isOrigin())
                 {
@@ -347,25 +310,15 @@ bool MainWindow::mandatoryMove()
                 if (cell->y-1 >= 0 && (grid->getCell(x,y-1).getColor() == -1)) // || grid->getCell(x,y-1).getColor() == cell->getColor()))
                 {
                     caseChosen = 3;
-                    /*Cell* iterator = new Cell();
-                    iterator = cell;
-                    while(iterator->previous[0] != 0) {
-                        iterator = iterator->previous[0];
-                        if(iterator->x == x && iterator->y == y){
-                            numberOfExits--;
-                            caseChosen = -1;
-                        }
-                    }*/
-                    //std::cout << "UP\n";
 
                     numberOfExits++;
-
-
                 }
 
-                std::cout << "\nnbExit: " << numberOfExits << "\n";
-                if(numberOfExits == 1) { //  && notValidExit == 1
+                std::cout << "nbExit: " << numberOfExits << "\n";
+
+                if(numberOfExits == 1) {
                     std::cout << "Before entering; caseChosen: " << caseChosen << "\n";
+
                     Cell* nextCell = new Cell();
                     switch(caseChosen) {
                         case(0):
@@ -419,27 +372,12 @@ bool MainWindow::mandatoryMove()
 
                         break;
                     }
-
-
-
-
-
                 }
-
             }
-
         }
     }
 
-
-
-    //TODO remove ?
-    //repaint();
-    //usleep(30000);
-    //update();
-
     return didAMandatoryMove;
-
 }
 
 void MainWindow::reversePath(Cell* cell) {
