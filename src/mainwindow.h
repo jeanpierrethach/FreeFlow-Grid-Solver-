@@ -73,8 +73,6 @@ private:
 
     bool cellIsPartOfHimself(Cell* current, Cell* target);
 
-    void setNextCell(Cell* current, Cell* next);
-
     bool adjacentCellIsCompatible(int, int, int);
     bool mandatoryMove();
 

@@ -729,26 +729,6 @@ bool MainWindow::adjacentCellIsCompatible(int x, int y, int color) {
             //&& grid->getCell(x,y).previous[0] == 0;
 }
 
-void MainWindow::setNextCell(Cell* current, Cell* next) {
-    next->setCovered(true);
-    next->setColor(current->getColor());
-    next->previous[0] = current;
-    if(next->isOrigin()) {
-        next->setSecondOrigin(true);
-        next->setPathComplete(true);
-    } else {
-        Cell* it = next;
-        while(it->next[0] != 0) {
-            it = it->next[0];
-        }
-        if(it->isOrigin()) {
-            it->setSecondOrigin(true);
-            it->setPathComplete(true);
-        }
-    }
-    current->next[0] = next;
-}
-
 bool MainWindow::cellIsPartOfHimself(Cell* current, Cell* target) {
     Cell* it = new Cell();
     it = current;
