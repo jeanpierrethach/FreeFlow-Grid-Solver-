@@ -476,27 +476,17 @@ void MainWindow::reversePath(Cell* cell) {
     }
 }
 
-void MainWindow::solve()
+void MainWindow::reversePathFromSecondOrigin(int nbOfColors)
 {
-    Cell* temp2 = new Cell();
-
-    int nbOfColors = 0;
-    std::vector<int> listOfOriginsColor;
-
-    while(mandatoryMove());
-
     //Reverse the path of the second origin
-    std::vector<bool> reversePath(nbOfColors);
-    for(bool b : reversePath) {
-        b = false;
-    }
+    std::vector<bool> reversableOrigins(nbOfColors);
     for (int i = 0; i < grid->getNbRow(); ++i)
     {
         for (int j = 0; j < grid->getNbColumn(); ++j)
         {
             if (grid->getGrid()[i][j].isOrigin())
             {
-                if(reversePath[grid->getGrid()[i][j].getColor()]) {
+                if(reversableOrigins[grid->getGrid()[i][j].getColor()]) {
                     Cell* current = new Cell();
                     current = grid->getCellPtr(i,j);
                     if(current->next[0] != 0) {
@@ -529,12 +519,24 @@ void MainWindow::solve()
 
                     }
                 } else {
-                    reversePath[grid->getGrid()[i][j].getColor()] = true;
+                    reversableOrigins[grid->getGrid()[i][j].getColor()] = true;
                 }
 
             }
         }
     }
+}
+
+void MainWindow::solve()
+{
+    Cell* temp2 = new Cell();
+
+    int nbOfColors = 0;
+    std::vector<int> listOfOriginsColor;
+
+    while(mandatoryMove());
+
+    reversePathFromSecondOrigin(nbOfColors);
 
     //Try to recursively solve each path starting from point i,j
     //for(int p = 0; p < 10; p++) {

@@ -76,8 +76,9 @@ private:
     bool adjacentCellIsCompatible(int, int, int);
     bool mandatoryMove();
 
-    void verifySecondOrigin(int, int);
+    void confirmSecondOriginFrom(int, int);
     void connectToLoneSecondOrigin(int x, int y, int color, Cell* nextCell);
+    void reversePathFromSecondOrigin(int);
 
     void setPositionStart();
     void setPositionCase();
