@@ -17,6 +17,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <chrono>
+
+using namespace std;
+using namespace std::chrono;
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -330,7 +334,7 @@ bool MainWindow::mandatoryMove()
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x-1][y];
                         std::cout << "nextCell case 0 GOING LEFT, x: " << nextCell->x << " ,y: " << nextCell->y << "\n\n";
                         repaint();
-                        usleep(300000);
+                        //usleep(300000);
 
                         break;
                     case(1):
@@ -342,7 +346,7 @@ bool MainWindow::mandatoryMove()
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y+1];
                         std::cout << "nextCell case 1 GOING DOWN, x: " << nextCell->x << " ,y: " << nextCell->y << "\n\n";
                         repaint();
-                        usleep(300000);
+                        //usleep(300000);
 
                         break;
                     case(2):
@@ -355,7 +359,7 @@ bool MainWindow::mandatoryMove()
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x+1][y];
                         std::cout << "nextCell case 2 GOING RIGHT, x: " << nextCell->x << " ,y: " << nextCell->y << "\n\n";
                         repaint();
-                        usleep(300000);
+                        //usleep(300000);
 
                         break;
                     case(3):
@@ -368,7 +372,7 @@ bool MainWindow::mandatoryMove()
                         grid->getGrid()[x][y].next[0] = &grid->getGrid()[x][y-1];
                         std::cout << "nextCell case 3 GOING UP, x: " << nextCell->x << " ,y: " << nextCell->y << "\n\n";
                         repaint();
-                        usleep(300000);
+                        //usleep(300000);
 
                         break;
                     }
@@ -564,6 +568,8 @@ void MainWindow::solveRandomly(const std::vector<bool>& pathCompleted)
 
 void MainWindow::solve()
 {
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+
     // TODO LOOK variable and vector initialization
     int nbOfColors = 0;
 
@@ -591,7 +597,7 @@ void MainWindow::solve()
         }
     }
     repaint();
-    usleep(30000);
+    //usleep(30000);
 
     //Clear the paths that arent completed
 /*
@@ -609,6 +615,12 @@ void MainWindow::solve()
     solveRandomly(pathCompletedColor);
 
     update();
+
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+    auto duration = duration_cast<milliseconds>( t2 - t1 ).count();
+
+    cout << "\n********\nDURATION : " << duration << " milliseconds\n********\n";
 }
 
 bool MainWindow::adjacentCellIsCompatible(int x, int y, int color) {
@@ -652,7 +664,7 @@ void MainWindow::connectToLoneSecondOrigin(int x, int y, int color, Cell* nextCe
 void MainWindow::solveRec(Cell* currentCell, bool isRandom, bool clockTurn)
 {
     repaint();
-    usleep(30000);
+    //usleep(30000);
 
     if(currentCell->getPathComplete() || currentCell->next[0] != 0) {
         return;
