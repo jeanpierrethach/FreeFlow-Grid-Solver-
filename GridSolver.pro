@@ -21,7 +21,8 @@ SOURCES += src/main.cpp \
     src/gridbuilder.cpp \
     src/generator.cpp \
     src/gamestorer.cpp \
-    src/cell.cpp
+    src/cell.cpp \
+    src/solver.cpp
 
 
 HEADERS  += src/mainwindow.h \
@@ -31,7 +32,8 @@ HEADERS  += src/mainwindow.h \
     src/gridbuilder.h \
     src/generator.h \
     src/gamestorer.h \
-    src/cell.h
+    src/cell.h \
+    src/solver.h
 
 FORMS    += src/mainwindow.ui \
     src/dialog.ui \

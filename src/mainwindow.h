@@ -92,7 +92,7 @@ private:
     //const int bottom = 5;
     const int offset = 5; // separator between the frame and the grid
 
-    int height = 600;
+    int height = 720;
     int width = 720 + leftside + rightside;
     const int bottomSpace = height/5;
 

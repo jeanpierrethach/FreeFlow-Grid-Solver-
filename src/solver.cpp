@@ -46,6 +46,29 @@ void Solver::clearPathColorCase(Cell* temp)
     }
 }
 
+void Solver::incrementNbOfExitsIfPossible(Cell* cell, int x, int y, int* numberOfExits)
+{
+    if (grid->getCell(x,y).getColor() != cell->getColor())
+        return;
+
+    if (grid->getCell(x,y).isOrigin() == false && grid->getCell(x,y).next[0] == 0)
+    {
+        (*numberOfExits)++;
+    }
+    if (grid->getCell(x,y).isOrigin() && (cell->isOrigin()
+        || (cell->previous[0] != 0 && !cell->previous[0]->isOrigin())))
+    {
+        (*numberOfExits)++;
+    }
+    if (grid->getCell(x,y).isOrigin() && cell->previous[0] != 0 && cell->previous[0]->isOrigin())
+    {
+        if (!(grid->getCell(x,y).next[0] != 0 && cell->x == grid->getCell(x,y).next[0]->x
+                && cell->y == grid->getCell(x,y).next[0]->y))
+        {
+            (*numberOfExits)++;
+        }
+    }
+}
 
 bool Solver::mandatoryMove()
 {
@@ -80,38 +103,11 @@ bool Solver::mandatoryMove()
                 int numberOfExits = 0;
                 int caseChosen = -1;
 
-                // (TODO : SIMPLIFY) Verification of every possible exits and its incrementation
                 // Checking left cell
-                if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == cell->getColor() && grid->getCell(x-1,y).isOrigin()
-                        && cell->isOrigin())
-                {
-                    numberOfExits++;
-                }
-                if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == cell->getColor() && !grid->getCell(x-1,y).isOrigin()
-                        && grid->getCell(x-1,y).next[0] == 0)
-                {
-                    numberOfExits++;
-                }
-                if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == cell->getColor() && grid->getCell(x-1,y).isOrigin()
-                        && cell->previous[0] != 0 && !cell->previous[0]->isOrigin())
-                {
-                    numberOfExits++;
-                }
-                if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == cell->getColor() && grid->getCell(x-1,y).isOrigin()
-                        && cell->previous[0] != 0 && cell->previous[0]->isOrigin())
-                {
-                    if (grid->getCell(x-1,y).next[0] != 0 && cell->x == grid->getCell(x-1,y).next[0]->x
-                            && cell->y == grid->getCell(x-1,y).next[0]->y)
-                    {
+                if (cell->x-1 >= 0)
+                    incrementNbOfExitsIfPossible(cell, x-1, y, &numberOfExits);
 
-                    }
-                    else
-                    {
-                        numberOfExits++;
-                    }
-
-                }
-                if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == -1) //|| grid->getCell(x-1,y).getColor() == cell->getColor()))
+                if (cell->x-1 >= 0 && grid->getCell(x-1,y).getColor() == -1)
                 {
                     caseChosen = 0;
 
@@ -119,72 +115,20 @@ bool Solver::mandatoryMove()
                 }
 
                 // Checking down cell
-                if (cell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).getColor() == cell->getColor() && grid->getCell(x,y+1).isOrigin()
-                        && cell->isOrigin())
-                {
-                    numberOfExits++;
-                }
-                if (cell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).getColor() == cell->getColor() && !grid->getCell(x,y+1).isOrigin()
-                        && grid->getCell(x,y+1).next[0] == 0)
-                {
-                    numberOfExits++;
-                }
-                if (cell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).getColor() == cell->getColor() && grid->getCell(x,y+1).isOrigin()
-                        && cell->previous[0] != 0 && !cell->previous[0]->isOrigin())
-                {
-                    numberOfExits++;
-                }
-                if (cell->y+1 < grid->getNbRow() && grid->getCell(x,y+1).getColor() == cell->getColor() && grid->getCell(x,y+1).isOrigin()
-                        && cell->previous[0] != 0 && cell->previous[0]->isOrigin())
-                {
-                    if (grid->getCell(x,y+1).next[0] != 0 && cell->x == grid->getCell(x,y+1).next[0]->x
-                            && cell->y == grid->getCell(x,y+1).next[0]->y)
-                    {
+                if (cell->y+1 < grid->getNbRow())
+                    incrementNbOfExitsIfPossible(cell, x, y+1, &numberOfExits);
 
-                    }
-                    else
-                    {
-                        numberOfExits++;
-                    }
-
-                }
-                if (cell->y+1 < grid->getNbRow() && (grid->getCell(x,y+1).getColor() == -1)) // || grid->getCell(x,y+1).getColor() == cell->getColor()))
+                if (cell->y+1 < grid->getNbRow() && (grid->getCell(x,y+1).getColor() == -1))
                 {
                     caseChosen = 1;
 
                     numberOfExits++;
                 }
 
-                // Checking right cell
-                if (cell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).getColor() == cell->getColor() && grid->getCell(x+1,y).isOrigin()
-                        && cell->isOrigin())
-                {
-                    numberOfExits++;
-                }
-                if (cell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).getColor() == cell->getColor() && !grid->getCell(x+1,y).isOrigin()
-                        && grid->getCell(x+1,y).next[0] == 0)
-                {
-                    numberOfExits++;
-                }
-                if (cell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).getColor() == cell->getColor() && grid->getCell(x+1,y).isOrigin()
-                        && cell->previous[0] != 0 && !cell->previous[0]->isOrigin())
-                {
-                    numberOfExits++;
-                }
-                if (cell->x+1 < grid->getNbColumn() && grid->getCell(x+1,y).getColor() == cell->getColor() && grid->getCell(x+1,y).isOrigin()
-                        && cell->previous[0] != 0 && cell->previous[0]->isOrigin())
-                {
-                    if (grid->getCell(x+1,y).next[0] != 0 && cell->x == grid->getCell(x+1,y).next[0]->x
-                            && cell->y == grid->getCell(x+1,y).next[0]->y)
-                    {
+                // Checking right cell               
+                if (cell->x+1 < grid->getNbColumn())
+                    incrementNbOfExitsIfPossible(cell, x+1, y, &numberOfExits);
 
-                    }
-                    else
-                    {
-                        numberOfExits++;
-                    }
-
-                }
                 if (cell->x+1 < grid->getNbColumn() && (grid->getCell(x+1,y).getColor() == -1)) // || grid->getCell(x+1,y).getColor() == cell->getColor()))
                 {
                     caseChosen = 2;
@@ -193,35 +137,9 @@ bool Solver::mandatoryMove()
                 }
 
                 // Checking up cell
-                if (cell->y-1 >= 0 && grid->getCell(x,y-1).getColor() == cell->getColor() && grid->getCell(x,y-1).isOrigin()
-                        && cell->isOrigin())
-                {
-                    numberOfExits++;
-                }
-                if (cell->y-1 >= 0 && grid->getCell(x,y-1).getColor() == cell->getColor() && !grid->getCell(x,y-1).isOrigin()
-                        && grid->getCell(x,y-1).next[0] == 0)
-                {
-                    numberOfExits++;
-                }
-                if (cell->y-1 >= 0 && grid->getCell(x,y-1).getColor() == cell->getColor() && grid->getCell(x,y-1).isOrigin()
-                        && cell->previous[0] != 0 && !cell->previous[0]->isOrigin())
-                {
-                    numberOfExits++;
-                }
-                if (cell->y-1 >= 0 && grid->getCell(x,y-1).getColor() == cell->getColor() && grid->getCell(x,y-1).isOrigin()
-                        && cell->previous[0] != 0 && cell->previous[0]->isOrigin())
-                {
-                    if (grid->getCell(x,y-1).next[0] != 0 && cell->x == grid->getCell(x,y-1).next[0]->x
-                            && cell->y == grid->getCell(x,y-1).next[0]->y)
-                    {
+                if (cell->y-1 >= 0)
+                    incrementNbOfExitsIfPossible(cell, x, y-1, &numberOfExits);
 
-                    }
-                    else
-                    {
-                        numberOfExits++;
-                    }
-
-                }
                 if (cell->y-1 >= 0 && (grid->getCell(x,y-1).getColor() == -1)) // || grid->getCell(x,y-1).getColor() == cell->getColor()))
                 {
                     caseChosen = 3;
@@ -491,7 +409,6 @@ void Solver::fillGrid() {
     {
         for(int y = 0; y < grid->getNbColumn(); ++y)
         {
-            bool clearedEmptySpot = false;
             //Found empty spot
             if(grid->getCell(x,y).getColor() == -1) {
                 //found a second adjacent empty cell
@@ -502,6 +419,7 @@ void Solver::fillGrid() {
                 Cell* firstEmptyCell = new Cell();
                 Cell* secondEmptyCell = new Cell();
                 firstEmptyCell = grid->getCellPtr(x,y);
+
                 if(y+1 < grid->getNbColumn() && grid->getCell(x,y+1).getColor() == -1)
                 {
                     secondEmptyCell = grid->getCellPtr(x, y+1);

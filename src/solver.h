@@ -29,7 +29,7 @@ private:
     void solveRandomly(const std::vector<bool>&);
     void fillGrid();
     void matchEmptyCaseWithPath(Cell** adjacentCell, Cell** adjacentCell2, bool* matching, Cell** bottomBlank, Cell** topBlank);
-
+    void incrementNbOfExitsIfPossible(Cell* cell, int x, int y, int* numberOfExits);
 
 };
 
